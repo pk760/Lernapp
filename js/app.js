@@ -223,6 +223,14 @@ function numpad(L) {
     <div class="keypad">${keys}<button class="key" ${dis} data-a="key" data-v="del" aria-label="Löschen">⌫</button><button class="key" ${dis} data-a="key" data-v="0">0</button><button class="key go" ${L.input ? dis : 'disabled'} data-a="check" aria-label="Prüfen">✓</button></div>`;
 }
 
+function clockSvg([h, m]) {
+  const pt = (deg, r) => `${(60 + r * Math.sin(deg * Math.PI / 180)).toFixed(1)},${(60 - r * Math.cos(deg * Math.PI / 180)).toFixed(1)}`;
+  const ticks = Array.from({ length: 12 }, (_, i) => `<text x="${pt(i * 30 + 30, 43).split(',')[0]}" y="${(Number(pt(i * 30 + 30, 43).split(',')[1]) + 4).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">${i + 1}</text>`).join('');
+  return `<svg class="clock" viewBox="0 0 120 120" role="img" aria-label="Uhr"><circle cx="60" cy="60" r="56" fill="none" stroke="var(--gold, #f5c542)" stroke-width="4"/>${ticks}
+    <line x1="60" y1="60" x2="${pt((h % 12) * 30 + m * 0.5, 26).split(',')[0]}" y2="${pt((h % 12) * 30 + m * 0.5, 26).split(',')[1]}" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+    <line x1="60" y1="60" x2="${pt(m * 6, 38).split(',')[0]}" y2="${pt(m * 6, 38).split(',')[1]}" stroke="var(--gold, #f5c542)" stroke-width="3" stroke-linecap="round"/><circle cx="60" cy="60" r="3.5" fill="currentColor"/></svg>`;
+}
+
 function viewLesson(p) {
   const L = ui.lesson, q = L.queue[L.i];
   const v = VILLAINS[L.villain];
@@ -254,6 +262,7 @@ function viewLesson(p) {
       <div class="fighter foe">${foePic(v, 'foe-fig')}${dmg}<div class="hpbox"><small>${esc(v.name)}</small><div class="bar hp"><i style="width:${hp}%"></i></div></div></div>
     </div>${blitz}
     <div class="row between qrow"><h2 class="q">${esc(q.q)}</h2><button class="speak" data-a="speak" aria-label="Vorlesen">🔊</button></div>
+    ${q.clock ? `<div class="clockbox">${clockSvg(q.clock)}</div>` : ''}
     ${L.hintText ? `<p class="center-t hint">${esc(L.hintText)}</p>` : q.hint && !L.answered ? `<p class="muted center-t">Tipp: ${esc(q.hint)}</p>` : ''}${power}
     ${q.num ? numpad(L) : `<div class="opts">${opts}</div>`}${fb}${L.answered && L.crit ? '<div class="flash"></div>' : ''}</main>`;
 }

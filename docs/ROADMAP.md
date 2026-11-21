@@ -14,7 +14,7 @@ Karten-Packs, Sammlung, Ligen, Klassenarbeits-Projekte inkl. Boss, lokale Profil
 - [x] Story-Kampagne (js/story.js), Kampf-Arena, Combo/Superkraft/Blitz-Aufgabe, ECHO-Notruf, Sounds (abschaltbar), Brief-Mission, Heldenfoto lokal
 - [ ] Konfetti/Foil-Animation beim Boss-Sieg, Story-Vorlesen verfeinern, Kapitel-Illustrationen
 - [x] Zahleneingabe per Ziffernblock (Mathe, ca. 50 % der Aufgaben)
-- [ ] Weitere Antwort-Typen: Lückentext, Buchstaben legen, Zuordnen, Uhrzeit stellen
+- [ ] Weitere Antwort-Typen: Buchstaben legen, Zuordnen, Uhrzeit stellen (Zifferblatt-Aufgabe mit Auswahl ✅, Lückentext als Auswahl vorhanden)
 - [ ] iPad-Feinschliff: Querformat-Layout, Safe Areas, Splash-Screens
 
 ## Phase 2 – Inhalte

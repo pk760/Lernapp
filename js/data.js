@@ -245,11 +245,35 @@ const MATH = {
     const a = rnd(12, 60), b = rnd(12, 60), c = rnd(2, 9); return mq(`(${a} + ${b}) · ${c} = ?`, (a + b) * c, { chk: `(${a}+${b})*${c}`, hint: KL, wrong: [a + b * c] });
   },
 };
+// ---- Uhrzeit: Aufgabe mit Zifferblatt (q.clock = [Stunde 1–12, Minute]); Antworten als Mehrfachauswahl
+export function fmtTime(grade, h, m) {
+  const hh = (x) => ((x - 1) % 12) + 1;
+  if (grade <= 2) {
+    if (m === 0) return `${h} Uhr`;
+    if (m === 30) return `halb ${hh(h + 1)}`;
+    if (m === 15) return `Viertel nach ${h}`;
+    return `Viertel vor ${hh(h + 1)}`;
+  }
+  return `${h}:${String(m).padStart(2, '0')} Uhr`;
+}
+export function clockQuestion(grade) {
+  const mins = grade === 1 ? [0, 30] : grade === 2 ? [0, 15, 30, 45] : [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
+  const r = (a) => a[Math.floor(Math.random() * a.length)];
+  const h = 1 + Math.floor(Math.random() * 12), m = r(mins);
+  const c = fmtTime(grade, h, m), wrong = new Set();
+  const cand = [[m / 5 || 12, h * 5 % 60], [h % 12 + 1, m], [(h + 10) % 12 + 1, m], [h, r(mins)], [r([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]), r(mins)]];
+  for (const [ch, cm] of cand) { const f = fmtTime(grade, ch, mins.includes(cm) ? cm : m); if (f !== c) wrong.add(f); }
+  let g = 0;
+  while (wrong.size < 3 && g++ < 50) { const f = fmtTime(grade, 1 + Math.floor(Math.random() * 12), r(mins)); if (f !== c) wrong.add(f); }
+  return { q: 'Wie spät ist es?', c, w: [...wrong].slice(0, 3), hint: 'Der kurze Zeiger zeigt die Stunde, der lange die Minuten.', clock: [h, m] };
+}
+
 function uniqueMath(grade, n) {
   const out = [], seen = new Set();
   let guard = 0;
+  if (Math.random() < 0.35) { const c = clockQuestion(grade); seen.add(c.q); out.push(c); }
   while (out.length < n && guard++ < 200) { const q = MATH[grade](); if (!seen.has(q.q)) { seen.add(q.q); out.push(q); } }
-  return out;
+  return shuffle(out);
 }
 
 // Baut eine Lektion. boss = 10 Fragen mit Nachbar-Klassen gemischt.
