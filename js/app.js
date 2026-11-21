@@ -238,7 +238,7 @@ function viewLesson(p) {
   const fx = L.answered ? (L.ok ? (L.crit ? 'hit crit' : 'hit') : 'miss') : '';
   const BOLT = '<svg class="bolt" viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true"><polyline points="0,58 52,40 78,62 126,28 152,58 204,22 232,50 300,36"/></svg>';
   const sparks = Array.from({ length: L.crit ? 14 : 8 }, (_, i) => `<i style="--a:${i * (360 / (L.crit ? 14 : 8)) + 7}deg;--d:${34 + (i * 13) % 30}px"></i>`).join('');
-  const strike = L.answered && L.ok ? `<div class="strike ${L.crit ? 'big' : ''}" aria-hidden="true">${BOLT}<div class="sparks">${sparks}</div>${L.crit ? '<div class="ring"></div>' : ''}</div>` : '';
+  const strike = L.answered && L.ok ? `<div class="strike ${L.crit ? 'big' : ''}" aria-hidden="true">${BOLT}<div class="sparks">${sparks}</div>${L.crit ? '<div class="ring"></div>' : ''}<b class="pow ${L.crit ? 'big' : ''}">${(L.crit ? ['BAM!', 'KRACH!', 'ZAP!', 'BOOM!'] : ['TREFFER!', 'ZACK!', 'WUMM!'])[L.i % (L.crit ? 4 : 3)]}</b></div>` : '';
   const dmg = L.answered && L.ok ? `<span class="dmg">−${Math.ceil(100 / L.total)}${L.crit ? ' !' : ''}</span>` : '';
   const pips = [0, 1, 2].map((i) => `<i class="${L.power > i ? 'on' : ''}"></i>`).join('');
   const combo = L.combo >= 2 ? `<span class="combo">COMBO ×${L.combo}</span>` : '';
@@ -273,7 +273,8 @@ function viewLesson(p) {
 function viewResult() {
   const R = ui.result, c = R.card;
   const reveal = c ? (R.opened
-    ? `<div class="tcg big ${c.rarity} pop"><div class="art">${cardArt(c)}</div><b>${c.name}</b><small>${RARITY[c.rarity].name} · ${SUBJECTS[c.subject].name}</small><p>${esc(c.text)}</p></div>`
+    ? `<div class="reveal-fx ${c.rarity}" aria-hidden="true"><i class="rays"></i><i class="shock"></i><i class="shock s2"></i></div><div class="rarity-banner ${c.rarity}">${c.rarity === 'common' ? 'NEUER HELD!' : RARITY[c.rarity].name.toUpperCase() + '!'}</div>
+      <div class="tcg big ${c.rarity} pop flipin"><div class="art">${cardArt(c)}</div><b>${c.name}</b><small>${RARITY[c.rarity].name} · ${SUBJECTS[c.subject].name}</small><p>${esc(c.text)}</p></div>`
     : `<button class="pack" data-a="open">📦<span>Helden-Kiste öffnen</span></button>`) : (R.letter ? '<p class="muted">Beute gibt es nur für den ersten Brief am Tag. Die Antwort kommt gleich!</p>' : '<p class="muted">Für eine Helden-Kiste brauchst du mindestens 60 % sofort richtig. Nochmal – du schaffst das!</p>');
   const v = VILLAINS[R.villain];
   const bossPic = R.boss && v.img ? `<img class="boss-big ${R.won ? 'beaten' : ''}" src="${v.img}" alt="${esc(v.name)}" draggable="false">` : '';

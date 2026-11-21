@@ -13,7 +13,7 @@ Karten-Packs, Sammlung, Ligen, Klassenarbeits-Projekte inkl. Boss, lokale Profil
 - [ ] KI-Sidekick (optional): Erklärungen/Tipps per Sprache. Braucht API → Kosten & Datenschutz (Kind!) vorher klären; erst Eltern-Entscheidung
 - [x] Story-Kampagne (js/story.js), Kampf-Arena, Combo/Superkraft/Blitz-Aufgabe, ECHO-Notruf, Sounds (abschaltbar), Brief-Mission, Heldenfoto lokal
 - [x] Figuren animiert (Atmen, Aura, Treffer-/Crit-Reaktionen, 3D-Tilt der Karten); Konfetti beim Sieg ✅
-- [ ] Foil-Animation beim Boss-Sieg, Story-Vorlesen verfeinern, Kapitel-Illustrationen
+- [x] Kisten-Show (Strahlen, Schockwelle, Seltenheits-Banner, Karten-Flip), Comic-Einblendungen (BAM!), Story-Vorlesen verfeinern, Kapitel-Illustrationen
 - [x] Zahleneingabe per Ziffernblock (Mathe, ca. 50 % der Aufgaben)
 - [ ] Weitere Antwort-Typen: Buchstaben legen, Zuordnen, Uhrzeit stellen (Zifferblatt-Aufgabe mit Auswahl ✅, Lückentext als Auswahl vorhanden)
 - [ ] iPad-Feinschliff: Querformat-Layout, Safe Areas, Splash-Screens

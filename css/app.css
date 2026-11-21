@@ -424,3 +424,31 @@ input:focus, select:focus { outline: none; box-shadow: inset 0 0 0 2px var(--cya
 .tcg.legendary .hero-img { animation: legendpulse 3s ease-in-out infinite; }
 @keyframes legendpulse { 50% { filter: brightness(1.12) saturate(1.15); } }
 @media (prefers-reduced-motion: reduce) { .fighter, .fighter > *, .hero-me > *, .hero-side > *, .scene-foe-img, .tcg, .tcg .hero-img { animation: none !important; transform: none !important; } }
+
+/* =================== Comic-Einblendung & Kisten-Show =================== */
+.pow { position: absolute; left: 50%; top: 10px; z-index: 6; transform: translateX(-50%) rotate(-6deg); font: 800 34px/1 var(--display); letter-spacing: .08em; color: #fff; padding: 4px 16px;
+  background: #e23b3b; clip-path: polygon(0 20%, 12% 0, 30% 14%, 50% 0, 70% 14%, 88% 0, 100% 22%, 92% 50%, 100% 78%, 86% 100%, 68% 86%, 50% 100%, 30% 86%, 12% 100%, 0 78%, 8% 50%);
+  animation: powin .9s cubic-bezier(.2,1.6,.4,1) forwards; pointer-events: none; text-shadow: 0 2px 0 rgba(0,0,0,.5); }
+.pow.big { font-size: 46px; padding: 10px 34px; background: linear-gradient(180deg, #ffe066, #ff9d2b); color: #2a1200; text-shadow: none; }
+@keyframes powin { 0% { opacity: 0; transform: translateX(-50%) rotate(-6deg) scale(.2); } 25% { opacity: 1; transform: translateX(-50%) rotate(-6deg) scale(1.3); } 45% { transform: translateX(-50%) rotate(-6deg) scale(1); } 85% { opacity: 1; } 100% { opacity: 0; transform: translateX(-50%) rotate(-6deg) translateY(-12px) scale(1.05); } }
+
+.pack { animation: packshake 1.6s ease-in-out infinite, packglow 1.6s ease-in-out infinite alternate; }
+@keyframes packshake { 0%, 70%, 100% { transform: none; } 75% { transform: rotate(-4deg) scale(1.04); } 80% { transform: rotate(4deg) scale(1.06); } 85% { transform: rotate(-3deg) scale(1.06); } 90% { transform: rotate(3deg) scale(1.04); } }
+@keyframes packglow { from { filter: drop-shadow(0 0 16px rgba(255,197,49,.5)); } to { filter: drop-shadow(0 0 42px rgba(255,197,49,1)); } }
+
+.reveal-fx { --rc: #9aa3b8; position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 1; display: grid; place-items: center; }
+.reveal-fx.rare { --rc: #4aa3ff; } .reveal-fx.epic { --rc: #b16bff; } .reveal-fx.legendary { --rc: #ffc531; }
+.reveal-fx .rays { position: absolute; width: 190vmax; height: 190vmax; opacity: .0; animation: raysin 1.2s ease-out .1s forwards, spin 14s linear infinite;
+  background: repeating-conic-gradient(from 0deg, color-mix(in srgb, var(--rc) 45%, transparent) 0 6deg, transparent 6deg 18deg); -webkit-mask: radial-gradient(circle, #000 0, transparent 45%); mask: radial-gradient(circle, #000 0, transparent 45%); }
+.reveal-fx.common .rays { display: none; }
+@keyframes raysin { to { opacity: .8; } } @keyframes spin { to { transform: rotate(360deg); } }
+.reveal-fx .shock { position: absolute; width: 40px; height: 40px; border-radius: 50%; border: 4px solid var(--rc); box-shadow: 0 0 30px var(--rc); animation: shockw .9s ease-out forwards; }
+.reveal-fx .shock.s2 { animation-delay: .2s; } .reveal-fx.common .shock.s2 { display: none; }
+@keyframes shockw { from { transform: scale(.2); opacity: 1; } to { transform: scale(26); opacity: 0; } }
+.reveal-fx::after { content: ""; position: absolute; inset: 0; background: var(--rc); opacity: 0; animation: rflash .6s ease-out forwards; } @keyframes rflash { 0% { opacity: .85; } 100% { opacity: 0; } }
+.rarity-banner { position: relative; z-index: 2; font: 800 34px/1 var(--display); letter-spacing: .2em; color: #fff; padding: 6px 28px; clip-path: var(--cut-s); background: #3a4160; animation: bannerin .6s cubic-bezier(.2,1.4,.4,1) .15s both; }
+.rarity-banner.rare { background: linear-gradient(90deg, #1f5fbf, #4aa3ff); } .rarity-banner.epic { background: linear-gradient(90deg, #5b2fb8, #b16bff); } .rarity-banner.legendary { background: linear-gradient(90deg, #d99200, #ffe066); color: #2a1200; }
+@keyframes bannerin { from { transform: scaleX(.1); opacity: 0; letter-spacing: .8em; } }
+.tcg.flipin.pop { position: relative; z-index: 2; animation: flipin .9s cubic-bezier(.2,1.2,.4,1) .2s both; }
+@keyframes flipin { from { transform: perspective(700px) rotateY(180deg) scale(.4); opacity: 0; } 60% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .reveal-fx, .pow { display: none; } }
