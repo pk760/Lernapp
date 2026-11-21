@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { STATIC, SUBJECTS, GRADES, CARDS, buildQuestions, rollCard, ligaFor } from '../js/data.js';
+import { existsSync } from 'node:fs';
+import { IMAGE_IDS, VILLAINS, STATIC, SUBJECTS, GRADES, CARDS, buildQuestions, rollCard, ligaFor } from '../js/data.js';
 
 test('statische Fragen: Antwort eindeutig, keine doppelten Optionen', () => {
   for (const [subj, byGrade] of Object.entries(STATIC)) {
@@ -74,4 +75,10 @@ test('Zahleneingabe nur bei Mathe; Antworten bleiben ganzzahlig', () => {
     for (let i = 0; i < 100; i++) for (const q of buildQuestions('mathe', g)) if (q.num) assert.match(q.c, /^\d{1,6}$/);
   }
   assert.ok(CARDS.length >= 24);
+});
+
+test('Alle eingetragenen Helden- und Boss-Bilder existieren', () => {
+  for (const id of IMAGE_IDS) assert.ok(existsSync(new URL(`../assets/heroes/${id}.webp`, import.meta.url)), id);
+  for (const v of Object.values(VILLAINS)) assert.ok(existsSync(new URL(`../${v.img}`, import.meta.url)), v.img);
+  assert.ok(IMAGE_IDS.every((id) => CARDS.some((c) => c.id === id)));
 });

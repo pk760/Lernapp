@@ -36,13 +36,13 @@ agentbabel: Superhero "Agent Babel" – violet with gold accents suit, flowing d
 ```
 quadrattitan: Superhero "Quadrat-Titan" – gold with dark steel accents suit, flowing dark cape, a hexagon emblem on the chest, a full helmet with narrow glowing white visor slits, fair skin. advanced armored suit with energy glow details.
 
-nullpunkt: Superhero "Nullpunkt" – teal with dark steel accents suit, flowing dark cape, a glowing ring emblem on the chest, a cowl with pointed ears and narrow glowing eyes, lower face visible, strong jaw, tan skin. advanced armored suit with energy glow details.
+nullpunkt: Superhero "Nullpunkt" – teal with dark steel accents suit, flowing dark cape, a glowing ring emblem on the chest, a sleek hooded helmet with a swept-back crest and narrow glowing eyes (NO pointed bat-like ears), lower face visible, strong jaw, tan skin. advanced armored suit with energy glow details.
 
 grammatiktitan: Superhero "Grammatik-Titan" – violet with gold accents suit, flowing dark cape, a hexagon emblem on the chest, a full helmet with narrow glowing white visor slits, fair skin. advanced armored suit with energy glow details.
 
-maerchenmeister: Superhero "Märchenmeister" – gold with dark steel accents suit, flowing dark cape, a flame emblem on the chest, a cowl with pointed ears and narrow glowing eyes, lower face visible, strong jaw, brown skin. advanced armored suit with energy glow details.
+maerchenmeister: Superhero "Märchenmeister" – gold with dark steel accents suit, flowing dark cape, a flame emblem on the chest, a sleek hooded helmet with a swept-back crest and narrow glowing eyes (NO pointed bat-like ears), lower face visible, strong jaw, brown skin. advanced armored suit with energy glow details.
 
-lingolord: Superhero "Lingo-Lord" – matte black with cyan glowing accents suit, flowing dark cape, a hexagon emblem on the chest, a cowl with pointed ears and narrow glowing eyes, lower face visible, strong jaw, fair skin. advanced armored suit with energy glow details.
+lingolord: Superhero "Lingo-Lord" – matte black with cyan glowing accents suit, flowing dark cape, a hexagon emblem on the chest, a sleek hooded helmet with a swept-back crest and narrow glowing eyes (NO pointed bat-like ears), lower face visible, strong jaw, fair skin. advanced armored suit with energy glow details.
 
 globeglider: Superhero "Globe-Glider" – teal with dark steel accents suit, flowing dark cape, a glowing ring emblem on the chest, a helmet with a glowing visor band, lower face visible, tan skin. advanced armored suit with energy glow details.
 ```
@@ -66,19 +66,19 @@ speakspark: Superhero "Speak-Spark" – burnt orange with navy accents suit, flo
 ```
 zahlenblitz: Superhero "Zahlenblitz" – electric blue with red accents suit, flowing dark cape, a lightning bolt emblem on the chest, an angular eye mask and short dark hair, lower face visible, strong jaw, fair skin. practical tactical suit.
 
-minusninja: Superhero "Minus-Ninja" – matte black with cyan glowing accents suit, no cape, a star emblem on the chest, a cowl with pointed ears and narrow glowing eyes, lower face visible, strong jaw, brown skin. practical tactical suit.
+minusninja: Superhero "Minus-Ninja" – matte black with cyan glowing accents suit, no cape, a star emblem on the chest, a sleek hooded helmet with a swept-back crest and narrow glowing eyes (NO pointed bat-like ears), lower face visible, strong jaw, brown skin. practical tactical suit.
 
 plusphantom: Superhero "Plus-Phantom" – violet with gold accents suit, flowing dark cape, a glowing ring emblem on the chest, a helmet with a glowing visor band, lower face visible, light skin. practical tactical suit.
 
 silbensturm: Superhero "Silben-Sturm" – teal with dark steel accents suit, flowing dark cape, a lightning bolt emblem on the chest, an angular eye mask and short dark hair, lower face visible, strong jaw, light skin. practical tactical suit.
 
-wortwaechter: Superhero "Wortwächter" – emerald green with black accents suit, flowing dark cape, a shield emblem on the chest, a cowl with pointed ears and narrow glowing eyes, lower face visible, strong jaw, brown skin. practical tactical suit.
+wortwaechter: Superhero "Wortwächter" – emerald green with black accents suit, flowing dark cape, a shield emblem on the chest, a sleek hooded helmet with a swept-back crest and narrow glowing eyes (NO pointed bat-like ears), lower face visible, strong jaw, brown skin. practical tactical suit.
 
 satzschatten: Superhero "Satz-Schatten" – matte black with cyan glowing accents suit, no cape, a glowing ring emblem on the chest, a helmet with a glowing visor band, lower face visible, fair skin. practical tactical suit.
 
 hellohawk: Superhero "Hello-Hawk" – electric blue with red accents suit, flowing dark cape, a lightning bolt emblem on the chest, an angular eye mask and short dark hair, lower face visible, strong jaw, light skin. practical tactical suit.
 
-wordwarrior: Superhero "Word-Warrior" – crimson red with gold accents suit, no cape, a flame emblem on the chest, a cowl with pointed ears and narrow glowing eyes, lower face visible, strong jaw, tan skin. practical tactical suit.
+wordwarrior: Superhero "Word-Warrior" – crimson red with gold accents suit, no cape, a flame emblem on the chest, a sleek hooded helmet with a swept-back crest and narrow glowing eyes (NO pointed bat-like ears), lower face visible, strong jaw, tan skin. practical tactical suit.
 
 captainvocab: Superhero "Captain Vocab" – emerald green with black accents suit, flowing dark cape, a star emblem on the chest, a helmet with a glowing visor band, lower face visible, dark brown skin. practical tactical suit.
 ```

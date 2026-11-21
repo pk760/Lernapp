@@ -142,7 +142,7 @@ function viewLesson() {
   const fb = L.answered ? `<div class="feedback ${L.ok ? 'ok' : 'bad'}"><b>${L.ok ? '💥 Volltreffer!' : 'Daneben! Richtig ist:'}</b>${L.ok ? '' : ` <span>${esc(q.c)}</span>`}<button class="btn" data-a="next">Weiter</button></div>` : '';
   const tag = L.boss ? 'BOSS-MISSION' : L.project ? 'TRAINING FÜR DIE ARBEIT' : 'MISSION';
   return `<main class="lesson"><div class="row"><button class="x" data-a="quit" aria-label="Beenden">✕</button><div class="bar grow"><i style="width:${Math.round((L.i / L.queue.length) * 100)}%"></i></div></div>
-    <div class="enemy ${L.boss ? 'boss-on' : ''}"><span class="foe">${v.emoji}</span><div class="grow"><small>${tag} · ${esc(v.name)}</small><div class="bar hp"><i style="width:${hp}%"></i></div></div></div>
+    <div class="enemy ${L.boss ? 'boss-on' : ''}">${v.img ? `<img class="foe-img" src="${v.img}" alt="${esc(v.name)}" draggable="false">` : `<span class="foe">${v.emoji}</span>`}<div class="grow"><small>${tag} · ${esc(v.name)}</small><div class="bar hp"><i style="width:${hp}%"></i></div></div></div>
     <div class="row between qrow"><h2 class="q">${esc(q.q)}</h2><button class="speak" data-a="speak" aria-label="Vorlesen">🔊</button></div>
     ${q.hint && !L.answered ? `<p class="muted center-t">Tipp: ${esc(q.hint)}</p>` : ''}
     ${q.num ? numpad(L) : `<div class="opts">${opts}</div>`}${fb}</main>`;
@@ -154,7 +154,8 @@ function viewResult() {
     ? `<div class="tcg big ${c.rarity} pop"><div class="art">${cardArt(c)}</div><b>${c.name}</b><small>${RARITY[c.rarity].name} · ${SUBJECTS[c.subject].name}</small><p>${esc(c.text)}</p></div>`
     : `<button class="pack" data-a="open">📦<span>Helden-Kiste öffnen</span></button>`) : '<p class="muted">Für eine Helden-Kiste brauchst du mindestens 60 % sofort richtig. Nochmal – du schaffst das!</p>';
   const v = VILLAINS[R.subject];
-  return `<main class="center"><h1>${R.boss ? (R.won ? `${v.name} besiegt!` : 'Fast besiegt!') : R.perfect ? 'Perfekte Mission!' : 'Mission erledigt!'}</h1>
+  const bossPic = R.boss && v.img ? `<img class="boss-big ${R.won ? 'beaten' : ''}" src="${v.img}" alt="${esc(v.name)}" draggable="false">` : '';
+  return `<main class="center">${bossPic}<h1>${R.boss ? (R.won ? `${v.name} besiegt!` : 'Fast besiegt!') : R.perfect ? 'Perfekte Mission!' : 'Mission erledigt!'}</h1>
     <p class="big-num">${R.correct} / ${R.total} <span class="muted">sofort richtig</span></p>
     <p class="chip">⚡ +${R.fp} Fachpunkte</p>${reveal}
     <button class="btn" data-a="done" ${c && !R.opened ? 'disabled' : ''}>Weiter</button></main>`;

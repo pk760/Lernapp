@@ -140,3 +140,6 @@ h1, h2 { font-weight: 900; font-style: italic; } h1 { font-size: 32px; }
 
 .hero-img { width: 100%; height: auto; display: block; border-radius: 8px; aspect-ratio: 4 / 5; object-fit: cover; }
 .tcg.locked .hero-img { filter: brightness(0) opacity(.22); }
+.foe-img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; object-position: 50% 25%; border: 2px solid var(--primary); flex: none; }
+.boss-big { width: min(240px, 60vw); border-radius: 14px; border: 3px solid var(--primary); box-shadow: var(--shadow); }
+.boss-big.beaten { filter: grayscale(1) brightness(.7); }

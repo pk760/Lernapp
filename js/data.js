@@ -9,7 +9,11 @@ export const SUBJECTS = {
 export const GRADES = [1, 2, 3, 4];
 
 // Bossgegner je Fach (Boss-Mission = Klassenarbeits-Vorbereitung)
-export const VILLAINS = { mathe: { name: 'Professor Chaos-Null', emoji: '🤖' }, deutsch: { name: 'Der Fehlerteufel', emoji: '👹' }, englisch: { name: 'Baron Babel', emoji: '🦹' } };
+export const VILLAINS = {
+  mathe:    { name: 'Professor Chaos-Null', emoji: '🤖', img: 'assets/bosses/boss-mathe.webp' },
+  deutsch:  { name: 'Der Fehlerteufel',     emoji: '👹', img: 'assets/bosses/boss-deutsch.webp' },
+  englisch: { name: 'Baron Babel',          emoji: '🦹', img: 'assets/bosses/boss-englisch.webp' },
+};
 
 // ---- Helden-Sammelkarten (eigene Figuren, SVG aus js/hero.js) ----
 export const RARITY = {
@@ -48,7 +52,14 @@ export const CARDS = [
 
 // Helden, für die ein echtes Bild unter assets/heroes/<id>.webp liegt (siehe docs/HELDEN-BILDER.md).
 // Alle anderen werden als SVG aus js/hero.js gezeichnet. Nach dem Ablegen eines Bildes die ID hier eintragen.
-export const IMAGE_IDS = [];
+export const IMAGE_IDS = [
+  'agentbabel', 'captainvocab', 'globeglider', 'grammarguard',
+  'grammatiktitan', 'hellohawk', 'kapitaenquotient', 'lingolord',
+  'maerchenmeister', 'meisterfederkiel', 'minusninja', 'multimax',
+  'nullpunkt', 'plusphantom', 'quadrattitan', 'rechenfalke',
+  'reimreiter', 'satzschatten', 'silbensturm', 'speakspark',
+  'tintenfalke', 'wordwarrior', 'wortwaechter', 'zahlenblitz',
+];
 
 // ---- Ränge (lokal, nach Gesamt-Fachpunkten) ----
 export const LIGEN = [

@@ -1,7 +1,16 @@
 // Offline-First App-Shell. Bei Änderungen an Dateien VERSION erhöhen.
-const VERSION = 'lernhelden-v4';
+const VERSION = 'lernhelden-v5';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'css/app.css', 'js/app.js', 'js/data.js', 'js/store.js', 'js/hero.js',
-  'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
+  'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png',
+  'assets/heroes/agentbabel.webp', 'assets/heroes/captainvocab.webp', 'assets/heroes/globeglider.webp',
+  'assets/heroes/grammarguard.webp', 'assets/heroes/grammatiktitan.webp', 'assets/heroes/hellohawk.webp',
+  'assets/heroes/kapitaenquotient.webp', 'assets/heroes/lingolord.webp', 'assets/heroes/maerchenmeister.webp',
+  'assets/heroes/meisterfederkiel.webp', 'assets/heroes/minusninja.webp', 'assets/heroes/multimax.webp',
+  'assets/heroes/nullpunkt.webp', 'assets/heroes/plusphantom.webp', 'assets/heroes/quadrattitan.webp',
+  'assets/heroes/rechenfalke.webp', 'assets/heroes/reimreiter.webp', 'assets/heroes/satzschatten.webp',
+  'assets/heroes/silbensturm.webp', 'assets/heroes/speakspark.webp', 'assets/heroes/tintenfalke.webp',
+  'assets/heroes/wordwarrior.webp', 'assets/heroes/wortwaechter.webp', 'assets/heroes/zahlenblitz.webp',
+  'assets/bosses/boss-mathe.webp', 'assets/bosses/boss-deutsch.webp', 'assets/bosses/boss-englisch.webp'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));

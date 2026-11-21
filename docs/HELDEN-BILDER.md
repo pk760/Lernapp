@@ -14,3 +14,6 @@ Tipp: Erst die 3 legendären + 5 epischen erzeugen – die Wirkung ist dort am g
 - Nutzungsbedingungen des Bild-Tools für die eigene Nutzung prüfen (privat/öffentlich).
 - Der **eigene Held** des Kindes bleibt SVG (Farbwahl). Option für später: ein paar fertige Held-Portraits zur Auswahl.
 - Prompts neu erzeugen nach Änderungen an den Karten: `node scripts/make-prompts.mjs`.
+
+## Stand
+Alle 24 Helden und 3 Bosse (`assets/bosses/boss-<fach>.webp`) sind eingebaut. Neue/ersetzte Bilder: WebP (ca. 600×750) nach `assets/heroes/` legen, bei neuen IDs `IMAGE_IDS` und `sw.js` ergänzen, `VERSION` in sw.js erhöhen.

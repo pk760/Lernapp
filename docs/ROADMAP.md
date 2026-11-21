@@ -7,7 +7,8 @@ Karten-Packs, Sammlung, Ligen, Klassenarbeits-Projekte inkl. Boss, lokale Profil
 ## Phase 1 – Spielgefühl & Design (nächste Aufgabe)
 - [x] Design: Hero Academy (Superhelden-Look) statt Kosmos/Squishys, siehe docs/DESIGN.md
 - [x] 24 Helden, eigener Held mit Rang, Sidekick, Boss-Missionen mit Lebensleiste, Vorlesen, Spotify-Link
-- [ ] **Realistische Helden-Bilder** (Prio, Wunsch des Kindes: „realistisch cool“): Prompts in docs/HELDEN-PROMPTS.md, Anleitung docs/HELDEN-BILDER.md; Pipeline (`IMAGE_IDS`) ist eingebaut, Bilder fehlen noch
+- [x] Realistische Helden-Bilder: alle 24 Helden + 3 Bosse als WebP eingebaut (aus ChatGPT-Sammelbögen zugeschnitten, ~600×750; Quellen in höherer Auflösung wären besser)
+- [ ] **Rechtlich prüfen/ersetzen:** Helden mit spitzen „Fledermaus-Ohren“ (minusninja, wortwaechter, wordwarrior, nullpunkt, maerchenmeister, lingolord) wirken wie Batman → mit neuem Prompt (Kamm statt Ohren, siehe docs/HELDEN-PROMPTS.md) neu erzeugen, bevor die Seite öffentlich wird; ggf. auch tintenfalke (blau/rot/Stern) prüfen
 - [ ] Helden ausbauen: 40+, Kostüm-Upgrades, Heldenkraft je Fach als Werte, Foil/Animation beim Öffnen der Kiste, Sound-Effekte
 - [ ] KI-Sidekick (optional): Erklärungen/Tipps per Sprache. Braucht API → Kosten & Datenschutz (Kind!) vorher klären; erst Eltern-Entscheidung
 - [ ] Animationen/Sounds (Web Audio, abschaltbar), Konfetti bei Boss
