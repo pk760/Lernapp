@@ -81,7 +81,7 @@ const SAYS = ['Bereit für die nächste Mission?', 'Heute zeigst du, was in dir 
 function heroBlock(p) {
   const side = CARDS.find((x) => x.id === p.sidekick && p.cards[x.id]);
   const l = ligaFor(p.fp);
-  return `<section class="hero-row"><div class="hero-me" data-a="squish">${myHero(p)}</div>
+  return `<section class="hero-row"><div class="hero-me" data-a="squish">${myHero(p)}<label class="photo-btn" data-stop>📷 ${p.photo ? 'Ändern' : 'Foto'}<input type="file" data-photo accept="image/*" hidden></label></div>
     <div class="hero-info"><b>${esc(p.name)}</b><span class="muted">${l.cur.emoji} ${l.cur.name}</span><div class="say">${SAYS[(p.fp + p.streak) % SAYS.length]}</div></div>
     ${side ? `<div class="hero-side" data-a="squish" title="Sidekick: ${esc(side.name)}">${cardArt(side)}</div>` : ''}</section>`;
 }
