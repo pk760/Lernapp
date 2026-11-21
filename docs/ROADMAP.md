@@ -7,11 +7,12 @@ Karten-Packs, Sammlung, Ligen, Klassenarbeits-Projekte inkl. Boss, lokale Profil
 ## Phase 1 – Spielgefühl & Design (nächste Aufgabe)
 - [x] Design: Hero Academy (Superhelden-Look) statt Kosmos/Squishys, siehe docs/DESIGN.md
 - [x] 24 Helden, eigener Held mit Rang, Sidekick, Boss-Missionen mit Lebensleiste, Vorlesen, Spotify-Link
-- [x] Realistische Helden-Bilder: alle 24 Helden + 3 Bosse als WebP eingebaut (aus ChatGPT-Sammelbögen zugeschnitten, ~600×750; Quellen in höherer Auflösung wären besser)
+- [x] Realistische Helden-Bilder: alle 24 Helden + 3 Bosse als WebP eingebaut (1024×1280, aus ChatGPT-Collagen hochskaliert; für Druck/Detail einzeln neu generieren)
 - [ ] **Rechtlich prüfen/ersetzen:** Helden mit spitzen „Fledermaus-Ohren“ (minusninja, wortwaechter, wordwarrior, nullpunkt, maerchenmeister, lingolord) wirken wie Batman → mit neuem Prompt (Kamm statt Ohren, siehe docs/HELDEN-PROMPTS.md) neu erzeugen, bevor die Seite öffentlich wird; ggf. auch tintenfalke (blau/rot/Stern) prüfen
 - [ ] Helden ausbauen: 40+, Kostüm-Upgrades, Heldenkraft je Fach als Werte, Foil/Animation beim Öffnen der Kiste, Sound-Effekte
 - [ ] KI-Sidekick (optional): Erklärungen/Tipps per Sprache. Braucht API → Kosten & Datenschutz (Kind!) vorher klären; erst Eltern-Entscheidung
-- [ ] Animationen/Sounds (Web Audio, abschaltbar), Konfetti bei Boss
+- [x] Story-Kampagne (js/story.js), Kampf-Arena, Combo/Superkraft/Blitz-Aufgabe, ECHO-Notruf, Sounds (abschaltbar), Brief-Mission, Heldenfoto lokal
+- [ ] Konfetti/Foil-Animation beim Boss-Sieg, Story-Vorlesen verfeinern, Kapitel-Illustrationen
 - [x] Zahleneingabe per Ziffernblock (Mathe, ca. 50 % der Aufgaben)
 - [ ] Weitere Antwort-Typen: Lückentext, Buchstaben legen, Zuordnen, Uhrzeit stellen
 - [ ] iPad-Feinschliff: Querformat-Layout, Safe Areas, Splash-Screens
@@ -20,7 +21,8 @@ Karten-Packs, Sammlung, Ligen, Klassenarbeits-Projekte inkl. Boss, lokale Profil
 - [ ] Fragenbank mit Themen-Tags (z. B. „Einmaleins“, „Wortarten“) statt nur Klasse
 - [ ] Klassenarbeits-Modus nach Thema: Projekt wählt Themen, Training zieht gezielt daraus, Fehler-Wiederholung
 - [ ] Lehrplan-Abgleich mit NRW-Lehrplan Grundschule (Kompetenzerwartungen je Klasse als Themenliste ableiten; Lehrwerke der Schule erfragen)
-- [ ] Mathe: Sachaufgaben, Geometrie, Uhrzeit, Geld; Deutsch: Diktat-Wörter, Lesetexte; Englisch: Vokabeln mit Bildern
+- [x] Mathe Kl. 3: Punkt vor Strich, Sachaufgaben, Geld, Rest-Division (Kl. 1/2/4 noch dünn)
+- [ ] Mathe: Geometrie, Uhrzeit, schriftliches Rechnen (Kl. 3/4); Deutsch: Diktat-Wörter, Lesetexte; Englisch: Vokabeln mit Bildern
 - [ ] Wissens-Review durch Eltern/Lehrkraft (Korrektheit!)
 
 ## Phase 3 – Komfort
@@ -33,3 +35,6 @@ Karten-Packs, Sammlung, Ligen, Klassenarbeits-Projekte inkl. Boss, lokale Profil
 2. ✅ Bundesland: NRW, Grundschule Füchtorf (48336). Noch offen: Englisch ab welcher Klasse, Schrift, Lehrwerke der Schule
 3. Nur ein Kind/Gerät oder mehrere Profile (aktuell mehrere lokal möglich)?
 4. Wie soll das Repo heißen / soll es öffentlich oder privat sein (Pages privat braucht bezahlten Plan)?
+
+5. ✅ Repo: pk760/Lernapp (öffentlich). Pages: Source auf „GitHub Actions“ stellen, App-URL https://pk760.github.io/Lernapp/
+6. Offen: Schulstoff Klasse 3 aktuell (Mathe/Deutsch/Englisch) mit dem Kind/der Lehrkraft abgleichen; Brief-Mission prüft nur Aufbau, nicht Rechtschreibung; Backup/Export des Fortschritts (Safari kann Website-Daten löschen!).
