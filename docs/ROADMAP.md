@@ -8,7 +8,7 @@ Karten-Packs, Sammlung, Ligen, Klassenarbeits-Projekte inkl. Boss, lokale Profil
 - [x] Design: Hero Academy (Superhelden-Look) statt Kosmos/Squishys, siehe docs/DESIGN.md
 - [x] 24 Helden, eigener Held mit Rang, Sidekick, Boss-Missionen mit Lebensleiste, Vorlesen, Spotify-Link
 - [x] Realistische Helden-Bilder: alle 24 Helden + 3 Bosse als WebP eingebaut (1024×1280, aus ChatGPT-Collagen hochskaliert; für Druck/Detail einzeln neu generieren)
-- [ ] **Rechtlich prüfen/ersetzen:** Helden mit spitzen „Fledermaus-Ohren“ (minusninja, wortwaechter, wordwarrior, nullpunkt, maerchenmeister, lingolord) wirken wie Batman → mit neuem Prompt (Kamm statt Ohren, siehe docs/HELDEN-PROMPTS.md) neu erzeugen, bevor die Seite öffentlich wird; ggf. auch tintenfalke (blau/rot/Stern) prüfen
+- [~] **Rechtlich:** Fledermaus-Ohren bei minusninja, wortwaechter, wordwarrior per Bildbearbeitung entfernt (runde Helme). Noch prüfen/ersetzen vor Veröffentlichung: nullpunkt und lingolord (Kopfform/Maske weiter sehr Batman-nah, siehe docs/HELDEN-PROMPTS.md), tintenfalke (blau/rot/Stern ≈ Captain America)
 - [ ] Helden ausbauen: 40+, Kostüm-Upgrades, Heldenkraft je Fach als Werte, Foil/Animation beim Öffnen der Kiste, Sound-Effekte
 - [ ] KI-Sidekick (optional): Erklärungen/Tipps per Sprache. Braucht API → Kosten & Datenschutz (Kind!) vorher klären; erst Eltern-Entscheidung
 - [x] Story-Kampagne (js/story.js), Kampf-Arena, Combo/Superkraft/Blitz-Aufgabe, ECHO-Notruf, Sounds (abschaltbar), Brief-Mission, Heldenfoto lokal

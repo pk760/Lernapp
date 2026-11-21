@@ -514,8 +514,9 @@ document.addEventListener('click', (e) => {
     case 'open': {
       const R = ui.result;
       if (R.opening) return;
-      R.opening = true; sfx.tap();
-      setTimeout(() => { if (ui.result === R) { R.opened = true; sfx.open(); render(); } }, 1700);
+      R.opening = true; sfx.shake();
+      setTimeout(() => { if (ui.result === R) sfx.lid(); }, 1100);
+      setTimeout(() => { if (ui.result === R) { R.opened = true; sfx.reveal(R.card.rarity); render(); } }, 1700);
       break;
     }
     case 'done': {
