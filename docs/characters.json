@@ -1,0 +1,353 @@
+[
+  {
+    "id": "kapitaenquotient",
+    "type": "hero",
+    "png": "/assets/characters/png/kapitaenquotient.png",
+    "webp": "/assets/characters/webp/kapitaenquotient.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "a_dramatic_cinematic_portrait_collage_in_a_fantas.png",
+    "source_crop_px": [
+      557,
+      697
+    ]
+  },
+  {
+    "id": "meisterfederkiel",
+    "type": "hero",
+    "png": "/assets/characters/png/meisterfederkiel.png",
+    "webp": "/assets/characters/webp/meisterfederkiel.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "a_dramatic_cinematic_portrait_collage_in_a_fantas.png",
+    "source_crop_px": [
+      557,
+      697
+    ]
+  },
+  {
+    "id": "agentbabel",
+    "type": "hero",
+    "png": "/assets/characters/png/agentbabel.png",
+    "webp": "/assets/characters/webp/agentbabel.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "a_dramatic_cinematic_portrait_collage_in_a_fantas.png",
+    "source_crop_px": [
+      562,
+      697
+    ]
+  },
+  {
+    "id": "quadrattitan",
+    "type": "hero",
+    "png": "/assets/characters/png/quadrattitan.png",
+    "webp": "/assets/characters/webp/quadrattitan.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "grid_like_composite_of_six_heroic_armored_superhe.png",
+    "source_crop_px": [
+      370,
+      697
+    ]
+  },
+  {
+    "id": "nullpunkt",
+    "type": "hero",
+    "png": "/assets/characters/png/nullpunkt.png",
+    "webp": "/assets/characters/webp/nullpunkt.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "grid_like_composite_of_six_heroic_armored_superhe.png",
+    "source_crop_px": [
+      370,
+      697
+    ]
+  },
+  {
+    "id": "grammatiktitan",
+    "type": "hero",
+    "png": "/assets/characters/png/grammatiktitan.png",
+    "webp": "/assets/characters/webp/grammatiktitan.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "grid_like_composite_of_six_heroic_armored_superhe.png",
+    "source_crop_px": [
+      370,
+      697
+    ]
+  },
+  {
+    "id": "maerchenmeister",
+    "type": "hero",
+    "png": "/assets/characters/png/maerchenmeister.png",
+    "webp": "/assets/characters/webp/maerchenmeister.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "grid_like_composite_of_six_heroic_armored_superhe.png",
+    "source_crop_px": [
+      370,
+      697
+    ]
+  },
+  {
+    "id": "lingolord",
+    "type": "hero",
+    "png": "/assets/characters/png/lingolord.png",
+    "webp": "/assets/characters/webp/lingolord.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "grid_like_composite_of_six_heroic_armored_superhe.png",
+    "source_crop_px": [
+      370,
+      697
+    ]
+  },
+  {
+    "id": "globeglider",
+    "type": "hero",
+    "png": "/assets/characters/png/globeglider.png",
+    "webp": "/assets/characters/webp/globeglider.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "grid_like_composite_of_six_heroic_armored_superhe.png",
+    "source_crop_px": [
+      370,
+      697
+    ]
+  },
+  {
+    "id": "rechenfalke",
+    "type": "hero",
+    "png": "/assets/characters/png/rechenfalke.png",
+    "webp": "/assets/characters/webp/rechenfalke.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "a_dramatic_high_detail_cinematic_digital_illustra.png",
+    "source_crop_px": [
+      370,
+      697
+    ]
+  },
+  {
+    "id": "multimax",
+    "type": "hero",
+    "png": "/assets/characters/png/multimax.png",
+    "webp": "/assets/characters/webp/multimax.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "a_dramatic_high_detail_cinematic_digital_illustra.png",
+    "source_crop_px": [
+      370,
+      697
+    ]
+  },
+  {
+    "id": "reimreiter",
+    "type": "hero",
+    "png": "/assets/characters/png/reimreiter.png",
+    "webp": "/assets/characters/webp/reimreiter.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "a_dramatic_high_detail_cinematic_digital_illustra.png",
+    "source_crop_px": [
+      370,
+      697
+    ]
+  },
+  {
+    "id": "tintenfalke",
+    "type": "hero",
+    "png": "/assets/characters/png/tintenfalke.png",
+    "webp": "/assets/characters/webp/tintenfalke.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "a_dramatic_high_detail_cinematic_digital_illustra.png",
+    "source_crop_px": [
+      370,
+      697
+    ]
+  },
+  {
+    "id": "grammarguard",
+    "type": "hero",
+    "png": "/assets/characters/png/grammarguard.png",
+    "webp": "/assets/characters/webp/grammarguard.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "a_dramatic_high_detail_cinematic_digital_illustra.png",
+    "source_crop_px": [
+      370,
+      697
+    ]
+  },
+  {
+    "id": "speakspark",
+    "type": "hero",
+    "png": "/assets/characters/png/speakspark.png",
+    "webp": "/assets/characters/webp/speakspark.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "a_dramatic_high_detail_cinematic_digital_illustra.png",
+    "source_crop_px": [
+      370,
+      697
+    ]
+  },
+  {
+    "id": "zahlenblitz",
+    "type": "hero",
+    "png": "/assets/characters/png/zahlenblitz.png",
+    "webp": "/assets/characters/webp/zahlenblitz.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "a_detailed_composite_poster_like_image_a_3_3_grid.png",
+    "source_crop_px": [
+      393,
+      437
+    ]
+  },
+  {
+    "id": "minusninja",
+    "type": "hero",
+    "png": "/assets/characters/png/minusninja.png",
+    "webp": "/assets/characters/webp/minusninja.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "a_detailed_composite_poster_like_image_a_3_3_grid.png",
+    "source_crop_px": [
+      392,
+      437
+    ]
+  },
+  {
+    "id": "plusphantom",
+    "type": "hero",
+    "png": "/assets/characters/png/plusphantom.png",
+    "webp": "/assets/characters/webp/plusphantom.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "a_detailed_composite_poster_like_image_a_3_3_grid.png",
+    "source_crop_px": [
+      393,
+      437
+    ]
+  },
+  {
+    "id": "silbensturm",
+    "type": "hero",
+    "png": "/assets/characters/png/silbensturm.png",
+    "webp": "/assets/characters/webp/silbensturm.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "a_detailed_composite_poster_like_image_a_3_3_grid.png",
+    "source_crop_px": [
+      393,
+      436
+    ]
+  },
+  {
+    "id": "wortwaechter",
+    "type": "hero",
+    "png": "/assets/characters/png/wortwaechter.png",
+    "webp": "/assets/characters/webp/wortwaechter.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "a_detailed_composite_poster_like_image_a_3_3_grid.png",
+    "source_crop_px": [
+      392,
+      436
+    ]
+  },
+  {
+    "id": "satzschatten",
+    "type": "hero",
+    "png": "/assets/characters/png/satzschatten.png",
+    "webp": "/assets/characters/webp/satzschatten.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "a_detailed_composite_poster_like_image_a_3_3_grid.png",
+    "source_crop_px": [
+      393,
+      436
+    ]
+  },
+  {
+    "id": "hellohawk",
+    "type": "hero",
+    "png": "/assets/characters/png/hellohawk.png",
+    "webp": "/assets/characters/webp/hellohawk.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "a_detailed_composite_poster_like_image_a_3_3_grid.png",
+    "source_crop_px": [
+      393,
+      437
+    ]
+  },
+  {
+    "id": "wordwarrior",
+    "type": "hero",
+    "png": "/assets/characters/png/wordwarrior.png",
+    "webp": "/assets/characters/webp/wordwarrior.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "a_detailed_composite_poster_like_image_a_3_3_grid.png",
+    "source_crop_px": [
+      392,
+      437
+    ]
+  },
+  {
+    "id": "captainvocab",
+    "type": "hero",
+    "png": "/assets/characters/png/captainvocab.png",
+    "webp": "/assets/characters/webp/captainvocab.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "a_detailed_composite_poster_like_image_a_3_3_grid.png",
+    "source_crop_px": [
+      393,
+      437
+    ]
+  },
+  {
+    "id": "boss-mathe",
+    "type": "boss",
+    "png": "/assets/characters/png/boss-mathe.png",
+    "webp": "/assets/characters/webp/boss-mathe.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "dynamic_cinematic_sci_fi_illustration_of_a_roboti.png",
+    "source_crop_px": [
+      1122,
+      1402
+    ]
+  },
+  {
+    "id": "boss-deutsch",
+    "type": "boss",
+    "png": "/assets/characters/png/boss-deutsch.png",
+    "webp": "/assets/characters/webp/boss-deutsch.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "dynamic_cinematic_illustration_of_a_mischievous_r.png",
+    "source_crop_px": [
+      1122,
+      1402
+    ]
+  },
+  {
+    "id": "boss-englisch",
+    "type": "boss",
+    "png": "/assets/characters/png/boss-englisch.png",
+    "webp": "/assets/characters/webp/boss-englisch.webp",
+    "width": 1024,
+    "height": 1280,
+    "source": "a_dramatic_highly_detailed_cinematic_digital_illu.png",
+    "source_crop_px": [
+      1122,
+      1402
+    ]
+  }
+]

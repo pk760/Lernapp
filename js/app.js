@@ -1,22 +1,28 @@
-import { SUBJECTS, GRADES, CARDS, RARITY, VILLAINS, IMAGE_IDS, ligaFor, buildQuestions, rollCard } from './data.js';
+import { SUBJECTS, GRADES, CARDS, RARITY, VILLAINS, IMAGE_IDS, ligaFor, buildQuestions, rollCard, shuffle, pick } from './data.js';
 import { heroSvg, SUITS, EMBLEMS, SKINS } from './hero.js';
+import { STORY, DAILY_BRIEFING, ECHO_HIT, ECHO_CRIT, ECHO_MISS } from './story.js';
+import { sfx, sfxState } from './sfx.js';
 import { load, save, newProfile, today, yesterday, weekKey, daysUntil } from './store.js';
 
 const PATH_NODES = 8;
 const SESSIONS_FOR_BOSS = 3;
 const SESSIONS_GOAL = 5;
+const BLITZ_SECONDS = 10;
 
 let S = load();
-const ui = { route: 'learn', subject: 'mathe', lesson: null, result: null, sheet: null, confirm: null };
+sfxState.muted = !!S.mute;
+const ui = { route: 'learn', subject: 'mathe', lesson: null, result: null, scene: null, sheet: null, confirm: null };
 
 const $app = document.getElementById('app');
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const P = () => S.profiles.find((p) => p.id === S.active) || null;
 const commit = () => { save(S); render(); };
-// Echtes Bild, falls vorhanden – sonst SVG-Held
-const cardArt = (c) => (IMAGE_IDS.includes(c.id) ? `<img class="hero-img" src="assets/heroes/${esc(c.id)}.webp" alt="${esc(c.name)}" draggable="false">` : heroSvg(c));
 const heroOf = (p) => p.hero || { suit: 'rot', emblem: 'bolt', mask: 'domino', cape: true, skin: SKINS[1] };
 const myHero = (p) => heroSvg({ ...heroOf(p), rarity: 'common' });
+const cardArt = (c) => (IMAGE_IDS.includes(c.id) ? `<img class="hero-img" src="assets/heroes/${esc(c.id)}.webp" alt="${esc(c.name)}" draggable="false">` : heroSvg(c));
+const fill = (t, p) => esc(t.replace(/\{name\}/g, p.name));
+const ECHO = '<svg class="echo-svg" viewBox="0 0 60 60" aria-hidden="true"><defs><radialGradient id="eg"><stop offset="0" stop-color="#aaffff"/><stop offset="1" stop-color="#18c6d6" stop-opacity=".15"/></radialGradient></defs><circle cx="30" cy="30" r="27" fill="url(#eg)"/><circle cx="30" cy="30" r="14" fill="#06202a" stroke="#7ff" stroke-width="2"/><circle cx="30" cy="30" r="6" fill="#bff"/></svg>';
+const foePic = (v, cls = 'foe-img') => (v.img ? `<img class="${cls}" src="${v.img}" alt="${esc(v.name)}" draggable="false">` : `<span class="foe">${v.emoji}</span>`);
 
 function rollWeek(p) {
   const wk = weekKey();
@@ -67,15 +73,22 @@ function heroBlock(p) {
 function viewLearn(p) {
   const key = `${ui.subject}-${p.grade}`;
   const done = p.progress[key] || 0;
+  const story = STORY[ui.subject];
   const subs = Object.entries(SUBJECTS).map(([k, s]) => `<button class="${ui.subject === k ? 'on' : ''}" data-a="subject" data-v="${k}">${s.emoji} ${s.name}</button>`).join('');
   const offs = [0, 38, 64, 38, 0, -38, -64, -38];
   const nodes = Array.from({ length: PATH_NODES }, (_, i) => {
     const st = i < done ? 'done' : i === done ? 'now' : 'lock';
-    return `<div class="node-wrap" style="transform:translateX(${offs[i % 8]}px)"><button class="node ${st}" ${st === 'lock' ? 'disabled' : ''} data-a="lesson" data-i="${i}" aria-label="Mission ${i + 1}">${st === 'done' ? '✓' : st === 'now' ? '▶' : '🔒'}</button>${st === 'now' ? '<span class="bubble">Mission ' + (i + 1) + '</span>' : ''}</div>`;
+    const fin = i === PATH_NODES - 1;
+    const face = st === 'done' ? '✓' : st === 'now' ? (fin ? '👑' : '▶') : '🔒';
+    return `<div class="node-wrap" style="transform:translateX(${offs[i % 8]}px)"><button class="node ${st} ${fin ? 'finale' : ''}" ${st === 'lock' ? 'disabled' : ''} data-a="lesson" data-i="${i}" aria-label="Kapitel ${i + 1}: ${esc(story.chapters[i].t)}">${face}</button>${st === 'now' ? `<span class="bubble">Kapitel ${i + 1}</span>` : ''}</div>`;
   }).join('');
   const music = /^https:\/\/open\.spotify\.com\//.test(S.spotify || '') ? `<a class="chip music" href="${esc(S.spotify)}" target="_blank" rel="noopener">🎧 Mission-Soundtrack</a>` : '';
-  return `<main>${heroBlock(p)}${music}<div class="seg sub">${subs}</div>
-    <h2 class="path-title">${SUBJECTS[ui.subject].emoji} ${SUBJECTS[ui.subject].name} · Klasse ${p.grade}</h2>
+  const daily = p.daily !== today()
+    ? `<button class="notruf" data-a="daily"><span class="siren">🚨</span><span><b>ECHO-Notruf</b><small>Tages-Mission · doppelte Beute · garantiert ein seltener Held</small></span></button>`
+    : '<p class="muted center-t">🚨 Tages-Notruf erledigt – morgen kommt der nächste!</p>';
+  const next = done < PATH_NODES ? `Kapitel ${done + 1}: ${esc(story.chapters[done].t)}` : 'Akte geschlossen – du hast alle Kapitel geschafft! 🏆';
+  return `<main>${heroBlock(p)}${music}${daily}<div class="seg sub">${subs}</div>
+    <h2 class="path-title">${esc(story.title)}</h2><p class="muted center-t">${next} · Klasse ${p.grade}</p>
     <div class="path">${nodes}</div></main>`;
 }
 
@@ -105,7 +118,7 @@ function viewCollection(p) {
   const grid = CARDS.map((c) => {
     const n = p.cards[c.id] || 0;
     return n ? `<button class="tcg ${c.rarity}" data-a="sheet" data-v="card:${c.id}"><div class="art">${cardArt(c)}</div><b>${c.name}</b><small>${RARITY[c.rarity].name}${n > 1 ? ` · ×${n}` : ''}</small></button>`
-      : `<div class="tcg locked"><div class="art">${cardArt(c)}</div><b>???</b><small>${SUBJECTS[c.subject].name}</small></div>`;
+      : `<div class="tcg locked"><div class="art">${heroSvg(c)}</div><b>???</b><small>${SUBJECTS[c.subject].name}</small></div>`;
   }).join('');
   return `<main><h1>Helden-Archiv</h1><p class="muted">${owned} von ${CARDS.length} Helden rekrutiert</p><div class="grid">${grid}</div></main>`;
 }
@@ -122,6 +135,19 @@ function viewRank(p) {
     <p class="muted">Online-Rangliste mit Freunden kommt später (siehe docs/ROADMAP.md).</p></main>`;
 }
 
+// ---- Story-Szene (Briefing / Nachbesprechung) mit ECHO
+function viewScene(p) {
+  const sc = ui.scene;
+  const v = VILLAINS[sc.subject];
+  const lines = sc.lines.map((t, i) => `<p class="line" style="animation-delay:${i * 1.1}s">${fill(t, p)}</p>`).join('');
+  const shadow = sc.kind === 'brief' && v.img ? `<div class="scene-foe ${sc.finale ? 'reveal' : 'shadow'}">${foePic(v, 'scene-foe-img')}</div>` : sc.kind === 'debrief' && v.img ? `<div class="scene-foe beaten">${foePic(v, 'scene-foe-img')}</div>` : '';
+  const goText = sc.kind === 'debrief' ? 'Weiter' : sc.finale ? '⚔️ Zum Duell!' : '▶ Mission starten';
+  return `<main class="scene"><div class="scene-title">${esc(sc.title)}</div>${shadow}
+    <div class="echo-row"><div class="echo">${ECHO}</div><div class="bubbles">${lines}</div></div>
+    <div class="row wrap scene-btns"><button class="btn" data-a="scenego">${goText}</button><button class="btn ghost" data-a="speaklines" aria-label="Vorlesen">🔊</button></div></main>`;
+}
+
+// ---- Lektion mit Kampf
 function numpad(L) {
   const cls = L.answered ? (L.ok ? 'right' : 'wrong') : '';
   const dis = L.answered ? 'disabled' : '';
@@ -130,22 +156,39 @@ function numpad(L) {
     <div class="keypad">${keys}<button class="key" ${dis} data-a="key" data-v="del" aria-label="Löschen">⌫</button><button class="key" ${dis} data-a="key" data-v="0">0</button><button class="key go" ${L.input ? dis : 'disabled'} data-a="check" aria-label="Prüfen">✓</button></div>`;
 }
 
-function viewLesson() {
+function viewLesson(p) {
   const L = ui.lesson, q = L.queue[L.i];
-  const v = VILLAINS[L.subject];
+  const v = VILLAINS[L.villain];
   const hp = Math.max(0, 100 - Math.round((L.hits / L.total) * 100));
+  const fx = L.answered ? (L.ok ? (L.crit ? 'hit crit' : 'hit') : 'miss') : '';
+  const dmg = L.answered && L.ok ? `<span class="dmg">−${Math.ceil(100 / L.total)}${L.crit ? ' !' : ''}</span>` : '';
+  const pips = [0, 1, 2].map((i) => `<i class="${L.power > i ? 'on' : ''}"></i>`).join('');
+  const combo = L.combo >= 2 ? `<span class="combo">COMBO ×${L.combo}</span>` : '';
   const opts = q.options.map((o, i) => {
-    let cls = '';
+    const gone = L.removed.includes(i);
+    let cls = gone ? 'gone' : '';
     if (L.answered) cls = o === q.c ? 'right' : i === L.picked ? 'wrong' : 'dim';
-    return `<button class="opt ${cls}" ${L.answered ? 'disabled' : ''} data-a="answer" data-i="${i}">${esc(o)}</button>`;
+    return `<button class="opt ${cls}" ${L.answered || gone ? 'disabled' : ''} data-a="answer" data-i="${i}">${esc(o)}</button>`;
   }).join('');
-  const fb = L.answered ? `<div class="feedback ${L.ok ? 'ok' : 'bad'}"><b>${L.ok ? '💥 Volltreffer!' : 'Daneben! Richtig ist:'}</b>${L.ok ? '' : ` <span>${esc(q.c)}</span>`}<button class="btn" data-a="next">Weiter</button></div>` : '';
-  const tag = L.boss ? 'BOSS-MISSION' : L.project ? 'TRAINING FÜR DIE ARBEIT' : 'MISSION';
+  let blitz = '';
+  if (L.blitzAt && !L.answered) {
+    const el = (Date.now() - L.blitzAt) / 1000;
+    blitz = el < BLITZ_SECONDS
+      ? `<div class="blitz"><b>⚡ BLITZ-AUFGABE · doppelter Schaden!</b><div class="blitzbar"><i style="animation-duration:${BLITZ_SECONDS}s;animation-delay:-${el.toFixed(2)}s"></i></div></div>`
+      : '<div class="blitz late">⏱️ Zeit vorbei – kein Blitz-Bonus</div>';
+  }
+  const power = L.power >= 3 && !L.answered && !L.usedPower ? '<button class="power-btn" data-a="power">⚡ SUPERKRAFT AKTIVIEREN</button>' : '';
+  const fb = L.answered ? `<div class="feedback ${L.ok ? 'ok' : 'bad'}"><b>${esc(L.echo)}</b>${L.ok ? '' : ` <span>Richtig ist: ${esc(q.c)}</span>`}<button class="btn" data-a="next">Weiter</button></div>` : '';
+  const tag = L.boss ? (L.nodeIndex === PATH_NODES - 1 ? 'FINALE' : 'BOSS-MISSION') : L.daily ? 'ECHO-NOTRUF' : L.project ? 'TRAINING' : `KAPITEL ${L.nodeIndex + 1}`;
   return `<main class="lesson"><div class="row"><button class="x" data-a="quit" aria-label="Beenden">✕</button><div class="bar grow"><i style="width:${Math.round((L.i / L.queue.length) * 100)}%"></i></div></div>
-    <div class="enemy ${L.boss ? 'boss-on' : ''}">${v.img ? `<img class="foe-img" src="${v.img}" alt="${esc(v.name)}" draggable="false">` : `<span class="foe">${v.emoji}</span>`}<div class="grow"><small>${tag} · ${esc(v.name)}</small><div class="bar hp"><i style="width:${hp}%"></i></div></div></div>
+    <div class="arena ${fx}">
+      <div class="fighter me" data-a="squish">${myHero(p)}</div>
+      <div class="mid"><small>${tag}</small>${combo}<div class="pips" title="Superkraft-Leiste">${pips}</div></div>
+      <div class="fighter foe">${foePic(v, 'foe-fig')}${dmg}<div class="hpbox"><small>${esc(v.name)}</small><div class="bar hp"><i style="width:${hp}%"></i></div></div></div>
+    </div>${blitz}
     <div class="row between qrow"><h2 class="q">${esc(q.q)}</h2><button class="speak" data-a="speak" aria-label="Vorlesen">🔊</button></div>
-    ${q.hint && !L.answered ? `<p class="muted center-t">Tipp: ${esc(q.hint)}</p>` : ''}
-    ${q.num ? numpad(L) : `<div class="opts">${opts}</div>`}${fb}</main>`;
+    ${L.hintText ? `<p class="center-t hint">${esc(L.hintText)}</p>` : q.hint && !L.answered ? `<p class="muted center-t">Tipp: ${esc(q.hint)}</p>` : ''}${power}
+    ${q.num ? numpad(L) : `<div class="opts">${opts}</div>`}${fb}${L.answered && L.crit ? '<div class="flash"></div>' : ''}</main>`;
 }
 
 function viewResult() {
@@ -153,11 +196,12 @@ function viewResult() {
   const reveal = c ? (R.opened
     ? `<div class="tcg big ${c.rarity} pop"><div class="art">${cardArt(c)}</div><b>${c.name}</b><small>${RARITY[c.rarity].name} · ${SUBJECTS[c.subject].name}</small><p>${esc(c.text)}</p></div>`
     : `<button class="pack" data-a="open">📦<span>Helden-Kiste öffnen</span></button>`) : '<p class="muted">Für eine Helden-Kiste brauchst du mindestens 60 % sofort richtig. Nochmal – du schaffst das!</p>';
-  const v = VILLAINS[R.subject];
+  const v = VILLAINS[R.villain];
   const bossPic = R.boss && v.img ? `<img class="boss-big ${R.won ? 'beaten' : ''}" src="${v.img}" alt="${esc(v.name)}" draggable="false">` : '';
+  const extras = [R.maxCombo >= 3 ? `🔥 Combo ×${R.maxCombo}` : '', R.blitzWins ? `⚡ ${R.blitzWins}× Blitz-Treffer` : '', R.daily ? '🚨 Notruf-Bonus' : ''].filter(Boolean).map((x) => `<span class="chip">${x}</span>`).join('');
   return `<main class="center">${bossPic}<h1>${R.boss ? (R.won ? `${v.name} besiegt!` : 'Fast besiegt!') : R.perfect ? 'Perfekte Mission!' : 'Mission erledigt!'}</h1>
     <p class="big-num">${R.correct} / ${R.total} <span class="muted">sofort richtig</span></p>
-    <p class="chip">⚡ +${R.fp} Fachpunkte</p>${reveal}
+    <p class="chip">⚡ +${R.fp} Fachpunkte</p><div class="row wrap">${extras}</div>${reveal}
     <button class="btn" data-a="done" ${c && !R.opened ? 'disabled' : ''}>Weiter</button></main>`;
 }
 
@@ -166,6 +210,7 @@ function sheet(p) {
   let body = '';
   if (ui.sheet === 'settings') {
     body = `<h2>Einstellungen</h2><h3>Klasse</h3><div class="seg">${GRADES.map((g) => `<button class="${p.grade === g ? 'on' : ''}" data-a="grade" data-v="${g}">Klasse ${g}</button>`).join('')}</div>
+      <h3>Sound</h3><div class="seg"><button class="${S.mute ? '' : 'on'}" data-a="mute">${S.mute ? '🔇 Aus' : '🔊 An'}</button></div>
       <h3>Mission-Soundtrack</h3><form data-f="spotify"><label>Spotify-Link (Playlist oder Künstler)<input name="url" inputmode="url" placeholder="https://open.spotify.com/…" value="${esc(S.spotify || '')}"></label><button class="btn" type="submit">Speichern</button></form>
       <p class="muted">Der Link öffnet Spotify in der Spotify-App. Leer lassen = kein Soundtrack-Knopf.</p>
       <div class="row wrap"><button class="btn ghost" data-a="switch">Held wechseln</button><button class="btn ghost danger" data-a="reset">${ui.confirm === 'reset' ? 'Wirklich alles löschen?' : 'Alles zurücksetzen'}</button></div>`;
@@ -186,8 +231,9 @@ function render() {
   const p = P();
   let html;
   if (!p) html = viewProfile();
-  else if (ui.lesson) html = viewLesson();
+  else if (ui.lesson) html = viewLesson(p);
   else if (ui.result) html = viewResult();
+  else if (ui.scene) html = viewScene(p);
   else {
     rollWeek(p);
     const v = { learn: viewLearn, projects: viewProjects, collection: viewCollection, rank: viewRank }[ui.route];
@@ -197,18 +243,44 @@ function render() {
 }
 
 // ------------------------------------------------------------ Lektionen
-function startLesson({ subject, nodeIndex = null, project = null, boss = false }) {
+function armQuestion(L) {
+  L.removed = []; L.hintText = ''; L.usedPower = false;
+  L.blitzAt = L.i > 0 && L.i < L.total - 1 && Math.random() < 0.28 ? Date.now() : 0; // nie bei der ersten/letzten Frage
+}
+
+function startLesson({ subject, nodeIndex = null, project = null, boss = false, daily = false }) {
   const p = P();
-  const questions = buildQuestions(subject, p.grade, { boss });
-  ui.lesson = { subject, nodeIndex, project, boss, queue: questions, i: 0, total: questions.length, correct: 0, hits: 0, failedOnce: new Set(), answered: false, picked: -1, ok: false, input: '' };
+  let questions;
+  if (daily) {
+    questions = shuffle(Object.keys(SUBJECTS).flatMap((s) => buildQuestions(s, p.grade).slice(0, 2)));
+  } else {
+    questions = buildQuestions(subject, p.grade, { boss });
+  }
+  const L = { subject, nodeIndex, project, boss, daily, villain: daily ? pick(Object.keys(VILLAINS)) : subject, queue: questions, i: 0, total: questions.length, correct: 0, hits: 0, combo: 0, maxCombo: 0, power: 0, blitzWins: 0, failedOnce: new Set(), answered: false, picked: -1, ok: false, crit: false, echo: '', input: '' };
+  armQuestion(L);
+  ui.lesson = L; ui.scene = null;
   render();
 }
 
 function judge(ok, picked) {
   const L = ui.lesson, q = L.queue[L.i];
   L.picked = picked; L.answered = true; L.ok = ok;
-  if (ok) { L.hits++; if (!L.failedOnce.has(q.q)) L.correct++; }
-  else if (!L.failedOnce.has(q.q)) { L.failedOnce.add(q.q); L.queue.push({ ...q, options: [...q.options].sort(() => Math.random() - 0.5) }); }
+  const inTime = L.blitzAt && (Date.now() - L.blitzAt) / 1000 <= BLITZ_SECONDS;
+  L.crit = false;
+  if (ok) {
+    L.hits++; L.combo++; L.maxCombo = Math.max(L.maxCombo, L.combo); L.power = Math.min(3, L.power + 1);
+    if (!L.failedOnce.has(q.q)) L.correct++;
+    if (inTime) L.blitzWins++;
+    L.crit = L.combo >= 3 || !!inTime;
+    L.echo = pick(L.crit ? ECHO_CRIT : ECHO_HIT);
+    if (L.crit) sfx.crit(); else sfx.hit();
+    if (L.power === 3 && !L.usedPower) setTimeout(() => sfx.power(), 250);
+  } else {
+    L.combo = 0;
+    L.echo = pick(ECHO_MISS);
+    sfx.miss();
+    if (!L.failedOnce.has(q.q)) { L.failedOnce.add(q.q); L.queue.push({ ...q, options: shuffle(q.options) }); }
+  }
   render();
 }
 function answer(i) { const L = ui.lesson; if (!L.answered) judge(L.queue[L.i].options[i] === L.queue[L.i].c, i); }
@@ -216,7 +288,17 @@ function check() { const L = ui.lesson; if (!L.answered && L.input) judge(L.inpu
 function typeKey(v) {
   const L = ui.lesson;
   if (!L || L.answered || !L.queue[L.i].num) return;
+  sfx.tap();
   if (v === 'del') L.input = L.input.slice(0, -1); else if (L.input.length < 6) L.input += v;
+  render();
+}
+
+function usePower() {
+  const L = ui.lesson, q = L.queue[L.i];
+  if (L.power < 3 || L.answered || L.usedPower) return;
+  L.usedPower = true; L.power = 0; sfx.power();
+  if (q.num) L.hintText = `⚡ Superkraft: Die Lösung endet auf ${q.c.slice(-1)} und hat ${q.c.length} Stelle${q.c.length > 1 ? 'n' : ''}.`;
+  else { L.removed = shuffle(q.options.map((o, i) => i).filter((i) => q.options[i] !== q.c)).slice(0, 2); L.hintText = '⚡ Superkraft: Zwei falsche Antworten sind weg!'; }
   render();
 }
 
@@ -224,42 +306,46 @@ function next() {
   const L = ui.lesson;
   L.i++; L.answered = false; L.picked = -1; L.input = '';
   if (L.i >= L.queue.length) return finishLesson();
+  armQuestion(L);
   render();
 }
 
-function speak() {
-  const L = ui.lesson;
-  if (!L || !('speechSynthesis' in window)) return;
+function speakText(text) {
+  if (!('speechSynthesis' in window)) return;
   try {
     speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(L.queue[L.i].q.replace(/[·:]/g, (c) => (c === '·' ? ' mal ' : ' geteilt durch ')).replace(/−/g, ' minus ').replace(/\+/g, ' plus ').replace(/=\s*\?/, ' gleich was?'));
+    const u = new SpeechSynthesisUtterance(text);
     u.lang = 'de-DE'; u.rate = 0.95;
     speechSynthesis.speak(u);
   } catch (e) { /* Vorlesen nicht verfügbar */ }
 }
+const mathSpeech = (t) => t.replace(/·/g, ' mal ').replace(/:/g, ' geteilt durch ').replace(/−/g, ' minus ').replace(/\+/g, ' plus ').replace(/=\s*\?/, ' gleich was?');
 
 function finishLesson() {
   const p = P(), L = ui.lesson;
-  const acc = L.correct / L.total, perfect = L.correct === L.total;
-  const passed = acc >= (L.boss ? 0.8 : 0.6);
-  let fp = L.correct * 2 + 5 + (perfect ? 5 : 0) + (L.project ? 10 : 0);
+  const perfect = L.correct === L.total;
+  const passed = L.correct / L.total >= (L.boss ? 0.8 : 0.6);
+  let fp = L.correct * 2 + 5 + (perfect ? 5 : 0) + (L.project ? 10 : 0) + (L.maxCombo >= 3 ? (L.maxCombo - 2) * 2 : 0) + L.blitzWins * 3 + (L.daily ? 15 : 0);
   let won = false;
   if (L.boss && passed) { fp += 40; won = true; }
   rollWeek(p);
   p.fp += fp; p.weekFp += fp;
   if (p.lastDay !== today()) { p.streak = p.lastDay === yesterday() ? p.streak + 1 : 1; p.lastDay = today(); }
+  let story = null;
   if (L.nodeIndex !== null && passed) {
     const key = `${L.subject}-${p.grade}`;
-    if ((p.progress[key] || 0) === L.nodeIndex) p.progress[key] = L.nodeIndex + 1;
+    if ((p.progress[key] || 0) === L.nodeIndex) { p.progress[key] = L.nodeIndex + 1; story = { title: `Kapitel ${L.nodeIndex + 1} geschafft: ${STORY[L.subject].chapters[L.nodeIndex].t}`, lines: STORY[L.subject].chapters[L.nodeIndex].out }; }
   }
+  if (L.daily && passed) p.daily = today();
   if (L.project) {
     const pr = p.projects.find((x) => x.id === L.project);
     if (pr && passed) { if (L.boss) { if (won) pr.boss = 'won'; } else pr.sessions++; }
   }
-  const card = passed ? rollCard({ subject: L.subject, boss: L.boss, perfect }) : null;
+  const card = passed ? rollCard({ subject: L.daily ? pick(Object.keys(SUBJECTS)) : L.subject, boss: L.boss, perfect: perfect || L.daily }) : null;
   if (card) p.cards[card.id] = (p.cards[card.id] || 0) + 1;
-  ui.result = { subject: L.subject, correct: L.correct, total: L.total, fp, perfect, boss: L.boss, won, card, opened: false };
+  ui.result = { subject: L.subject, villain: L.villain, correct: L.correct, total: L.total, fp, perfect, boss: L.boss, won, card, opened: false, maxCombo: L.maxCombo, blitzWins: L.blitzWins, daily: L.daily, story };
   ui.lesson = null;
+  if (passed) sfx.win();
   commit();
 }
 
@@ -276,9 +362,17 @@ document.addEventListener('click', (e) => {
     case 'sheet': ui.sheet = v; ui.confirm = null; break;
     case 'closesheet': ui.sheet = null; ui.confirm = null; break;
     case 'grade': p.grade = Number(v); break;
+    case 'mute': S.mute = !S.mute; sfxState.muted = S.mute; sfx.tap(); break;
     case 'switch': S.active = null; ui.sheet = null; break;
     case 'reset': if (ui.confirm === 'reset') { S = { ...S, active: null, profiles: [] }; ui.sheet = null; ui.confirm = null; } else ui.confirm = 'reset'; break;
-    case 'lesson': return startLesson({ subject: ui.subject, nodeIndex: Number(t.dataset.i) });
+    case 'lesson': {
+      const i = Number(t.dataset.i), key = `${ui.subject}-${p.grade}`, ch = STORY[ui.subject].chapters[i], fin = i === PATH_NODES - 1;
+      if ((p.progress[key] || 0) === i) { ui.scene = { kind: 'brief', subject: ui.subject, title: `Kapitel ${i + 1}: ${ch.t}`, lines: ch.in, finale: fin, after: { subject: ui.subject, nodeIndex: i, boss: fin } }; sfx.tap(); break; }
+      return startLesson({ subject: ui.subject, nodeIndex: i, boss: fin });
+    }
+    case 'daily': ui.scene = { kind: 'brief', subject: pick(Object.keys(VILLAINS)), title: 'ECHO-Notruf', lines: DAILY_BRIEFING, finale: false, after: { subject: 'mathe', daily: true } }; sfx.tap(); break;
+    case 'scenego': { const sc = ui.scene; sfx.tap(); if (sc.after) return startLesson(sc.after); ui.scene = null; break; }
+    case 'speaklines': { speakText(ui.scene.lines.map((l) => l.replace(/\{name\}/g, p.name).replace(/^ECHO:\s*/, '')).join(' ')); return; }
     case 'projlesson': { const pr = p.projects.find((x) => x.id === id); return startLesson({ subject: pr.subject, project: pr.id }); }
     case 'boss': { const pr = p.projects.find((x) => x.id === id); return startLesson({ subject: pr.subject, project: pr.id, boss: true }); }
     case 'confirm': ui.confirm = id; break;
@@ -286,13 +380,19 @@ document.addEventListener('click', (e) => {
     case 'answer': return answer(Number(t.dataset.i));
     case 'key': return typeKey(v);
     case 'check': return check();
-    case 'speak': return speak();
+    case 'power': return usePower();
+    case 'speak': { const L = ui.lesson; if (L) speakText(mathSpeech(L.queue[L.i].q)); return; }
     case 'sidekick': p.sidekick = id; ui.sheet = null; break;
     case 'next': return next();
     case 'quit': ui.lesson = null; break;
-    case 'open': ui.result.opened = true; break;
-    case 'done': ui.result = null; break;
-    case 'squish': { t.classList.remove('squish'); void t.offsetWidth; t.classList.add('squish'); return; }
+    case 'open': ui.result.opened = true; sfx.open(); break;
+    case 'done': {
+      const s = ui.result.story, subj = ui.result.subject;
+      ui.result = null;
+      if (s) ui.scene = { kind: 'debrief', subject: subj, title: s.title, lines: s.lines, finale: false, after: null };
+      break;
+    }
+    case 'squish': { t.classList.remove('squish'); void t.offsetWidth; t.classList.add('squish'); sfx.tap(); return; }
   }
   commit();
 });

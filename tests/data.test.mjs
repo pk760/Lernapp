@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync } from 'node:fs';
+import { STORY, DAILY_BRIEFING } from '../js/story.js';
 import { IMAGE_IDS, VILLAINS, STATIC, SUBJECTS, GRADES, CARDS, buildQuestions, rollCard, ligaFor } from '../js/data.js';
 
 test('statische Fragen: Antwort eindeutig, keine doppelten Optionen', () => {
@@ -81,4 +82,14 @@ test('Alle eingetragenen Helden- und Boss-Bilder existieren', () => {
   for (const id of IMAGE_IDS) assert.ok(existsSync(new URL(`../assets/heroes/${id}.webp`, import.meta.url)), id);
   for (const v of Object.values(VILLAINS)) assert.ok(existsSync(new URL(`../${v.img}`, import.meta.url)), v.img);
   assert.ok(IMAGE_IDS.every((id) => CARDS.some((c) => c.id === id)));
+});
+
+test('Story: 3 Akten mit je 8 Kapiteln, jedes mit Briefing und Nachbesprechung', () => {
+  assert.deepEqual(Object.keys(STORY).sort(), Object.keys(SUBJECTS).sort());
+  for (const [subj, akte] of Object.entries(STORY)) {
+    assert.equal(akte.chapters.length, 8, subj);
+    for (const ch of akte.chapters) { assert.ok(ch.t && ch.in.length >= 2 && ch.out.length >= 1, `${subj}: ${ch.t}`); }
+    assert.ok(akte.chapters[7].t.startsWith('Das Duell'));
+  }
+  assert.ok(DAILY_BRIEFING.length >= 2);
 });
