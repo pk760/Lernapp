@@ -270,12 +270,22 @@ function viewLesson(p) {
     ${q.num ? numpad(L) : `<div class="opts">${opts}</div>`}${fb}${L.answered && L.crit ? '<div class="flash"></div>' : ''}</main>`;
 }
 
+const crateSvg = () => `<div class="crate"><i class="beam"></i><svg viewBox="0 0 200 190" aria-hidden="true">
+  <defs><linearGradient id="cm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a3560"/><stop offset="1" stop-color="#10162e"/></linearGradient><linearGradient id="cg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b8841a"/><stop offset=".5" stop-color="#ffe066"/><stop offset="1" stop-color="#b8841a"/></linearGradient></defs>
+  <ellipse cx="100" cy="176" rx="78" ry="9" fill="rgba(0,0,0,.45)"/>
+  <g class="cbody"><polygon points="32,86 168,86 160,172 40,172" fill="url(#cm)" stroke="url(#cg)" stroke-width="3"/>
+    <rect class="seam" x="32" y="84" width="136" height="5" fill="currentColor"/>
+    <polygon points="104,100 86,132 99,132 94,160 116,122 102,122" fill="url(#cg)"/>
+    <rect x="40" y="96" width="8" height="70" fill="url(#cg)" opacity=".5"/><rect x="152" y="96" width="8" height="70" fill="url(#cg)" opacity=".5"/></g>
+  <g class="lid"><polygon points="24,60 176,60 168,88 32,88" fill="url(#cm)" stroke="url(#cg)" stroke-width="3"/><rect x="92" y="60" width="16" height="28" fill="url(#cg)"/><polygon points="24,60 176,60 168,68 32,68" fill="rgba(255,255,255,.12)"/></g>
+</svg></div>`;
+
 function viewResult() {
   const R = ui.result, c = R.card;
   const reveal = c ? (R.opened
     ? `<div class="reveal-fx ${c.rarity}" aria-hidden="true"><i class="rays"></i><i class="shock"></i><i class="shock s2"></i></div><div class="rarity-banner ${c.rarity}">${c.rarity === 'common' ? 'NEUER HELD!' : RARITY[c.rarity].name.toUpperCase() + '!'}</div>
       <div class="tcg big ${c.rarity} pop flipin"><div class="art">${cardArt(c)}</div><b>${c.name}</b><small>${RARITY[c.rarity].name} · ${SUBJECTS[c.subject].name}</small><p>${esc(c.text)}</p></div>`
-    : `<button class="pack" data-a="open">📦<span>Helden-Kiste öffnen</span></button>`) : (R.letter ? '<p class="muted">Beute gibt es nur für den ersten Brief am Tag. Die Antwort kommt gleich!</p>' : '<p class="muted">Für eine Helden-Kiste brauchst du mindestens 60 % sofort richtig. Nochmal – du schaffst das!</p>');
+    : `<button class="crate-btn ${c.rarity} ${R.opening ? 'opening' : ''}" data-a="open" ${R.opening ? 'disabled' : ''}>${crateSvg()}<span>${R.opening ? 'Öffnet sich …' : 'Helden-Kiste öffnen'}</span></button>`) : (R.letter ? '<p class="muted">Beute gibt es nur für den ersten Brief am Tag. Die Antwort kommt gleich!</p>' : '<p class="muted">Für eine Helden-Kiste brauchst du mindestens 60 % sofort richtig. Nochmal – du schaffst das!</p>');
   const v = VILLAINS[R.villain];
   const bossPic = R.boss && v.img ? `<img class="boss-big ${R.won ? 'beaten' : ''}" src="${v.img}" alt="${esc(v.name)}" draggable="false">` : '';
   const extras = [R.maxCombo >= 3 ? `🔥 Combo ×${R.maxCombo}` : '', R.blitzWins ? `⚡ ${R.blitzWins}× Blitz-Treffer` : '', R.daily ? '🚨 Notruf-Bonus' : ''].filter(Boolean).map((x) => `<span class="chip">${x}</span>`).join('');
@@ -501,7 +511,13 @@ document.addEventListener('click', (e) => {
     case 'sidekick': p.sidekick = id; ui.sheet = null; break;
     case 'next': return next();
     case 'quit': ui.lesson = null; break;
-    case 'open': ui.result.opened = true; sfx.open(); break;
+    case 'open': {
+      const R = ui.result;
+      if (R.opening) return;
+      R.opening = true; sfx.tap();
+      setTimeout(() => { if (ui.result === R) { R.opened = true; sfx.open(); render(); } }, 1700);
+      break;
+    }
     case 'done': {
       const s = ui.result.story, subj = ui.result.subject;
       ui.result = null;
