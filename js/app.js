@@ -236,6 +236,9 @@ function viewLesson(p) {
   const v = VILLAINS[L.villain];
   const hp = Math.max(0, 100 - Math.round((L.hits / L.total) * 100));
   const fx = L.answered ? (L.ok ? (L.crit ? 'hit crit' : 'hit') : 'miss') : '';
+  const BOLT = '<svg class="bolt" viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true"><polyline points="0,58 52,40 78,62 126,28 152,58 204,22 232,50 300,36"/></svg>';
+  const sparks = Array.from({ length: L.crit ? 14 : 8 }, (_, i) => `<i style="--a:${i * (360 / (L.crit ? 14 : 8)) + 7}deg;--d:${34 + (i * 13) % 30}px"></i>`).join('');
+  const strike = L.answered && L.ok ? `<div class="strike ${L.crit ? 'big' : ''}" aria-hidden="true">${BOLT}<div class="sparks">${sparks}</div>${L.crit ? '<div class="ring"></div>' : ''}</div>` : '';
   const dmg = L.answered && L.ok ? `<span class="dmg">−${Math.ceil(100 / L.total)}${L.crit ? ' !' : ''}</span>` : '';
   const pips = [0, 1, 2].map((i) => `<i class="${L.power > i ? 'on' : ''}"></i>`).join('');
   const combo = L.combo >= 2 ? `<span class="combo">COMBO ×${L.combo}</span>` : '';
@@ -243,7 +246,7 @@ function viewLesson(p) {
     const gone = L.removed.includes(i);
     let cls = gone ? 'gone' : '';
     if (L.answered) cls = o === q.c ? 'right' : i === L.picked ? 'wrong' : 'dim';
-    return `<button class="opt ${cls}" ${L.answered || gone ? 'disabled' : ''} data-a="answer" data-i="${i}">${esc(o)}</button>`;
+    return `<button class="opt ${cls}" ${L.answered || gone ? 'disabled' : ''} data-a="answer" data-i="${i}"><b class="ltr">${'ABCD'[i]}</b><span>${esc(o)}</span></button>`;
   }).join('');
   let blitz = '';
   if (L.blitzAt && !L.answered) {
@@ -260,7 +263,7 @@ function viewLesson(p) {
       <div class="fighter me" data-a="squish">${myHero(p)}</div>
       <div class="mid"><small>${tag}</small>${combo}<div class="pips" title="Superkraft-Leiste">${pips}</div></div>
       <div class="fighter foe">${foePic(v, 'foe-fig')}${dmg}<div class="hpbox"><small>${esc(v.name)}</small><div class="bar hp"><i style="width:${hp}%"></i></div></div></div>
-    </div>${blitz}
+      ${strike}</div>${blitz}
     <div class="row between qrow"><h2 class="q">${esc(q.q)}</h2><button class="speak" data-a="speak" aria-label="Vorlesen">🔊</button></div>
     ${q.clock ? `<div class="clockbox">${clockSvg(q.clock)}</div>` : ''}
     ${L.hintText ? `<p class="center-t hint">${esc(L.hintText)}</p>` : q.hint && !L.answered ? `<p class="muted center-t">Tipp: ${esc(q.hint)}</p>` : ''}${power}
@@ -275,7 +278,8 @@ function viewResult() {
   const v = VILLAINS[R.villain];
   const bossPic = R.boss && v.img ? `<img class="boss-big ${R.won ? 'beaten' : ''}" src="${v.img}" alt="${esc(v.name)}" draggable="false">` : '';
   const extras = [R.maxCombo >= 3 ? `🔥 Combo ×${R.maxCombo}` : '', R.blitzWins ? `⚡ ${R.blitzWins}× Blitz-Treffer` : '', R.daily ? '🚨 Notruf-Bonus' : ''].filter(Boolean).map((x) => `<span class="chip">${x}</span>`).join('');
-  return `<main class="center">${bossPic}<h1>${R.letter ? (R.perfect ? 'Meisterbrief zugestellt!' : 'Brief zugestellt!') : R.boss ? (R.won ? `${v.name} besiegt!` : 'Fast besiegt!') : R.perfect ? 'Perfekte Mission!' : 'Mission erledigt!'}</h1>
+  const conf = (R.won || R.perfect) ? `<div class="confetti" aria-hidden="true">${Array.from({ length: 28 }, (_, i) => `<i style="--x:${(i * 37) % 100}%;--dl:${(i % 9) * 0.12}s;--c:${['#ffc531', '#e23b3b', '#18c6d6', '#fff'][i % 4]}"></i>`).join('')}</div>` : '';
+  return `<main class="center">${conf}${bossPic}<h1>${R.letter ? (R.perfect ? 'Meisterbrief zugestellt!' : 'Brief zugestellt!') : R.boss ? (R.won ? `${v.name} besiegt!` : 'Fast besiegt!') : R.perfect ? 'Perfekte Mission!' : 'Mission erledigt!'}</h1>
     <p class="big-num">${R.correct} / ${R.total} <span class="muted">${R.letter ? 'Brief-Check' : 'sofort richtig'}</span></p>
     <p class="chip">⚡ +${R.fp} Fachpunkte</p><div class="row wrap">${extras}</div>${reveal}
     <button class="btn" data-a="done" ${c && !R.opened ? 'disabled' : ''}>Weiter</button></main>`;
