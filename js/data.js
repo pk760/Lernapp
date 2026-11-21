@@ -126,6 +126,14 @@ export const STATIC = {
       Q('Die Vergangenheit von „ich gehe“ ist …', 'ich ging', ['ich gehte', 'ich gegangen', 'ich gehen']),
       Q('Welcher Satz ist richtig geschrieben?', 'Der Hund läuft schnell.', ['der Hund läuft schnell.', 'Der hund läuft schnell.', 'Der Hund Läuft schnell.']),
       Q('Welches Wort schreibt man mit „ie“?', 'Biene', ['Kind', 'Tisch', 'Winter']),
+      Q('Wie beginnt ein Brief an einen Freund?', 'Mit einer Anrede, z. B. „Lieber Max,“', ['Mit der Unterschrift', 'Mit „Tschüss“', 'Mit dem Namen der Schule']),
+      Q('Womit endet ein Brief?', 'Mit Grußformel und Unterschrift', ['Mit der Anrede', 'Mit einem Rechenzeichen', 'Mit dem Datum allein']),
+      Q('Welche Grußformel passt zu einem Brief an einen Freund?', 'Viele Grüße', ['Sehr geehrte Damen und Herren', 'Hochachtungsvoll', 'Guten Tag allerseits']),
+      Q('Was steht oben in einem Brief?', 'Ort und Datum', ['Die Unterschrift', 'Die Grußformel', 'Die Hausaufgaben']),
+      Q('Nach „Liebe Mia,“ schreibt man den ersten Satz …', 'klein weiter, weil der Satz nach dem Komma weitergeht', ['immer mit Großbuchstaben', 'ohne Wörter', 'mit einem Ausrufezeichen']),
+      Q('Welcher Satz mit wörtlicher Rede ist richtig?', 'Mia sagt: „Komm mit!“', ['Mia sagt „Komm mit“!', 'Mia sagt: Komm mit!', 'Mia, sagt „Komm mit!“']),
+      Q('Die Mehrzahl von „Buch“ ist …', 'Bücher', ['Buchs', 'Büchers', 'Buchen']),
+      Q('Welches Wort schreibt man mit „ä“?', 'Bäcker', ['Schwester', 'Winter', 'Zimmer']),
       Q('Welche Wortart ist „schnell“?', 'Adjektiv', ['Nomen', 'Verb', 'Artikel']),
       Q('Welches Wort ist ein zusammengesetztes Nomen?', 'Haustür', ['Haus', 'Tür', 'türkis']),
     ],
@@ -181,30 +189,64 @@ function distractors(c, n = 3) {
   for (const x of shuffle(cand)) if (x >= 0 && x !== c && !out.includes(x)) out.push(x);
   return out.slice(0, n);
 }
-const mq = (q, c) => ({ q, c: String(c), w: distractors(c).map(String), num: Math.random() < 0.5 });
+const mq = (q, c, o = {}) => {
+  const pref = (o.wrong || []).filter((x) => x >= 0 && x !== c);
+  const w = [...new Set([...pref, ...distractors(c, 8)])].filter((x) => x !== c).slice(0, 3).map(String);
+  return { q, c: String(c), w, num: o.num ?? Math.random() < 0.5, hint: o.hint, chk: o.chk ?? null };
+};
+const PVS = 'Punkt vor Strich: Erst mal und geteilt, dann plus und minus.';
+const KL = 'Klammern zuerst!';
+
+// Klasse 3 – Lehrplan NRW: Einmaleins, Division (auch mit Rest), Punkt vor Strich, Zahlenraum 1000,
+// Platzhalter, Zahlenmauern, Verdoppeln/Halbieren, Runden, Geld, Sachaufgaben.
+const G3 = [
+  () => { const a = rnd(2, 10), b = rnd(2, 10); return mq(`${a} · ${b} = ?`, a * b, { chk: `${a}*${b}` }); },
+  () => { const a = rnd(2, 10), b = rnd(2, 10); return mq(`${a * b} : ${a} = ?`, b, { chk: `${a * b}/${a}` }); },
+  () => { const a = rnd(10, 60), b = rnd(2, 9), c = rnd(2, 9); return mq(`${a} + ${b} · ${c} = ?`, a + b * c, { chk: `${a}+${b}*${c}`, hint: PVS, wrong: [(a + b) * c], num: false }); },
+  () => { const b = rnd(2, 9), c = rnd(2, 9), a = rnd(b * c, b * c + 40); return mq(`${a} − ${b} · ${c} = ?`, a - b * c, { chk: `${a}-${b}*${c}`, hint: PVS, wrong: [(a - b) * c], num: false }); },
+  () => { const a = rnd(2, 9), b = rnd(2, 9), c = rnd(5, 40); return mq(`${a} · ${b} + ${c} = ?`, a * b + c, { chk: `${a}*${b}+${c}`, hint: PVS, wrong: [a * (b + c)], num: false }); },
+  () => { const a = rnd(2, 9), b = rnd(3, 9), c = rnd(1, a * b - 1); return mq(`${a} · ${b} − ${c} = ?`, a * b - c, { chk: `${a}*${b}-${c}`, hint: PVS, wrong: [a * (b - c)], num: false }); },
+  () => { const d = rnd(2, 9), q = rnd(2, 9), a = rnd(5, 50); return mq(`${a} + ${d * q} : ${d} = ?`, a + q, { chk: `${a}+${d * q}/${d}`, hint: PVS, wrong: [(a + d * q) / d].filter(Number.isInteger), num: false }); },
+  () => { const a = rnd(2, 9), b = rnd(2, 9), c = rnd(2, 9); return mq(`(${a} + ${b}) · ${c} = ?`, (a + b) * c, { chk: `(${a}+${b})*${c}`, hint: KL, wrong: [a + b * c] }); },
+  () => { const a = rnd(120, 650), b = rnd(40, 340); return mq(`${a} + ${b} = ?`, a + b, { chk: `${a}+${b}` }); },
+  () => { const a = rnd(300, 990), b = rnd(40, a - 50); return mq(`${a} − ${b} = ?`, a - b, { chk: `${a}-${b}` }); },
+  () => { const a = rnd(2, 9), s = rnd(20, 90); return mq(`□ + ${a} = ${s}`, s - a, { chk: `${s}-${a}`, hint: 'Rechne die Umkehraufgabe.' }); },
+  () => { const a = rnd(10, 60), s = rnd(a + 10, 200); return mq(`${s} − □ = ${a}`, s - a, { chk: `${s}-${a}`, hint: 'Rechne die Umkehraufgabe.' }); },
+  () => { const a = rnd(2, 9), x = rnd(2, 10); return mq(`${a} · □ = ${a * x}`, x, { chk: `${a * x}/${a}`, hint: 'Rechne die Umkehraufgabe.' }); },
+  () => { const a = rnd(11, 49); return mq(`Das Doppelte von ${a} ist …`, a * 2, { chk: `${a}*2` }); },
+  () => { const a = rnd(11, 49); return mq(`Die Hälfte von ${a * 2} ist …`, a, { chk: `${a * 2}/2` }); },
+  () => { const a = rnd(2, 9) * 10 + rnd(1, 9), b = rnd(21, 79); return mq(`Zahlenmauer: Unten stehen ${a} und ${b}. Welche Zahl steht darüber?`, a + b, { chk: `${a}+${b}` }); },
+  () => { const a = rnd(20, 80), s = rnd(a + 10, 180); return mq(`Zahlenmauer: Oben steht ${s}, unten links ${a}. Welche Zahl steht unten rechts?`, s - a, { chk: `${s}-${a}` }); },
+  () => { const n = rnd(11, 998); if (n % 10 === 0) return mq(`Runde ${n + 3} auf volle Zehner.`, n, { chk: `Math.round(${n + 3}/10)*10` }); return mq(`Runde ${n} auf volle Zehner.`, Math.round(n / 10) * 10, { chk: `Math.round(${n}/10)*10`, hint: 'Ab 5 wird aufgerundet.' }); },
+  () => { const d = rnd(3, 9), q = rnd(2, 9), r = rnd(1, d - 1), a = d * q + r, c = `${q} Rest ${r}`; const w = [...new Set([`${q + 1} Rest ${r}`, `${q - 1} Rest ${r}`, `${q} Rest ${(r % (d - 1)) + 1}`, `${r} Rest ${q}`])].filter((x) => x !== c && !x.startsWith('0 ') && !x.startsWith('-')).slice(0, 3); while (w.length < 3) w.push(`${q + 2 + w.length} Rest ${r}`); return { q: `${a} : ${d} = ? (mit Rest)`, c, w, num: false, hint: 'Wie oft passt die Zahl ganz hinein? Was bleibt übrig?', chkRest: [a, d] }; },
+  () => { const a = rnd(3, 9), b = rnd(3, 9); return mq(`Zahlenblitz sammelt ${a} Energiekerne pro Mission. Wie viele sind es nach ${b} Missionen?`, a * b, { chk: `${a}*${b}` }); },
+  () => { const n = rnd(3, 9), k = rnd(2, 9); return mq(`${n} Helden teilen sich ${n * k} Trainingskarten gerecht. Wie viele bekommt jeder?`, k, { chk: `${n * k}/${n}` }); },
+  () => { const a = rnd(120, 400), b = rnd(10, 90), c = rnd(10, 100); return mq(`In der Akademie sind ${a} Helden. ${b} kommen neu dazu, ${c} gehen auf Mission. Wie viele sind noch da?`, a + b - c, { chk: `${a}+${b}-${c}`, hint: 'Rechne in zwei Schritten.' }); },
+  () => { const a = rnd(5, 30), b = rnd(2, 6), c = rnd(3, 9); return mq(`Du hast ${a} Karten und kaufst ${b} Packungen mit je ${c} Karten. Wie viele Karten hast du jetzt?`, a + b * c, { chk: `${a}+${b}*${c}`, hint: PVS, wrong: [(a + b) * c] }); },
+  () => { const e = rnd(1, 4), ct = pick([10, 20, 30, 40, 50, 60, 70, 80, 90]), pay = pick([5, 10]); return mq(`Ein Heft kostet ${e} € ${ct} ct. Du zahlst mit ${pay} €. Wie viel Rückgeld bekommst du in Cent?`, pay * 100 - (e * 100 + ct), { chk: `${pay * 100}-${e * 100 + ct}`, hint: '1 € = 100 ct' }); },
+];
 
 const MATH = {
-  1: () => { const a = rnd(1, 12), b = rnd(1, 20 - a); return Math.random() < 0.5 ? mq(`${a} + ${b} = ?`, a + b) : mq(`${a + b} − ${a} = ?`, b); },
+  1: () => { const a = rnd(1, 12), b = rnd(1, 20 - a); return Math.random() < 0.5 ? mq(`${a} + ${b} = ?`, a + b, { chk: `${a}+${b}` }) : mq(`${a + b} − ${a} = ?`, b, { chk: `${a + b}-${a}` }); },
   2: () => {
     const t = rnd(0, 2);
-    if (t === 0) { const a = rnd(10, 60), b = rnd(10, 99 - a); return mq(`${a} + ${b} = ?`, a + b); }
-    if (t === 1) { const a = rnd(30, 99), b = rnd(10, a - 1); return mq(`${a} − ${b} = ?`, a - b); }
-    const a = pick([2, 5, 10]), b = rnd(1, 10); return mq(`${a} · ${b} = ?`, a * b);
+    if (t === 0) { const a = rnd(10, 60), b = rnd(10, 99 - a); return mq(`${a} + ${b} = ?`, a + b, { chk: `${a}+${b}` }); }
+    if (t === 1) { const a = rnd(30, 99), b = rnd(10, a - 1); return mq(`${a} − ${b} = ?`, a - b, { chk: `${a}-${b}` }); }
+    const a = pick([2, 5, 10]), b = rnd(1, 10); return mq(`${a} · ${b} = ?`, a * b, { chk: `${a}*${b}` });
   },
-  3: () => {
-    if (Math.random() < 0.6) { const a = rnd(2, 10), b = rnd(2, 10); return mq(`${a} · ${b} = ?`, a * b); }
-    const a = rnd(2, 10), b = rnd(2, 10); return mq(`${a * b} : ${a} = ?`, b);
-  },
+  3: () => pick(G3)(),
   4: () => {
-    const t = rnd(0, 2);
-    if (t === 0) { const a = rnd(1000, 6000), b = rnd(500, 3999); return mq(`${a} + ${b} = ?`, a + b); }
-    if (t === 1) { const a = rnd(2000, 9999), b = rnd(100, 1999); return mq(`${a} − ${b} = ?`, a - b); }
-    const a = rnd(12, 99), b = rnd(3, 9); return mq(`${a} · ${b} = ?`, a * b);
+    const t = rnd(0, 5);
+    if (t === 0) { const a = rnd(1000, 6000), b = rnd(500, 3999); return mq(`${a} + ${b} = ?`, a + b, { chk: `${a}+${b}` }); }
+    if (t === 1) { const a = rnd(2000, 9999), b = rnd(100, 1999); return mq(`${a} − ${b} = ?`, a - b, { chk: `${a}-${b}` }); }
+    if (t === 2) { const a = rnd(12, 99), b = rnd(3, 9); return mq(`${a} · ${b} = ?`, a * b, { chk: `${a}*${b}` }); }
+    if (t === 3) { const a = rnd(100, 900), b = rnd(11, 40), c = rnd(3, 9); return mq(`${a} + ${b} · ${c} = ?`, a + b * c, { chk: `${a}+${b}*${c}`, hint: PVS, wrong: [(a + b) * c], num: false }); }
+    if (t === 4) { const b = rnd(3, 9), c = rnd(11, 60), a = rnd(b * c, b * c + 300); return mq(`${a} − ${b} · ${c} = ?`, a - b * c, { chk: `${a}-${b}*${c}`, hint: PVS, wrong: [(a - b) * c], num: false }); }
+    const a = rnd(12, 60), b = rnd(12, 60), c = rnd(2, 9); return mq(`(${a} + ${b}) · ${c} = ?`, (a + b) * c, { chk: `(${a}+${b})*${c}`, hint: KL, wrong: [a + b * c] });
   },
 };
-
 function uniqueMath(grade, n) {
-  const seen = new Set(), out = [];
+  const out = [], seen = new Set();
   let guard = 0;
   while (out.length < n && guard++ < 200) { const q = MATH[grade](); if (!seen.has(q.q)) { seen.add(q.q); out.push(q); } }
   return out;

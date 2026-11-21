@@ -32,17 +32,25 @@ test('buildQuestions liefert für alle Fächer/Klassen 5 bzw. 10 gültige Fragen
   }
 });
 
-test('Mathe-Aufgaben sind korrekt gerechnet', () => {
-  for (let r = 0; r < 300; r++) for (const g of GRADES) {
+test('Mathe-Aufgaben sind korrekt gerechnet (inkl. Punkt vor Strich, Klammern, Rest)', () => {
+  let pvs = 0, rest = 0;
+  for (let r = 0; r < 400; r++) for (const g of GRADES) {
     for (const q of buildQuestions('mathe', g)) {
-      const m = q.q.match(/^(\d+) ([+−·:]) (\d+) = \?$/);
-      assert.ok(m, q.q);
-      const [a, op, b] = [Number(m[1]), m[2], Number(m[3])];
-      const exp = op === '+' ? a + b : op === '−' ? a - b : op === '·' ? a * b : a / b;
+      if (q.chkRest) {
+        const [a, d] = q.chkRest; rest++;
+        assert.equal(q.c, `${Math.floor(a / d)} Rest ${a % d}`, q.q);
+        assert.equal(new Set(q.options).size, 4, q.q);
+        continue;
+      }
+      assert.ok(q.chk, q.q);
+      const exp = Function(`"use strict"; return (${q.chk});`)();
       assert.equal(Number(q.c), exp, q.q);
-      assert.ok(Number(q.c) >= 0 && Number.isInteger(Number(q.c)));
+      assert.ok(Number.isInteger(exp) && exp >= 0, q.q);
+      assert.equal(new Set(q.options).size, 4, q.q);
+      if (/ [+−] \d+ [·:] | [·:] \d+ [+−] /.test(q.q)) { pvs++; assert.ok(q.hint, q.q); }
     }
   }
+  assert.ok(pvs > 50 && rest > 5);
 });
 
 test('Karten: Boss gibt legendäre Fach-Karte, perfekte Lektion mind. selten', () => {

@@ -198,3 +198,47 @@ h1, h2 { font-weight: 900; font-style: italic; } h1 { font-size: 32px; }
 .avatar .hero-photo { border-radius: 50%; aspect-ratio: 1; border-width: 1px; box-shadow: none; }
 .hero-me { position: relative; }
 .photo-btn { position: absolute; left: 6px; bottom: 8px; padding: 6px 12px; border-radius: 99px; background: var(--accent); color: #2a1d00; font-weight: 900; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,.5); }
+
+/* ================= Cinematic-Feinschliff: schlanke Buttons ================= */
+.btn { min-height: 46px; padding: 10px 22px; border: 1px solid rgba(255,197,49,.55); border-bottom-width: 1px; border-radius: 6px; font-size: 14px; font-weight: 800; letter-spacing: .14em; font-style: normal;
+  background: linear-gradient(180deg, #ee4540 0%, #b3202b 100%); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 0 14px rgba(226,59,59,.35); text-shadow: 0 1px 2px rgba(0,0,0,.5); }
+.btn:active:not(:disabled) { transform: scale(.985); box-shadow: inset 0 1px 6px rgba(0,0,0,.5); }
+.btn.alt { background: linear-gradient(180deg, #2f6bff, #1a3f9e); border-color: rgba(140,180,255,.6); box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 0 14px rgba(47,107,255,.35); color: #fff; }
+.btn.ghost { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.22); box-shadow: none; text-shadow: none; color: var(--ink); min-height: 42px; padding: 8px 16px; }
+.btn.danger { color: #ff8a93; border-color: rgba(255,90,100,.5); }
+.btn:disabled { opacity: .35; box-shadow: none; }
+
+.opt { background: linear-gradient(180deg, rgba(26,36,64,.9), rgba(14,20,38,.9)); border: 1px solid rgba(255,255,255,.14); border-left: 3px solid rgba(255,197,49,.55); border-bottom-width: 1px; border-radius: 6px; padding: 14px 18px; min-height: 56px; font-size: 19px; font-weight: 600; text-align: left; box-shadow: inset 0 1px 0 rgba(255,255,255,.06); transition: border-color .15s, background .15s; }
+.opt:active:not(:disabled) { transform: none; border-color: var(--accent); background: rgba(255,197,49,.12); }
+.opts { gap: 10px; }
+.opt.right { background: linear-gradient(180deg, #1f8f5f, #136a44); border-color: #3bdc95; border-left-color: #3bdc95; color: #fff; box-shadow: 0 0 16px rgba(59,220,149,.3); }
+.opt.wrong { background: linear-gradient(180deg, #a52334, #781726); border-color: #ff5a6a; border-left-color: #ff5a6a; color: #fff; }
+.opt.dim { opacity: .35; }
+
+.numbox { width: min(220px, 60%); min-height: 62px; font-size: 38px; font-weight: 700; letter-spacing: 6px; border-radius: 6px; border: 1px solid rgba(255,197,49,.5); background: rgba(10,14,26,.9); box-shadow: inset 0 0 18px rgba(255,197,49,.08); }
+.numbox.right { background: #136a44; border-color: #3bdc95; } .numbox.wrong { background: #781726; border-color: #ff5a6a; }
+.keypad { gap: 8px; max-width: 340px; margin-inline: auto; }
+.key { min-height: 54px; font-size: 22px; font-weight: 600; border: 1px solid rgba(255,255,255,.14); border-bottom-width: 1px; border-radius: 6px; background: linear-gradient(180deg, rgba(30,42,74,.9), rgba(14,20,38,.95)); box-shadow: inset 0 1px 0 rgba(255,255,255,.07); }
+.key:active:not(:disabled) { transform: none; background: rgba(255,197,49,.18); border-color: var(--accent); }
+.key.go { background: linear-gradient(180deg, #ee4540, #b3202b); border-color: rgba(255,197,49,.55); color: #fff; }
+
+.tabs button, .seg button, .seg label span { border-radius: 6px; }
+.seg.sub button { padding: 8px 14px; font-size: 14px; letter-spacing: .08em; }
+.chip { border-radius: 6px; }
+.feedback { border-top: 1px solid rgba(255,255,255,.15); }
+.x { border: 1px solid rgba(255,255,255,.18); border-radius: 6px; background: rgba(255,255,255,.04); }
+.pack { border-radius: 8px; }
+
+/* ---------- Brief-Werkstatt ---------- */
+.pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 12px; }
+.pill { padding: 8px 14px; border-radius: 6px; font-size: 15px; font-weight: 600; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.18); }
+.pill.on { border-color: var(--accent); background: rgba(255,197,49,.15); color: #fff; }
+.pills.small .pill { font-size: 14px; padding: 6px 10px; border-style: dashed; }
+.task { padding: 12px 14px; border-left: 3px solid var(--accent); background: rgba(255,197,49,.07); border-radius: 4px; margin: 6px 0 10px; }
+.letter textarea { width: 100%; font: inherit; font-size: 18px; line-height: 1.5; color: var(--ink); background: rgba(10,14,26,.9); border: 1px solid rgba(255,255,255,.2); border-radius: 6px; padding: 12px; resize: vertical; }
+.letter textarea:focus { outline: none; border-color: var(--accent); }
+.checks { list-style: none; padding: 0; margin: 12px 0; display: grid; gap: 6px; }
+.checks li { padding: 8px 12px; border-radius: 6px; background: rgba(255,255,255,.04); } .checks li.ok { color: #6df0b0; background: rgba(59,220,149,.1); } .checks li.no small { display: block; color: var(--muted); margin-top: 2px; }
+.letterbtn { margin: 10px 0 0; flex: 1; min-width: 240px; }
+.mail pre { white-space: pre-wrap; font: inherit; margin: 6px 0; } .mail .reply { color: var(--accent); }
+.q { text-transform: none; font-style: normal; font-weight: 700; font-size: 24px; letter-spacing: 0; line-height: 1.3; text-align: left; }

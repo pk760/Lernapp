@@ -102,8 +102,11 @@ function viewLearn(p) {
   const daily = p.daily !== today()
     ? `<button class="notruf" data-a="daily"><span class="siren">🚨</span><span><b>ECHO-Notruf</b><small>Tages-Mission · doppelte Beute · garantiert ein seltener Held</small></span></button>`
     : '<p class="muted center-t">🚨 Tages-Notruf erledigt – morgen kommt der nächste!</p>';
+  const letters = ui.subject === 'deutsch' && p.grade >= 2
+    ? `<div class="row wrap"><button class="notruf letterbtn" data-a="letter"><span class="siren">✉️</span><span><b>Brief-Mission</b><small>Schreibe einem Helden-Freund · ${p.letterDay === today() ? 'heute schon geschrieben' : 'Beute für den ersten Brief am Tag'}</small></span></button>${(p.letters || []).length ? `<button class="btn ghost" data-a="sheet" data-v="letters">📬 Briefmappe (${p.letters.length})</button>` : ''}</div>`
+    : '';
   const next = done < PATH_NODES ? `Kapitel ${done + 1}: ${esc(story.chapters[done].t)}` : 'Akte geschlossen – du hast alle Kapitel geschafft! 🏆';
-  return `<main>${heroBlock(p)}${music}${daily}<div class="seg sub">${subs}</div>
+  return `<main>${heroBlock(p)}${music}${daily}<div class="seg sub">${subs}</div>${letters}
     <h2 class="path-title">${esc(story.title)}</h2><p class="muted center-t">${next} · Klasse ${p.grade}</p>
     <div class="path">${nodes}</div></main>`;
 }
@@ -149,6 +152,54 @@ function viewRank(p) {
     <p class="muted">${l.next ? `Noch ${l.next.min - p.fp} FP bis ${l.next.emoji} ${l.next.name}` : 'Höchster Rang erreicht!'}</p>
     <h2>Diese Woche (auf diesem Gerät)</h2>${rows}
     <p class="muted">Online-Rangliste mit Freunden kommt später (siehe docs/ROADMAP.md).</p></main>`;
+}
+
+
+// ------------------------------------------------------------ Brief-Mission (Deutsch)
+const TOPICS = {
+  help: { t: '🆘 Um Hilfe bitten', task: 'Der Fehlerteufel hat Chaos in der Akademie angerichtet. Bitte einen Helden-Freund in einem Brief um Hilfe.', reply: 'Ich bin schon unterwegs und bringe Verstärkung mit!' },
+  invite: { t: '🎯 Zur Mission einladen', task: 'Lade einen Helden-Freund in einem Brief zu einer geheimen Mission ein. Schreibe, wann und wo ihr euch trefft.', reply: 'Ich komme! Treffpunkt notiert, Proviant packe ich ein.' },
+  thanks: { t: '🏅 Danke sagen', task: 'Ein Helden-Freund hat dich gerettet. Bedanke dich in einem Brief und erzähle, was passiert ist.', reply: 'Gern geschehen! Dafür sind Helden da.' },
+};
+const PHRASES = ['ich brauche deine Hilfe.', 'Kannst du mir bitte helfen?', 'Wir treffen uns morgen um 15 Uhr.', 'Vielen Dank für deine Hilfe!', 'Der Fehlerteufel macht überall Fehler.'];
+const letterNames = (p) => {
+  const all = CARDS.filter((c) => c.subject === 'deutsch');
+  return [...all.filter((c) => p.cards[c.id]), ...all.filter((c) => !p.cards[c.id])].slice(0, 4).map((c) => c.name);
+};
+function letterChecks(text, name) {
+  const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
+  const body = lines.slice(1).join(' ');
+  const sents = body.split(/(?<=[.!?])\s+/).filter((x) => x.trim());
+  const last = lines.slice(-3).join(' ');
+  return [
+    { ok: /^(lieber|liebe|hallo|hi|hey)\s+\S+.*,\s*$/i.test(lines[0] || ''), t: 'Anrede mit Komma („Lieber Max,“)', tip: 'Beginne mit „Lieber …,“ oder „Liebe …,“ und setze ein Komma.' },
+    { ok: (body.match(/[.!?]/g) || []).length >= 4, t: 'Mindestens 4 Sätze', tip: 'Schreibe mindestens 4 Sätze mit Punkt, Fragezeichen oder Ausrufezeichen.' },
+    { ok: /\?|bitte|hilf|komm|treff|danke/i.test(body), t: 'Bitte, Frage oder Dank', tip: 'Was willst du von deinem Freund? Frage ihn etwas oder bedanke dich.' },
+    { ok: sents.slice(1).every((x) => /^[A-ZÄÖÜ„"]/.test(x.trim())) && sents.length > 1, t: 'Neue Sätze beginnen groß', tip: 'Nach jedem Punkt schreibst du den nächsten Satz mit großem Buchstaben.' },
+    { ok: /gru(ß|ss)|grüße|tschüss|freund/i.test(lines.slice(-2).join(' ')) && lines.length > 2, t: 'Grußformel am Ende', tip: 'Schreibe zum Schluss z. B. „Viele Grüße“ in eine neue Zeile.' },
+    { ok: !!lines.length && lines[lines.length - 1].toLowerCase().includes(name.toLowerCase()) && lines.length > 2, t: 'Unterschrift mit deinem Namen', tip: `Unterschreibe in der letzten Zeile mit deinem Namen: ${name}.` },
+  ];
+}
+function bumpStreak(p) {
+  if (p.lastDay !== today()) { p.streak = p.lastDay === yesterday() ? p.streak + 1 : 1; p.lastDay = today(); }
+}
+
+function viewLetter(p) {
+  const Lt = ui.letter, tp = TOPICS[Lt.topic];
+  const checks = letterChecks(Lt.text, p.name), n = checks.filter((c) => c.ok).length;
+  const chips = (arr, a, cur) => arr.map(([v, l]) => `<button class="pill ${cur === v ? 'on' : ''}" data-a="${a}" data-v="${esc(v)}">${esc(l)}</button>`).join('');
+  const list = Lt.checked ? `<ul class="checks">${checks.map((c) => `<li class="${c.ok ? 'ok' : 'no'}">${c.ok ? '✓' : '○'} ${esc(c.t)}${c.ok ? '' : `<small>${esc(c.tip)}</small>`}</li>`).join('')}</ul>` : '';
+  return `<main class="letter"><div class="row"><button class="x" data-a="lquit" aria-label="Beenden">✕</button><h2 class="grow">Funkspruch-Werkstatt</h2></div>
+    <p class="muted">Schreibe einen Brief an einen Helden-Freund.</p>
+    <div class="pills">${chips(Object.entries(TOPICS).map(([k, v]) => [k, v.t]), 'ltopic', Lt.topic)}</div>
+    <div class="task">✉️ ${esc(tp.task)}</div>
+    <p class="muted">An wen?</p><div class="pills">${chips(letterNames(p).map((x) => [x, x]), 'lrcpt', Lt.to)}</div>
+    <textarea data-letter rows="9" placeholder="Lieber ${esc(Lt.to)},&#10;&#10;…&#10;&#10;Viele Grüße&#10;${esc(p.name)}" autocapitalize="sentences" spellcheck="false">${esc(Lt.text)}</textarea>
+    <p class="muted">Wortspeicher – tippe, um Bausteine einzufügen:</p>
+    <div class="pills small"><button class="pill" data-a="lphrase" data-v="anrede">Lieber ${esc(Lt.to)},</button>${PHRASES.map((x, i) => `<button class="pill" data-a="lphrase" data-v="${i}">${esc(x)}</button>`).join('')}<button class="pill" data-a="lphrase" data-v="gruss">Viele Grüße</button><button class="pill" data-a="lphrase" data-v="name">${esc(p.name)}</button></div>
+    ${list}
+    <div class="row wrap"><button class="btn alt" data-a="lcheck">🔍 Brief prüfen</button><button class="btn" data-a="lsend" ${n >= 4 && Lt.checked ? '' : 'disabled'}>📨 Abschicken (${Lt.checked ? n : '?'}/6)</button></div>
+    <p class="muted">Du brauchst mindestens 4 von 6 Häkchen. Der Brief bleibt auf diesem Gerät in deiner Briefmappe.</p></main>`;
 }
 
 // ---- Story-Szene (Briefing / Nachbesprechung) mit ECHO
@@ -211,12 +262,12 @@ function viewResult() {
   const R = ui.result, c = R.card;
   const reveal = c ? (R.opened
     ? `<div class="tcg big ${c.rarity} pop"><div class="art">${cardArt(c)}</div><b>${c.name}</b><small>${RARITY[c.rarity].name} · ${SUBJECTS[c.subject].name}</small><p>${esc(c.text)}</p></div>`
-    : `<button class="pack" data-a="open">📦<span>Helden-Kiste öffnen</span></button>`) : '<p class="muted">Für eine Helden-Kiste brauchst du mindestens 60 % sofort richtig. Nochmal – du schaffst das!</p>';
+    : `<button class="pack" data-a="open">📦<span>Helden-Kiste öffnen</span></button>`) : (R.letter ? '<p class="muted">Beute gibt es nur für den ersten Brief am Tag. Die Antwort kommt gleich!</p>' : '<p class="muted">Für eine Helden-Kiste brauchst du mindestens 60 % sofort richtig. Nochmal – du schaffst das!</p>');
   const v = VILLAINS[R.villain];
   const bossPic = R.boss && v.img ? `<img class="boss-big ${R.won ? 'beaten' : ''}" src="${v.img}" alt="${esc(v.name)}" draggable="false">` : '';
   const extras = [R.maxCombo >= 3 ? `🔥 Combo ×${R.maxCombo}` : '', R.blitzWins ? `⚡ ${R.blitzWins}× Blitz-Treffer` : '', R.daily ? '🚨 Notruf-Bonus' : ''].filter(Boolean).map((x) => `<span class="chip">${x}</span>`).join('');
-  return `<main class="center">${bossPic}<h1>${R.boss ? (R.won ? `${v.name} besiegt!` : 'Fast besiegt!') : R.perfect ? 'Perfekte Mission!' : 'Mission erledigt!'}</h1>
-    <p class="big-num">${R.correct} / ${R.total} <span class="muted">sofort richtig</span></p>
+  return `<main class="center">${bossPic}<h1>${R.letter ? (R.perfect ? 'Meisterbrief zugestellt!' : 'Brief zugestellt!') : R.boss ? (R.won ? `${v.name} besiegt!` : 'Fast besiegt!') : R.perfect ? 'Perfekte Mission!' : 'Mission erledigt!'}</h1>
+    <p class="big-num">${R.correct} / ${R.total} <span class="muted">${R.letter ? 'Brief-Check' : 'sofort richtig'}</span></p>
     <p class="chip">⚡ +${R.fp} Fachpunkte</p><div class="row wrap">${extras}</div>${reveal}
     <button class="btn" data-a="done" ${c && !R.opened ? 'disabled' : ''}>Weiter</button></main>`;
 }
@@ -231,6 +282,8 @@ function sheet(p) {
       <h3>Mission-Soundtrack</h3><form data-f="spotify"><label>Spotify-Link (Playlist oder Künstler)<input name="url" inputmode="url" placeholder="https://open.spotify.com/…" value="${esc(S.spotify || '')}"></label><button class="btn" type="submit">Speichern</button></form>
       <p class="muted">Der Link öffnet Spotify in der Spotify-App. Leer lassen = kein Soundtrack-Knopf.</p>
       <div class="row wrap"><button class="btn ghost" data-a="switch">Held wechseln</button><button class="btn ghost danger" data-a="reset">${ui.confirm === 'reset' ? 'Wirklich alles löschen?' : 'Alles zurücksetzen'}</button></div>`;
+  } else if (ui.sheet === 'letters') {
+    body = `<h2>📬 Briefmappe</h2>${(p.letters || []).slice().reverse().map((l) => `<article class="card mail"><small class="muted">${esc(l.date.split('-').reverse().join('.'))} · an ${esc(l.to)}</small><pre>${esc(l.text)}</pre><div class="reply"><b>Antwort:</b> ${esc(l.reply)}</div></article>`).join('') || '<p class="muted">Noch keine Briefe.</p>'}`;
   } else if (ui.sheet === 'newproject') {
     body = `<h2>Neue Klassenarbeit</h2><form data-f="newproject"><label>Fach<select name="subject">${Object.entries(SUBJECTS).map(([k, s]) => `<option value="${k}" ${k === ui.subject ? 'selected' : ''}>${s.name}</option>`).join('')}</select></label>
       <label>Thema<input name="title" maxlength="40" placeholder="z. B. Einmaleins" required autocomplete="off"></label>
@@ -251,6 +304,7 @@ function render() {
   else if (ui.lesson) html = viewLesson(p);
   else if (ui.result) html = viewResult();
   else if (ui.scene) html = viewScene(p);
+  else if (ui.letter) html = viewLetter(p);
   else {
     rollWeek(p);
     const v = { learn: viewLearn, projects: viewProjects, collection: viewCollection, rank: viewRank }[ui.route];
@@ -336,7 +390,7 @@ function speakText(text) {
     speechSynthesis.speak(u);
   } catch (e) { /* Vorlesen nicht verfügbar */ }
 }
-const mathSpeech = (t) => t.replace(/·/g, ' mal ').replace(/:/g, ' geteilt durch ').replace(/−/g, ' minus ').replace(/\+/g, ' plus ').replace(/=\s*\?/, ' gleich was?');
+const mathSpeech = (t) => t.replace(/·/g, ' mal ').replace(/:/g, ' geteilt durch ').replace(/−/g, ' minus ').replace(/\+/g, ' plus ').replace(/□/g, ' was ').replace(/\(/g, ' Klammer auf ').replace(/\)/g, ' Klammer zu ').replace(/=\s*\?/, ' gleich was?');
 
 function finishLesson() {
   const p = P(), L = ui.lesson;
@@ -379,6 +433,33 @@ document.addEventListener('click', (e) => {
     case 'sheet': ui.sheet = v; ui.confirm = null; break;
     case 'closesheet': ui.sheet = null; ui.confirm = null; break;
     case 'grade': p.grade = Number(v); break;
+    case 'letter': ui.letter = { to: letterNames(p)[0], topic: 'help', text: '', checked: false }; break;
+    case 'lquit': ui.letter = null; break;
+    case 'ltopic': ui.letter.topic = v; break;
+    case 'lrcpt': ui.letter.to = v; break;
+    case 'lphrase': {
+      const Lt = ui.letter, tx = Lt.text.replace(/\s+$/, '');
+      if (v === 'anrede') Lt.text = `Lieber ${Lt.to},\n` + Lt.text.replace(/^\s+/, '');
+      else if (v === 'gruss') Lt.text = `${tx}\n\nViele Grüße`;
+      else if (v === 'name') Lt.text = `${tx}\n${p.name}`;
+      else Lt.text = tx + (tx && !/\n$/.test(Lt.text) ? ' ' : '') + (tx.endsWith(',') || !tx ? PHRASES[Number(v)] : PHRASES[Number(v)][0].toUpperCase() + PHRASES[Number(v)].slice(1));
+      Lt.checked = false; break;
+    }
+    case 'lcheck': ui.letter.checked = true; sfx.tap(); break;
+    case 'lsend': {
+      const Lt = ui.letter, n = letterChecks(Lt.text, p.name).filter((c) => c.ok).length;
+      if (n < 4) { Lt.checked = true; break; }
+      const first = p.letterDay !== today(), fp = first ? n * 4 + 10 : 0;
+      rollWeek(p); p.fp += fp; p.weekFp += fp; bumpStreak(p);
+      p.letterDay = today();
+      const tp = TOPICS[Lt.topic];
+      p.letters = [...(p.letters || []), { to: Lt.to, topic: Lt.topic, text: Lt.text.trim(), reply: tp.reply, date: today() }].slice(-30);
+      const card = first ? rollCard({ subject: 'deutsch', perfect: n === 6 }) : null;
+      if (card) p.cards[card.id] = (p.cards[card.id] || 0) + 1;
+      ui.result = { subject: 'deutsch', villain: 'deutsch', correct: n, total: 6, fp, perfect: n === 6, boss: false, won: false, card, opened: false, maxCombo: 0, blitzWins: 0, daily: false, letter: true,
+        story: { title: `Antwort von ${Lt.to}`, lines: [`ECHO: Eilmeldung! Dein Brief an ${Lt.to} wurde zugestellt.`, `${Lt.to}: „{name}, danke für deinen Brief! ${tp.reply}“`, 'ECHO: Die Antwort liegt in deiner Briefmappe.'] } };
+      ui.letter = null; sfx.win(); break;
+    }
     case 'nophoto': delete p.photo; break;
     case 'mute': S.mute = !S.mute; sfxState.muted = S.mute; sfx.tap(); break;
     case 'switch': S.active = null; ui.sheet = null; break;
@@ -421,6 +502,10 @@ document.addEventListener('keydown', (e) => {
   if (/^[0-9]$/.test(e.key)) typeKey(e.key);
   else if (e.key === 'Backspace') typeKey('del');
   else if (e.key === 'Enter') { if (L.answered) next(); else check(); }
+});
+
+document.addEventListener('input', (e) => {
+  if (e.target.matches('[data-letter]') && ui.letter) { ui.letter.text = e.target.value; ui.letter.checked = false; }
 });
 
 document.addEventListener('change', async (e) => {
