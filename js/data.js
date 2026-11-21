@@ -35,6 +35,18 @@ export const CARDS = [
   { id: 'loewenbutter',   name: 'Löwen-Butter',    shape: 'butter',   color: 'caramel', face: 'cat',    acc: 'bow',    subject: 'englisch', rarity: 'rare',      text: 'Brüllt leise, aber mit Akzent.' },
   { id: 'brueckenbao',    name: 'Brücken-Bao',     shape: 'bao',      color: 'mint',    face: 'sleepy', acc: 'halo',   subject: 'englisch', rarity: 'epic',      text: 'Baut Brücken zwischen den Sprachen.' },
   { id: 'weltendumpling', name: 'Welten-Dumpling', shape: 'dumpling', color: 'pink',    face: 'happy',  acc: 'crown',  subject: 'englisch', rarity: 'legendary', text: 'Hüter der Englisch-Arbeit.' },
+  // Mathe (neu)
+  { id: 'dreieckonigiri',  name: 'Dreieck-Onigiri', shape: 'onigiri',   color: 'cream',   face: 'happy',  acc: 'none',   subject: 'mathe',    rarity: 'common',    text: 'Hat drei Ecken und alle sind lecker.' },
+  { id: 'zahlenbroetchen', name: 'Zahlenbrötchen',  shape: 'broetchen', color: 'caramel', face: 'cat',    acc: 'none',   subject: 'mathe',    rarity: 'rare',      text: 'Frisch gebacken: 1 + 1 = 2.' },
+  { id: 'knetkalle',       name: 'Knet-Kalle',      shape: 'knet',      color: 'sky',     face: 'wow',    acc: 'halo',   subject: 'mathe',    rarity: 'epic',      text: 'Lässt sich zu jeder Zahl formen.' },
+  // Deutsch (neu)
+  { id: 'wortonigiri',     name: 'Wort-Onigiri',    shape: 'onigiri',   color: 'pink',    face: 'sleepy', acc: 'none',   subject: 'deutsch',  rarity: 'common',    text: 'Gefüllt mit den besten Wörtern.' },
+  { id: 'lesebroetchen',   name: 'Lese-Brötchen',   shape: 'broetchen', color: 'butter',  face: 'happy',  acc: 'sprout', subject: 'deutsch',  rarity: 'rare',      text: 'Liest dir beim Frühstück vor.' },
+  { id: 'knetknut',        name: 'Knet-Knut',       shape: 'knet',      color: 'mint',    face: 'cat',    acc: 'halo',   subject: 'deutsch',  rarity: 'epic',      text: 'Knetet aus Buchstaben ganze Geschichten.' },
+  // Englisch (neu)
+  { id: 'englischonigiri', name: 'Hello-Onigiri',   shape: 'onigiri',   color: 'lilac',   face: 'wow',    acc: 'none',   subject: 'englisch', rarity: 'common',    text: 'Spricht Reis-isch und Englisch.' },
+  { id: 'teabroetchen',    name: 'Tea-Brötchen',    shape: 'broetchen', color: 'peach',   face: 'sleepy', acc: 'bow',    subject: 'englisch', rarity: 'rare',      text: 'Trinkt jeden Tag um fünf Tee.' },
+  { id: 'knetkim',         name: 'Knet-Kim',        shape: 'knet',      color: 'pink',    face: 'happy',  acc: 'halo',   subject: 'englisch', rarity: 'epic',      text: 'Biegt sich um jede Grammatik.' },
 ];
 
 // ---- Ligen (lokal, nach Gesamt-Fachpunkten) ----
@@ -157,7 +169,7 @@ function distractors(c, n = 3) {
   for (const x of shuffle(cand)) if (x >= 0 && x !== c && !out.includes(x)) out.push(x);
   return out.slice(0, n);
 }
-const mq = (q, c) => ({ q, c: String(c), w: distractors(c).map(String) });
+const mq = (q, c) => ({ q, c: String(c), w: distractors(c).map(String), num: Math.random() < 0.5 });
 
 const MATH = {
   1: () => { const a = rnd(1, 12), b = rnd(1, 20 - a); return Math.random() < 0.5 ? mq(`${a} + ${b} = ?`, a + b) : mq(`${a + b} − ${a} = ?`, b); },

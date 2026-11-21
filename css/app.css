@@ -103,3 +103,15 @@ button:disabled { opacity: .45; cursor: default; }
 .tcg.locked .art { cursor: default; }
 .tcg.pop .squishy { animation: wobble 2.4s ease-in-out .6s infinite; }
 @keyframes wobble { 50% { transform: scale(1.04,.96); } }
+
+/* Ziffernblock */
+.numbox { margin: 0 auto 16px; width: min(260px, 70%); text-align: center; font-size: 48px; font-weight: 800; padding: 10px; border-radius: var(--radius); background: var(--surface); border: var(--lw) solid var(--line); min-height: 76px; letter-spacing: 4px; }
+.numbox.right { background: var(--good); color: #fff; } .numbox.wrong { background: var(--bad); color: #fff; }
+.keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 360px; margin: 0 auto; }
+.key { background: var(--surface); border: var(--lw) solid var(--line); border-bottom-width: calc(var(--lw) + 4px); border-radius: var(--radius); font-size: 28px; font-weight: 800; min-height: 68px; }
+.key:active:not(:disabled) { transform: translateY(2px); } .key.go { background: var(--primary); color: var(--primary-ink); }
+/* Begleiter */
+.buddy-row { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 26px; }
+.buddy { width: 84px; cursor: pointer; }
+.say { background: var(--surface); border-radius: 16px 16px 16px 4px; padding: 10px 14px; font-weight: 700; max-width: 230px; }
+.center-t { text-align: center; }

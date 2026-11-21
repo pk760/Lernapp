@@ -6,10 +6,11 @@ Karten-Packs, Sammlung, Ligen, Klassenarbeits-Projekte inkl. Boss, lokale Profil
 
 ## Phase 1 – Spielgefühl & Design (nächste Aufgabe)
 - [x] Design: Kosmos gewählt; Karten sind jetzt Squishys (SVG, prozedural)
-- [ ] Squishys ausbauen: 15 → 40+, mehr Formen (Onigiri, Brötchen, Knetmännchen), Accessoires, Glitzer-Version bei Doppelten, Sammelalbum mit Seiten
-- [ ] Squishy-Zuhause: Lieblings-Squishy als Begleiter auf dem Lernpfad, füttern/streicheln
+- [x] 24 Squishys, 8 Formen (inkl. Onigiri, Brötchen, Knetmännchen); Lieblings-Squishy als Begleiter auf dem Lernpfad
+- [ ] Squishys weiter ausbauen: 40+, Glitzer-Version bei Doppelten, Sammelalbum mit Seiten, Begleiter füttern/streicheln, Sprüche passend zum Fach
 - [ ] Animationen/Sounds (Web Audio, abschaltbar), Konfetti bei Boss
-- [ ] Antwort-Typen erweitern: Zahleneingabe (Ziffernblock), Lückentext, Buchstaben legen, Zuordnen
+- [x] Zahleneingabe per Ziffernblock (Mathe, ca. 50 % der Aufgaben)
+- [ ] Weitere Antwort-Typen: Lückentext, Buchstaben legen, Zuordnen, Uhrzeit stellen
 - [ ] iPad-Feinschliff: Querformat-Layout, Safe Areas, Splash-Screens
 
 ## Phase 2 – Inhalte

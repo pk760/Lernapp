@@ -56,8 +56,16 @@ function viewLearn(p) {
     return `<div class="node-wrap" style="transform:translateX(${offs[i % 8]}px)"><button class="node ${st}" ${dis} data-a="lesson" data-i="${i}" aria-label="Lektion ${i + 1}">${st === 'done' ? '✓' : st === 'now' ? '▶' : '🔒'}</button>${st === 'now' ? '<span class="bubble">Los!</span>' : ''}</div>`;
   }).join('');
   return `<main><div class="seg sub">${subs}</div>
+    ${buddyBlock(p)}
     <h2 class="path-title">${SUBJECTS[ui.subject].emoji} ${SUBJECTS[ui.subject].name} · Klasse ${p.grade}</h2>
     <div class="path">${nodes}</div></main>`;
+}
+
+const BUDDY_SAYS = ['Los, wir schaffen das!', 'Heute ein bisschen üben?', 'Du bist richtig gut!', 'Ich glaub an dich!'];
+function buddyBlock(p) {
+  const c = CARDS.find((x) => x.id === p.buddy && p.cards[x.id]);
+  if (!c) return '<p class="muted center-t">Tipp: Wähle in der Sammlung einen Begleiter aus. 🐾</p>';
+  return `<div class="buddy-row"><div class="buddy" data-a="squish">${squishy(c)}</div><div class="say">${BUDDY_SAYS[(p.fp + p.streak) % BUDDY_SAYS.length]}</div></div>`;
 }
 
 function viewProjects(p) {
@@ -114,7 +122,15 @@ function viewLesson() {
   return `<main class="lesson"><div class="row"><button class="x" data-a="quit" aria-label="Beenden">✕</button><div class="bar grow"><i style="width:${pct}%"></i></div></div>
     ${L.boss ? '<div class="boss">👑 Prüfungs-Boss</div>' : L.project ? '<div class="boss">📝 Klassenarbeit-Training</div>' : ''}
     <h2 class="q">${esc(q.q)}</h2>${q.hint && !L.answered ? `<p class="muted">Tipp: ${esc(q.hint)}</p>` : ''}
-    <div class="opts">${opts}</div>${fb}</main>`;
+    ${q.num ? numpad(L, q) : `<div class="opts">${opts}</div>`}${fb}</main>`;
+}
+
+function numpad(L, q) {
+  const cls = L.answered ? (L.ok ? 'right' : 'wrong') : '';
+  const dis = L.answered ? 'disabled' : '';
+  const keys = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => `<button class="key" ${dis} data-a="key" data-v="${n}">${n}</button>`).join('');
+  return `<div class="numbox ${cls}">${L.input ? esc(L.input) : '?'}</div>
+    <div class="keypad">${keys}<button class="key" ${dis} data-a="key" data-v="del" aria-label="Löschen">⌫</button><button class="key" ${dis} data-a="key" data-v="0">0</button><button class="key go" ${L.input ? dis : 'disabled'} data-a="check" aria-label="Prüfen">✓</button></div>`;
 }
 
 function viewResult() {
@@ -141,7 +157,8 @@ function sheet(p) {
       <button class="btn" type="submit">Anlegen</button></form>`;
   } else if (ui.sheet.startsWith('card:')) {
     const c = CARDS.find((x) => x.id === ui.sheet.slice(5));
-    body = `<div class="tcg big ${c.rarity}"><div class="art" data-a="squish">${squishy(c)}</div><b>${c.name}</b><small>${RARITY[c.rarity].name} · ${SUBJECTS[c.subject].name}</small><p>${esc(c.text)}</p></div>`;
+    body = `<div class="tcg big ${c.rarity}"><div class="art" data-a="squish">${squishy(c)}</div><b>${c.name}</b><small>${RARITY[c.rarity].name} · ${SUBJECTS[c.subject].name}</small><p>${esc(c.text)}</p></div>
+      ${p.cards[c.id] ? `<button class="btn wide" data-a="buddy" data-id="${c.id}" ${p.buddy === c.id ? 'disabled' : ''}>${p.buddy === c.id ? '🐾 Ist dein Begleiter' : '🐾 Als Begleiter wählen'}</button>` : ''}`;
   }
   return `<div class="scrim" data-a="closesheet"><section class="sheet" data-stop><button class="x close" data-a="closesheet" aria-label="Schließen">✕</button>${body}</section></div>`;
 }
@@ -164,22 +181,41 @@ function render() {
 function startLesson({ subject, nodeIndex = null, project = null, boss = false }) {
   const p = P();
   const questions = buildQuestions(subject, p.grade, { boss });
-  ui.lesson = { subject, nodeIndex, project, boss, queue: questions, i: 0, total: questions.length, correct: 0, failedOnce: new Set(), answered: false, picked: -1, ok: false };
+  ui.lesson = { subject, nodeIndex, project, boss, queue: questions, i: 0, total: questions.length, correct: 0, failedOnce: new Set(), answered: false, picked: -1, ok: false, input: '' };
   render();
 }
 
 function answer(i) {
   const L = ui.lesson, q = L.queue[L.i];
   if (L.answered) return;
-  L.picked = i; L.answered = true; L.ok = q.options[i] === q.c;
-  if (L.ok) { if (!L.failedOnce.has(q.q)) L.correct++; }
+  judge(q.options[i] === q.c, i);
+}
+
+function typeKey(v) {
+  const L = ui.lesson;
+  if (!L || L.answered || !L.queue[L.i].num) return;
+  if (v === 'del') L.input = L.input.slice(0, -1);
+  else if (L.input.length < 6) L.input += v;
+  render();
+}
+
+function check() {
+  const L = ui.lesson;
+  if (L.answered || !L.input) return;
+  judge(L.input === L.queue[L.i].c, -1);
+}
+
+function judge(ok, picked) {
+  const L = ui.lesson, q = L.queue[L.i];
+  L.picked = picked; L.answered = true; L.ok = ok;
+  if (ok) { if (!L.failedOnce.has(q.q)) L.correct++; }
   else if (!L.failedOnce.has(q.q)) { L.failedOnce.add(q.q); L.queue.push({ ...q, options: [...q.options].sort(() => Math.random() - 0.5) }); }
   render();
 }
 
 function next() {
   const L = ui.lesson;
-  L.i++; L.answered = false; L.picked = -1;
+  L.i++; L.answered = false; L.picked = -1; L.input = '';
   if (L.i >= L.queue.length) return finishLesson();
   render();
 }
@@ -230,6 +266,9 @@ document.addEventListener('click', (e) => {
     case 'confirm': ui.confirm = id; break;
     case 'delproj': p.projects = p.projects.filter((x) => x.id !== id); ui.confirm = null; break;
     case 'answer': return answer(Number(t.dataset.i));
+    case 'key': return typeKey(v);
+    case 'check': return check();
+    case 'buddy': p.buddy = id; ui.sheet = null; break;
     case 'next': return next();
     case 'quit': ui.lesson = null; break;
     case 'open': ui.result.opened = true; break;
@@ -237,6 +276,14 @@ document.addEventListener('click', (e) => {
     case 'done': ui.result = null; break;
   }
   commit();
+});
+
+document.addEventListener('keydown', (e) => {
+  const L = ui.lesson;
+  if (!L || !L.queue[L.i].num) return;
+  if (/^[0-9]$/.test(e.key)) typeKey(e.key);
+  else if (e.key === 'Backspace') typeKey('del');
+  else if (e.key === 'Enter') { if (L.answered) next(); else check(); }
 });
 
 document.addEventListener('submit', (e) => {

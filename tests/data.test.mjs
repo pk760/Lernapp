@@ -67,3 +67,11 @@ test('jede Karte rendert ein gültiges Squishy-SVG', () => {
   }
   assert.equal(CARDS.filter((c) => c.rarity === 'legendary').length, 3);
 });
+
+test('Zahleneingabe nur bei Mathe; Antworten bleiben ganzzahlig', () => {
+  for (const g of GRADES) {
+    assert.ok(buildQuestions('deutsch', g).every((q) => !q.num));
+    for (let i = 0; i < 100; i++) for (const q of buildQuestions('mathe', g)) if (q.num) assert.match(q.c, /^\d{1,6}$/);
+  }
+  assert.ok(CARDS.length >= 24);
+});

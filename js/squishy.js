@@ -1,7 +1,7 @@
 // Eigene Squishy-Figuren als SVG (rein prozedural, keine fremden Figuren, keine Bilddateien).
 // squishy({ shape, color, face, acc, rarity }) -> SVG-String (viewBox 0 0 100 100)
 
-const TOP = { dumpling: 30, butter: 34, mochi: 28, bao: 24, pudding: 40 }; // y-Oberkante, für Accessoires
+const TOP = { dumpling: 30, butter: 34, mochi: 28, bao: 24, pudding: 40, onigiri: 26, broetchen: 32, knet: 28 }; // y-Oberkante, für Accessoires
 
 export const COLORS = {
   cream: '#f6e7cf', butter: '#ffd966', pink: '#ffc9de', lilac: '#d9c8ff', mint: '#b8f0d8', sky: '#bfe3ff', peach: '#ffd0b0', caramel: '#ffb866',
@@ -15,6 +15,12 @@ const BODY = {
   mochi: (c) => `<ellipse cx="50" cy="58" rx="38" ry="30" fill="${c}"/>`,
   bao: (c) => `<circle cx="50" cy="56" r="33" fill="${c}"/>
     <path d="M50 24 Q60 26 58 34 Q56 40 48 38 Q42 36 44 30" fill="none" stroke="#00000022" stroke-width="2.5" stroke-linecap="round"/>`,
+  onigiri: (c) => `<path d="M50 24 Q58 24 66 42 L85 78 Q88 85 79 85 L21 85 Q12 85 15 78 L34 42 Q42 24 50 24Z" fill="${c}"/>
+    <path d="M23 76 L77 76 L82 80 Q84 85 78 85 L22 85 Q16 85 18 80Z" fill="#2b3a35"/>`,
+  broetchen: (c) => `<ellipse cx="50" cy="58" rx="39" ry="28" fill="${c}"/>
+    <path d="M30 38 Q34 46 42 40 M44 34 Q50 44 56 34 M58 40 Q66 46 70 38" fill="none" stroke="#00000024" stroke-width="2.8" stroke-linecap="round"/>`,
+  knet: (c) => `<circle cx="11" cy="66" r="8" fill="${c}"/><circle cx="89" cy="66" r="8" fill="${c}"/><circle cx="35" cy="86" r="8" fill="${c}"/><circle cx="65" cy="86" r="8" fill="${c}"/>
+    <ellipse cx="50" cy="58" rx="36" ry="29" fill="${c}"/>`,
   pudding: (c) => `<path d="M24 44 L76 44 L86 82 L14 82Z" fill="${c}" stroke="${c}" stroke-width="10" stroke-linejoin="round"/>
     <path d="M18 42 Q50 28 82 42 Q82 52 74 50 Q70 60 62 50 Q50 54 40 50 Q30 60 26 50 Q18 52 18 42Z" fill="#8a4b24"/>`,
 };

@@ -34,6 +34,7 @@ tests/*.test.mjs      Node-Tests für data.js (npm test)
 .github/workflows     Tests + Deploy nach GitHub Pages bei Push auf main
 docs/                 ROADMAP.md, DESIGN.md (3 Designvorschläge), CONTENT.md (Fragen schreiben)
 ```
+Aufgabenformat: Mehrfachauswahl; Mathe zusätzlich Zahleneingabe (`q.num`, Ziffernblock + Tastatur). Begleiter: `profile.buddy` (Karten-ID).
 Spielregeln (aktuell in `js/app.js` → `finishLesson`): Lektion = 5 Fragen; falsche Fragen kommen am Ende nochmal;
 ≥60 % sofort richtig ⇒ Lernpfad-Knoten + Karten-Pack; perfekt ⇒ mind. „selten“. Klassenarbeits-Einheit: +10 FP; Boss
 (ab 3 Einheiten, 10 Fragen, ≥80 %) ⇒ +40 FP und legendäre Fach-Karte.
