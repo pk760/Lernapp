@@ -51,4 +51,4 @@ Spielregeln (aktuell in `js/app.js` → `finishLesson`): Lektion = 5 Fragen; fal
 - Kleine, thematische Commits; Datenmodell-Änderungen in `store.js` mit Migration (`v` hochzählen).
 
 ## Nächste Schritte
-Siehe `docs/ROADMAP.md`, Phase 1 (Squishy-Feinschliff, Aufgabentypen, iPad-Test).
+Siehe `docs/ROADMAP.md`, Phase 1 (Helden-Ausbau, weitere Aufgabentypen, iPad-Test).
