@@ -66,15 +66,18 @@ function viewProfile() {
   const suits = Object.entries(SUITS).map(([k, [a, b]], i) => `<label class="swatch"><input type="radio" name="suit" value="${k}" ${i === 0 ? 'checked' : ''}><span style="background:linear-gradient(135deg,${a} 55%,${b} 55%)"></span></label>`).join('');
   const emblems = Object.entries(EMBLEMS).map(([k, e], i) => `<label class="swatch"><input type="radio" name="emblem" value="${k}" ${i === 0 ? 'checked' : ''}><span class="emb">${e}</span></label>`).join('');
   const skins = SKINS.map((c, i) => `<label class="swatch"><input type="radio" name="skin" value="${c}" ${i === 1 ? 'checked' : ''}><span style="background:${c}"></span></label>`).join('');
-  return `<main class="center"><h1>Hero Academy</h1><p class="muted">Wer meldet sich zum Dienst?</p>${list}
-    <form class="card" data-f="newprofile"><h2>Neuer Held</h2>
+  const prev = S.profiles.find((x) => x.id === ui.prev);
+  const back = prev ? `<button class="btn ghost back" data-a="pick" data-v="${prev.id}">← Zurück zu ${esc(prev.name)}</button>` : '';
+  const has = S.profiles.length > 0;
+  const form = has && !ui.newHero ? `<button class="btn wide" data-a="newhero">＋ Neuen Helden erschaffen</button>` : `<form class="card" data-f="newprofile"><h2>Neuer Held</h2>
       <input name="name" maxlength="16" placeholder="Heldenname" required autocomplete="off">
       <div class="seg">${GRADES.map((g, i) => `<label><input type="radio" name="grade" value="${g}" ${i === 0 ? 'checked' : ''}><span>Klasse ${g}</span></label>`).join('')}</div>
       <label>Eigenes Heldenfoto (optional, bleibt auf diesem Gerät)<input type="file" name="photo" accept="image/*"></label>
       <p class="muted">Anzug</p><div class="seg">${suits}</div>
       <p class="muted">Symbol</p><div class="seg">${emblems}</div>
       <p class="muted">Hautton</p><div class="seg">${skins}</div>
-      <button class="btn" type="submit">Held erschaffen</button></form></main>`;
+      <div class="row wrap"><button class="btn" type="submit">Held erschaffen</button>${has ? '<button class="btn ghost" type="button" data-a="cancelhero">Abbrechen</button>' : ''}</div></form>`;
+  return `<main class="center">${back}<h1>Hero Academy</h1><p class="muted">Wer meldet sich zum Dienst?</p>${list}${form}</main>`;
 }
 
 const SAYS = ['Bereit für die nächste Mission?', 'Heute zeigst du, was in dir steckt!', 'Die Welt braucht einen Helden. Los!', 'Training macht Helden stark.'];
@@ -209,7 +212,7 @@ function viewScene(p) {
   const lines = sc.lines.map((t, i) => `<p class="line" style="animation-delay:${i * 1.1}s">${fill(t, p)}</p>`).join('');
   const shadow = sc.kind === 'brief' && v.img ? `<div class="scene-foe ${sc.finale ? 'reveal' : 'shadow'}">${foePic(v, 'scene-foe-img')}</div>` : sc.kind === 'debrief' && v.img ? `<div class="scene-foe beaten">${foePic(v, 'scene-foe-img')}</div>` : '';
   const goText = sc.kind === 'debrief' ? 'Weiter' : sc.finale ? '⚔️ Zum Duell!' : '▶ Mission starten';
-  return `<main class="scene"><div class="scene-title">${esc(sc.title)}</div>${shadow}
+  return `<main class="scene"><button class="x scene-x" data-a="sceneback" aria-label="Zurück">← Zurück</button><div class="scene-title">${esc(sc.title)}</div>${shadow}
     <div class="echo-row"><div class="echo">${ECHO}</div><div class="bubbles">${lines}</div></div>
     <div class="row wrap scene-btns"><button class="btn" data-a="scenego">${goText}</button><button class="btn ghost" data-a="speaklines" aria-label="Vorlesen">🔊</button></div></main>`;
 }
@@ -455,7 +458,10 @@ document.addEventListener('click', (e) => {
   switch (a) {
     case 'go': ui.route = v; break;
     case 'subject': ui.subject = v; break;
-    case 'pick': S.active = v; break;
+    case 'pick': S.active = v; ui.prev = null; ui.newHero = false; break;
+    case 'newhero': ui.newHero = true; break;
+    case 'cancelhero': ui.newHero = false; break;
+    case 'sceneback': ui.scene = null; break;
     case 'sheet': ui.sheet = v; ui.confirm = null; break;
     case 'closesheet': ui.sheet = null; ui.confirm = null; ui.msg = null; break;
     case 'grade': p.grade = Number(v); break;
@@ -489,7 +495,7 @@ document.addEventListener('click', (e) => {
     case 'export': return doExport();
     case 'nophoto': delete p.photo; break;
     case 'mute': S.mute = !S.mute; sfxState.muted = S.mute; sfx.tap(); break;
-    case 'switch': S.active = null; ui.sheet = null; break;
+    case 'switch': ui.prev = S.active; S.active = null; ui.sheet = null; ui.newHero = false; break;
     case 'reset': if (ui.confirm === 'reset') { S = { ...S, active: null, profiles: [] }; ui.sheet = null; ui.confirm = null; } else ui.confirm = 'reset'; break;
     case 'lesson': {
       const i = Number(t.dataset.i), key = `${ui.subject}-${p.grade}`, ch = STORY[ui.subject].chapters[i], fin = i === PATH_NODES - 1;
@@ -582,7 +588,7 @@ document.addEventListener('submit', async (e) => {
     const np = newProfile(name, Number(d.get('grade')), hero);
     const ph = await readPhoto(d.get('photo'));
     if (ph) np.photo = ph;
-    S.profiles.push(np); S.active = np.id;
+    S.profiles.push(np); S.active = np.id; ui.newHero = false; ui.prev = null;
   } else if (f.dataset.f === 'newproject') {
     const p = P();
     p.projects.push({ id: Math.random().toString(36).slice(2, 9), subject: String(d.get('subject')), title: String(d.get('title')).trim(), date: String(d.get('date')), sessions: 0, boss: null });
