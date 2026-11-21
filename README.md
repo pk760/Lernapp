@@ -1,4 +1,4 @@
-# Lernhelden 🦊
+# Hero Academy 🦸
 
 Lern-App für Grundschüler (Klasse 1–4): Mathe, Deutsch, Englisch. Duolingo-artiger Lernpfad, Sammelkarten als Belohnung,
 Vorbereitung auf Klassenarbeiten. Läuft komplett im Browser, offline, ohne Server – installierbar auf dem iPad.
