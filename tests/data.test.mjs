@@ -57,3 +57,13 @@ test('Liga-Berechnung', () => {
   assert.equal(ligaFor(150).cur.name, 'Bronze-Liga');
   assert.equal(ligaFor(5000).next, null);
 });
+
+import { squishy } from '../js/squishy.js';
+test('jede Karte rendert ein gültiges Squishy-SVG', () => {
+  for (const c of CARDS) {
+    const svg = squishy(c);
+    assert.ok(svg.startsWith('<svg') && svg.endsWith('</svg>'), c.id);
+    assert.ok(!svg.includes('undefined'), c.id);
+  }
+  assert.equal(CARDS.filter((c) => c.rarity === 'legendary').length, 3);
+});

@@ -2,7 +2,7 @@
 
 ## Ziel
 Installierbare Web-App (PWA, iPad zuerst) mit Lernhilfen für Grundschüler **Klasse 1–4**: **Mathe, Deutsch, Englisch**.
-Duolingo-artiger Lernpfad, Belohnung über **Sammelkarten** (statt Sterne/Punkte), Ranking über **Ligen**, und ein
+Duolingo-artiger Lernpfad, Belohnung über **Squishy-Sammelfiguren** (Dumpling, Butterklops, Mochi, Bao, Pudding – Trend „Squishies/Kuscheltier-Blobs“; statt Sterne/Punkte), Ranking über **Ligen**, und ein
 **Klassenarbeits-Modus** (Arbeit mit Datum anlegen → gezielt üben → „Prüfungs-Boss“ → legendäre Karte).
 Zielgruppe: ca. 8 Jahre. Look: kindlich, motivierend, **nicht zu bunt, nicht albern**.
 
@@ -16,7 +16,8 @@ verwendete Schrift (Grundschrift/Schulausgangsschrift) und Lehrwerke der Schule.
 - **Kein Build-Schritt**: Vanilla JS (ES-Module), CSS, keine Frameworks, keine externen CDNs/Fonts (muss offline laufen).
 - **Deutsche UI-Texte** (Kind-gerecht, du-Form, kurze Sätze).
 - **Datenschutz**: Kinder-App → keine Tracker, keine Analytics, keine externen Requests, keine Klarnamen-Pflicht (Vorname/Spitzname reicht).
-- **Keine geschützten Figuren** (kein Pokémon o. Ä.). Alle Wesen/Karten sind eigene Erfindungen; aktuell Emoji-Platzhalter.
+- **Keine geschützten Figuren** (weder Pokémon noch Squishmallows o. Ä.). Alle Squishys sind eigene Erfindungen, prozedural als SVG gezeichnet (`js/squishy.js`: Form × Farbe × Gesicht × Accessoire). Antippen = quetschen (Animation).
+- **Design gewählt: Kosmos** (dunkles Weltall, oranger Akzent). Die anderen Entwürfe (Waldlichtung, Arena) wurden entfernt.
 - Repo-Name/Pages-Pfad: relative URLs verwenden (`./`), da Pages unter `/<repo>/` läuft.
 
 ## Architektur
@@ -24,8 +25,9 @@ verwendete Schrift (Grundschrift/Schulausgangsschrift) und Lehrwerke der Schule.
 index.html            App-Shell, Meta für iPad-Installation (Zum Home-Bildschirm)
 manifest.webmanifest  PWA-Manifest
 sw.js                 Service Worker (cache-first App-Shell). Bei Dateiänderung VERSION erhöhen!
-css/app.css           3 Themes über CSS-Variablen: cosmos | wald | arena (html[data-theme])
+css/app.css           Design „Kosmos“ über CSS-Variablen
 js/data.js            Reine Logik/Inhalte: Fächer, Karten, Ligen, Fragen (statisch + Mathe-Generator), rollCard()
+js/squishy.js         SVG-Generator für die Squishy-Figuren
 js/store.js           localStorage, Profile, Datums-Helfer
 js/app.js             UI: Rendering per Template-Strings, Event-Delegation (data-a / data-f), Lektionen-Ablauf
 tests/*.test.mjs      Node-Tests für data.js (npm test)
@@ -39,7 +41,6 @@ Spielregeln (aktuell in `js/app.js` → `finishLesson`): Lektion = 5 Fragen; fal
 ## Befehle
 - Lokal starten: `npm start` → http://localhost:8080 (Service Worker braucht http(s), nicht file://)
 - Tests: `npm test`
-- Theme testen: `?theme=wald` an die URL hängen
 - iPad: Safari → Teilen → „Zum Home-Bildschirm“
 
 ## Konventionen
@@ -49,4 +50,4 @@ Spielregeln (aktuell in `js/app.js` → `finishLesson`): Lektion = 5 Fragen; fal
 - Kleine, thematische Commits; Datenmodell-Änderungen in `store.js` mit Migration (`v` hochzählen).
 
 ## Nächste Schritte
-Siehe `docs/ROADMAP.md`. Als Erstes: **Design wählen** (`docs/DESIGN.md`, Themes live per Zahnrad-Menü), dann Phase 1.
+Siehe `docs/ROADMAP.md`, Phase 1 (Squishy-Feinschliff, Aufgabentypen, iPad-Test).

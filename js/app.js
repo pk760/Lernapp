@@ -1,11 +1,7 @@
 import { SUBJECTS, GRADES, CARDS, RARITY, ligaFor, buildQuestions, rollCard } from './data.js';
+import { squishy } from './squishy.js';
 import { load, save, newProfile, today, yesterday, weekKey, daysUntil } from './store.js';
 
-const THEMES = {
-  cosmos: { name: 'Kosmos', emoji: '🚀', blurb: 'Dunkles Weltall, Sternenwesen' },
-  wald:   { name: 'Waldlichtung', emoji: '🌲', blurb: 'Warm & ruhig, Papier-Look' },
-  arena:  { name: 'Arena', emoji: '🏟️', blurb: 'Hell & kontrastreich, Comic-Rand' },
-};
 const PATH_NODES = 8;
 const SESSIONS_FOR_BOSS = 3;
 const SESSIONS_GOAL = 5;
@@ -17,12 +13,6 @@ const $app = document.getElementById('app');
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const P = () => S.profiles.find((p) => p.id === S.active) || null;
 const commit = () => { save(S); render(); };
-
-function applyTheme() {
-  document.documentElement.dataset.theme = S.theme;
-  const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.content = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#14163a';
-}
 
 function rollWeek(p) {
   const wk = weekKey();
@@ -94,8 +84,8 @@ function viewCollection(p) {
   const owned = CARDS.filter((c) => p.cards[c.id]).length;
   const grid = CARDS.map((c) => {
     const n = p.cards[c.id] || 0;
-    return n ? `<button class="tcg ${c.rarity}" data-a="sheet" data-v="card:${c.id}"><div class="art">${c.emoji}</div><b>${c.name}</b><small>${RARITY[c.rarity].name}${n > 1 ? ` · ×${n}` : ''}</small></button>`
-      : `<div class="tcg locked"><div class="art">❔</div><b>???</b><small>${SUBJECTS[c.subject].name}</small></div>`;
+    return n ? `<button class="tcg ${c.rarity}" data-a="sheet" data-v="card:${c.id}"><div class="art" data-a="squish">${squishy(c)}</div><b>${c.name}</b><small>${RARITY[c.rarity].name}${n > 1 ? ` · ×${n}` : ''}</small></button>`
+      : `<div class="tcg locked"><div class="art">${squishy(c)}</div><b>???</b><small>${SUBJECTS[c.subject].name}</small></div>`;
   }).join('');
   return `<main><h1>Sammlung</h1><p class="muted">${owned} von ${CARDS.length} Lernwesen gefunden</p><div class="grid">${grid}</div></main>`;
 }
@@ -130,7 +120,7 @@ function viewLesson() {
 function viewResult() {
   const R = ui.result, c = R.card;
   const reveal = c ? (R.opened
-    ? `<div class="tcg big ${c.rarity} pop"><div class="art">${c.emoji}</div><b>${c.name}</b><small>${RARITY[c.rarity].name}</small><p>${esc(c.text)}</p></div>`
+    ? `<div class="tcg big ${c.rarity} pop"><div class="art" data-a="squish">${squishy(c)}</div><b>${c.name}</b><small>${RARITY[c.rarity].name}</small><p>${esc(c.text)}</p></div>`
     : `<button class="pack" data-a="open">🎁<span>Karten-Pack öffnen</span></button>`) : '<p class="muted">Für ein Karten-Pack brauchst du mindestens 60 % richtig. Probier es gleich nochmal!</p>';
   return `<main class="center"><h1>${R.boss ? (R.won ? '👑 Boss besiegt!' : 'Fast geschafft!') : R.perfect ? '🌟 Perfekt!' : 'Geschafft!'}</h1>
     <p class="big-num">${R.correct} / ${R.total} <span class="muted">sofort richtig</span></p>
@@ -142,8 +132,7 @@ function sheet(p) {
   if (!ui.sheet) return '';
   let body = '';
   if (ui.sheet === 'settings') {
-    body = `<h2>Einstellungen</h2><h3>Design</h3><div class="themes">${Object.entries(THEMES).map(([k, t]) => `<button class="card theme ${S.theme === k ? 'on' : ''}" data-a="theme" data-v="${k}"><span class="big-emoji">${t.emoji}</span><b>${t.name}</b><small>${t.blurb}</small></button>`).join('')}</div>
-      <h3>Klasse</h3><div class="seg">${GRADES.map((g) => `<button class="${p.grade === g ? 'on' : ''}" data-a="grade" data-v="${g}">Klasse ${g}</button>`).join('')}</div>
+    body = `<h2>Einstellungen</h2><h3>Klasse</h3><div class="seg">${GRADES.map((g) => `<button class="${p.grade === g ? 'on' : ''}" data-a="grade" data-v="${g}">Klasse ${g}</button>`).join('')}</div>
       <div class="row wrap"><button class="btn ghost" data-a="switch">Held wechseln</button><button class="btn ghost danger" data-a="reset">${ui.confirm === 'reset' ? 'Wirklich alles löschen?' : 'Alles zurücksetzen'}</button></div>`;
   } else if (ui.sheet === 'newproject') {
     body = `<h2>Neue Klassenarbeit</h2><form data-f="newproject"><label>Fach<select name="subject">${Object.entries(SUBJECTS).map(([k, s]) => `<option value="${k}" ${k === ui.subject ? 'selected' : ''}>${s.name}</option>`).join('')}</select></label>
@@ -152,7 +141,7 @@ function sheet(p) {
       <button class="btn" type="submit">Anlegen</button></form>`;
   } else if (ui.sheet.startsWith('card:')) {
     const c = CARDS.find((x) => x.id === ui.sheet.slice(5));
-    body = `<div class="tcg big ${c.rarity}"><div class="art">${c.emoji}</div><b>${c.name}</b><small>${RARITY[c.rarity].name} · ${SUBJECTS[c.subject].name}</small><p>${esc(c.text)}</p></div>`;
+    body = `<div class="tcg big ${c.rarity}"><div class="art" data-a="squish">${squishy(c)}</div><b>${c.name}</b><small>${RARITY[c.rarity].name} · ${SUBJECTS[c.subject].name}</small><p>${esc(c.text)}</p></div>`;
   }
   return `<div class="scrim" data-a="closesheet"><section class="sheet" data-stop><button class="x close" data-a="closesheet" aria-label="Schließen">✕</button>${body}</section></div>`;
 }
@@ -232,7 +221,6 @@ document.addEventListener('click', (e) => {
     case 'pick': S.active = v; break;
     case 'sheet': ui.sheet = v; ui.confirm = null; break;
     case 'closesheet': ui.sheet = null; ui.confirm = null; break;
-    case 'theme': S.theme = v; applyTheme(); break;
     case 'grade': p.grade = Number(v); break;
     case 'switch': S.active = null; ui.sheet = null; break;
     case 'reset': if (ui.confirm === 'reset') { S = { ...S, active: null, profiles: [] }; ui.sheet = null; ui.confirm = null; } else ui.confirm = 'reset'; break;
@@ -245,6 +233,7 @@ document.addEventListener('click', (e) => {
     case 'next': return next();
     case 'quit': ui.lesson = null; break;
     case 'open': ui.result.opened = true; break;
+    case 'squish': { t.classList.remove('squish'); void t.offsetWidth; t.classList.add('squish'); return; }
     case 'done': ui.result = null; break;
   }
   commit();
@@ -270,9 +259,6 @@ document.addEventListener('submit', (e) => {
 });
 
 // ------------------------------------------------------------ Start
-const qTheme = new URLSearchParams(location.search).get('theme'); // ?theme=wald zum Testen
-if (qTheme && THEMES[qTheme]) S.theme = qTheme;
-applyTheme();
 render();
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   navigator.serviceWorker.register('./sw.js').catch(() => { /* z. B. Vorschau-Sandbox */ });

@@ -5,8 +5,9 @@ PWA-Gerüst, 3 Themes, Lernpfad je Fach/Klasse, Lektionen (Mathe generiert, Deut
 Karten-Packs, Sammlung, Ligen, Klassenarbeits-Projekte inkl. Boss, lokale Profile, Offline-Cache, Pages-Deploy.
 
 ## Phase 1 – Spielgefühl & Design (nächste Aufgabe)
-- [ ] Design-Entscheidung treffen, Rest aufräumen oder als Auswahl lassen
-- [ ] Echte Illustrationen statt Emoji für Karten (SVG, eigene Figuren; 15 → 40 Karten)
+- [x] Design: Kosmos gewählt; Karten sind jetzt Squishys (SVG, prozedural)
+- [ ] Squishys ausbauen: 15 → 40+, mehr Formen (Onigiri, Brötchen, Knetmännchen), Accessoires, Glitzer-Version bei Doppelten, Sammelalbum mit Seiten
+- [ ] Squishy-Zuhause: Lieblings-Squishy als Begleiter auf dem Lernpfad, füttern/streicheln
 - [ ] Animationen/Sounds (Web Audio, abschaltbar), Konfetti bei Boss
 - [ ] Antwort-Typen erweitern: Zahleneingabe (Ziffernblock), Lückentext, Buchstaben legen, Zuordnen
 - [ ] iPad-Feinschliff: Querformat-Layout, Safe Areas, Splash-Screens
@@ -24,7 +25,7 @@ Karten-Packs, Sammlung, Ligen, Klassenarbeits-Projekte inkl. Boss, lokale Profil
 - [ ] Optionale Online-Rangliste/Freunde (nur wenn nötig; braucht Backend → Kosten/Datenschutz vorher klären)
 
 ## Offene Fragen an den Auftraggeber
-1. Welches Design (cosmos / wald / arena)?
+1. ✅ Design: Kosmos
 2. ✅ Bundesland: NRW, Grundschule Füchtorf (48336). Noch offen: Englisch ab welcher Klasse, Schrift, Lehrwerke der Schule
 3. Nur ein Kind/Gerät oder mehrere Profile (aktuell mehrere lokal möglich)?
 4. Wie soll das Repo heißen / soll es öffentlich oder privat sein (Pages privat braucht bezahlten Plan)?

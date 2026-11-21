@@ -17,21 +17,24 @@ export const RARITY = {
 };
 
 export const CARDS = [
-  { id: 'zahlenkaefer',  name: 'Zahlenkäfer',      emoji: '🐞', subject: 'mathe',    rarity: 'common',    text: 'Zählt alles. Auch dich.' },
-  { id: 'rechenigel',    name: 'Rechenigel',       emoji: '🦔', subject: 'mathe',    rarity: 'common',    text: 'Stachelt dich zum Rechnen an.' },
-  { id: 'plussaurier',   name: 'Plus-Saurier',     emoji: '🦖', subject: 'mathe',    rarity: 'rare',      text: 'Frisst Minusaufgaben zum Frühstück.' },
-  { id: 'nullgeist',     name: 'Nullgeist',        emoji: '👻', subject: 'mathe',    rarity: 'epic',      text: 'Macht alles zu Null – nur nicht dich.' },
-  { id: 'kronendrache',  name: 'Kronendrache',     emoji: '🐲', subject: 'mathe',    rarity: 'legendary', text: 'Hüter der Mathe-Arbeit.' },
-  { id: 'buchstabenmaus', name: 'Buchstabenmaus',  emoji: '🐭', subject: 'deutsch',  rarity: 'common',    text: 'Knabbert an langen Wörtern.' },
-  { id: 'reimeule',      name: 'Reimeule',         emoji: '🦉', subject: 'deutsch',  rarity: 'common',    text: 'Reimt sich alles zurecht.' },
-  { id: 'silbenfrosch',  name: 'Silbenfrosch',     emoji: '🐸', subject: 'deutsch',  rarity: 'rare',      text: 'Hüpft von Silbe zu Silbe.' },
-  { id: 'satzdelfin',    name: 'Satzdelfin',       emoji: '🐬', subject: 'deutsch',  rarity: 'epic',      text: 'Springt über jeden Satzbau.' },
-  { id: 'maerchenhorn',  name: 'Märchenhorn',      emoji: '🦄', subject: 'deutsch',  rarity: 'legendary', text: 'Hüter der Deutsch-Arbeit.' },
-  { id: 'wortfuchs',     name: 'Wortfuchs',        emoji: '🦊', subject: 'englisch', rarity: 'common',    text: 'Schlau wie ein Fuchs, auf Englisch.' },
-  { id: 'wortpapagei',   name: 'Wortpapagei',      emoji: '🦜', subject: 'englisch', rarity: 'common',    text: 'Spricht nach – und versteht auch.' },
-  { id: 'englischloewe', name: 'Englisch-Löwe',    emoji: '🦁', subject: 'englisch', rarity: 'rare',      text: 'Brüllt „Hello!“ in den Dschungel.' },
-  { id: 'brueckenadler', name: 'Brückenadler',     emoji: '🦅', subject: 'englisch', rarity: 'epic',      text: 'Fliegt zwischen den Sprachen.' },
-  { id: 'weltenfalke',   name: 'Weltenfalke',      emoji: '🦚', subject: 'englisch', rarity: 'legendary', text: 'Hüter der Englisch-Arbeit.' },
+  // Mathe
+  { id: 'rechenknoedel',  name: 'Rechenknödel',    shape: 'dumpling', color: 'cream',   face: 'happy',  acc: 'none',   subject: 'mathe',    rarity: 'common',    text: 'Zählt jede Falte nach. Dreimal.' },
+  { id: 'butterklops',    name: 'Butterklops Bruno', shape: 'butter',  color: 'butter',  face: 'sleepy', acc: 'none',   subject: 'mathe',    rarity: 'common',    text: 'Schmilzt bei schwierigen Aufgaben – und rechnet trotzdem weiter.' },
+  { id: 'pluspudding',    name: 'Plus-Pudding',    shape: 'pudding',  color: 'caramel', face: 'cat',    acc: 'bow',    subject: 'mathe',    rarity: 'rare',      text: 'Wackelt vor Freude bei jedem Plus.' },
+  { id: 'nullmochi',      name: 'Null-Mochi',      shape: 'mochi',    color: 'lilac',   face: 'wow',    acc: 'halo',   subject: 'mathe',    rarity: 'epic',      text: 'Aus Nichts wird bei ihm ganz viel.' },
+  { id: 'kronenbao',      name: 'Kronen-Bao',      shape: 'bao',      color: 'sky',     face: 'happy',  acc: 'crown',  subject: 'mathe',    rarity: 'legendary', text: 'Hüter der Mathe-Arbeit.' },
+  // Deutsch
+  { id: 'silbendumpling', name: 'Silben-Dumpling', shape: 'dumpling', color: 'mint',    face: 'cat',    acc: 'sprout', subject: 'deutsch',  rarity: 'common',    text: 'Hüpft von Silbe zu Silbe.' },
+  { id: 'buchstabenbutter', name: 'Buchstaben-Butter', shape: 'butter', color: 'peach', face: 'happy',  acc: 'none',   subject: 'deutsch',  rarity: 'common',    text: 'Streicht sich auf jedes Wort.' },
+  { id: 'reimbao',        name: 'Reim-Bao',        shape: 'bao',      color: 'pink',    face: 'cat',    acc: 'bow',    subject: 'deutsch',  rarity: 'rare',      text: 'Haus – Maus – Klaus! Reimt sich alles zurecht.' },
+  { id: 'satzmochi',      name: 'Satz-Mochi',      shape: 'mochi',    color: 'mint',    face: 'wow',    acc: 'sprout', subject: 'deutsch',  rarity: 'epic',      text: 'Dehnt jeden Satz bis er passt.' },
+  { id: 'maerchenpudding', name: 'Märchen-Pudding', shape: 'pudding', color: 'lilac',   face: 'sleepy', acc: 'crown',  subject: 'deutsch',  rarity: 'legendary', text: 'Hüter der Deutsch-Arbeit.' },
+  // Englisch
+  { id: 'wortmochi',      name: 'Wort-Mochi',      shape: 'mochi',    color: 'sky',     face: 'happy',  acc: 'none',   subject: 'englisch', rarity: 'common',    text: 'Sagt „Hello!“ zu jedem.' },
+  { id: 'helloknoedel',   name: 'Hello-Knödel',    shape: 'dumpling', color: 'peach',   face: 'wow',    acc: 'none',   subject: 'englisch', rarity: 'common',    text: 'Gut gefüllt mit Vokabeln.' },
+  { id: 'loewenbutter',   name: 'Löwen-Butter',    shape: 'butter',   color: 'caramel', face: 'cat',    acc: 'bow',    subject: 'englisch', rarity: 'rare',      text: 'Brüllt leise, aber mit Akzent.' },
+  { id: 'brueckenbao',    name: 'Brücken-Bao',     shape: 'bao',      color: 'mint',    face: 'sleepy', acc: 'halo',   subject: 'englisch', rarity: 'epic',      text: 'Baut Brücken zwischen den Sprachen.' },
+  { id: 'weltendumpling', name: 'Welten-Dumpling', shape: 'dumpling', color: 'pink',    face: 'happy',  acc: 'crown',  subject: 'englisch', rarity: 'legendary', text: 'Hüter der Englisch-Arbeit.' },
 ];
 
 // ---- Ligen (lokal, nach Gesamt-Fachpunkten) ----

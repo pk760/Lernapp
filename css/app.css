@@ -1,21 +1,9 @@
-/* Drei Design-Themes über CSS-Variablen. Umschalten: <html data-theme="cosmos|wald|arena"> */
-:root, [data-theme="cosmos"] {
+/* Design „Kosmos“ (gewählt). Farben über CSS-Variablen. */
+:root {
   --bg: #14163a; --surface: #202459; --surface2: #2b3070; --ink: #f4f3ff; --muted: #a9acd9;
   --primary: #ffb347; --primary-ink: #3a2200; --accent: #7c83ff; --good: #4fd18b; --bad: #ff6b81;
   --line: transparent; --lw: 0px; --radius: 22px; --shadow: 0 6px 0 rgba(0,0,0,.35);
   --bg-img: radial-gradient(circle at 15% 10%, rgba(124,131,255,.25), transparent 40%), radial-gradient(circle at 90% 80%, rgba(255,179,71,.15), transparent 40%);
-}
-[data-theme="wald"] {
-  --bg: #f6efdd; --surface: #fffaf0; --surface2: #efe4c8; --ink: #2f3b2a; --muted: #7b816c;
-  --primary: #3f8f5a; --primary-ink: #ffffff; --accent: #e0883a; --good: #3f8f5a; --bad: #c8553d;
-  --line: #d9cba8; --lw: 2px; --radius: 20px; --shadow: 0 4px 0 #d9cba8;
-  --bg-img: none;
-}
-[data-theme="arena"] {
-  --bg: #e9f3ff; --surface: #ffffff; --surface2: #dbe9ff; --ink: #14213d; --muted: #52618a;
-  --primary: #2f6bff; --primary-ink: #ffffff; --accent: #ff5d8f; --good: #1fa971; --bad: #e5384f;
-  --line: #14213d; --lw: 3px; --radius: 14px; --shadow: 4px 4px 0 #14213d;
-  --bg-img: none;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -92,7 +80,7 @@ button:disabled { opacity: .45; cursor: default; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
 .tcg { --rc: #9aa3b8; display: grid; justify-items: center; gap: 2px; padding: 12px 8px; border-radius: var(--radius); background: var(--surface); border: calc(var(--lw) + 3px) solid var(--rc); box-shadow: var(--shadow); text-align: center; color: var(--ink); }
 .tcg.common { --rc: #9aa3b8; } .tcg.rare { --rc: #4aa3ff; } .tcg.epic { --rc: #b16bff; } .tcg.legendary { --rc: #ffc531; background: linear-gradient(135deg, var(--surface), color-mix(in srgb, #ffc531 30%, var(--surface))); }
-.tcg .art { font-size: 56px; background: color-mix(in srgb, var(--rc) 22%, var(--surface2)); border-radius: 16px; width: 100%; padding: 10px 0; }
+.tcg .art { font-size: 56px; cursor: pointer; background: color-mix(in srgb, var(--rc) 22%, var(--surface2)); border-radius: 16px; width: 100%; padding: 10px 0; }
 .tcg.locked { opacity: .5; filter: grayscale(1); }
 .tcg.big { width: min(300px, 80vw); margin: 10px auto; padding: 18px; } .tcg.big .art { font-size: 110px; }
 .tcg.pop { animation: pop .6s cubic-bezier(.2,1.4,.4,1); }
@@ -103,8 +91,15 @@ button:disabled { opacity: .45; cursor: default; }
 /* Sheet */
 .scrim { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: grid; align-items: end; z-index: 20; }
 .sheet { position: relative; background: var(--bg); border-radius: 28px 28px 0 0; padding: 22px 18px calc(24px + env(safe-area-inset-bottom)); max-width: 760px; width: 100%; margin: 0 auto; max-height: 90dvh; overflow: auto; border: var(--lw) solid var(--line); }
-.themes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.theme { display: grid; gap: 2px; justify-items: center; text-align: center; margin: 0; padding: 12px 6px; }
-.theme.on { outline: 4px solid var(--primary); } .big-emoji { font-size: 38px; }
 
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* Squishy */
+.squishy { width: 100%; height: auto; display: block; overflow: visible; transform-origin: 50% 90%; }
+.tcg .art { padding: 14px 10px 6px; } .tcg.big .art { padding: 20px 20px 10px; }
+.squish .squishy { animation: squish .55s cubic-bezier(.3,1.6,.5,1); }
+@keyframes squish { 0% { transform: scale(1,1); } 25% { transform: scale(1.18,.7); } 55% { transform: scale(.9,1.14); } 80% { transform: scale(1.05,.96); } 100% { transform: scale(1,1); } }
+.tcg.locked .squishy { filter: brightness(0) opacity(.25); }
+.tcg.locked .art { cursor: default; }
+.tcg.pop .squishy { animation: wobble 2.4s ease-in-out .6s infinite; }
+@keyframes wobble { 50% { transform: scale(1.04,.96); } }
