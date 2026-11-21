@@ -37,6 +37,9 @@ export function save(state) {
   try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* ignorieren */ }
 }
 
+// Erlaubte Spotify-Links (Web-Link oder Kurzlink aus „Teilen“)
+export const isSpotifyUrl = (u) => /^https:\/\/(open\.spotify\.com|spotify\.link)\//.test(String(u || ''));
+
 // ---- Backup: Export/Import als Datei (kein Server) ----
 export const BACKUP_APP = 'lernhelden-backup';
 
@@ -53,7 +56,7 @@ export function parseBackup(text) {
   const ok = s.profiles.every((p) => p && typeof p.id === 'string' && typeof p.name === 'string' && Number.isInteger(p.grade) && p.grade >= 1 && p.grade <= 4
     && p.cards && typeof p.cards === 'object' && p.progress && typeof p.progress === 'object' && Array.isArray(p.projects));
   if (!ok) throw new Error('Die Datei ist beschädigt.');
-  const spotify = typeof s.spotify === 'string' && /^https:\/\/open\.spotify\.com\//.test(s.spotify) ? s.spotify : '';
+  const spotify = isSpotifyUrl(s.spotify) ? s.spotify : '';
   const active = s.profiles.some((p) => p.id === s.active) ? s.active : null;
   return { ...s, spotify, active };
 }

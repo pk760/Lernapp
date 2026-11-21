@@ -26,3 +26,13 @@ test('Backup: unsichere Spotify-Links und unbekannte aktive ID werden bereinigt'
   const r = parseBackup(exportJson(s));
   assert.equal(r.spotify, ''); assert.equal(r.active, null);
 });
+
+import { isSpotifyUrl } from '../js/store.js';
+test('Spotify-Link: nur echte Spotify-Adressen', () => {
+  assert.ok(isSpotifyUrl('https://open.spotify.com/playlist/37i9dQZF1DX?si=abc'));
+  assert.ok(isSpotifyUrl('https://spotify.link/xYz123'));
+  assert.ok(!isSpotifyUrl('http://open.spotify.com/x'));
+  assert.ok(!isSpotifyUrl('https://evil.example/open.spotify.com/'));
+  assert.ok(!isSpotifyUrl('javascript:alert(1)'));
+  assert.ok(!isSpotifyUrl(''));
+});

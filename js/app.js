@@ -2,7 +2,7 @@ import { SUBJECTS, GRADES, CARDS, RARITY, VILLAINS, IMAGE_IDS, ligaFor, buildQue
 import { heroSvg, SUITS, EMBLEMS, SKINS } from './hero.js';
 import { STORY, DAILY_BRIEFING, ECHO_HIT, ECHO_CRIT, ECHO_MISS } from './story.js';
 import { sfx, sfxState } from './sfx.js';
-import { load, save, newProfile, today, yesterday, weekKey, daysUntil, exportJson, parseBackup } from './store.js';
+import { load, save, newProfile, today, yesterday, weekKey, daysUntil, exportJson, parseBackup, isSpotifyUrl } from './store.js';
 
 const PATH_NODES = 8;
 const SESSIONS_FOR_BOSS = 3;
@@ -101,7 +101,7 @@ function viewLearn(p) {
     const face = st === 'done' ? '✓' : st === 'now' ? (fin ? '👑' : '▶') : '🔒';
     return `<div class="node-wrap" style="transform:translateX(${offs[i % 8]}px)"><button class="node ${st} ${fin ? 'finale' : ''}" ${st === 'lock' ? 'disabled' : ''} data-a="lesson" data-i="${i}" aria-label="Kapitel ${i + 1}: ${esc(story.chapters[i].t)}">${face}</button>${st === 'now' ? `<span class="bubble">Kapitel ${i + 1}</span>` : ''}</div>`;
   }).join('');
-  const music = /^https:\/\/open\.spotify\.com\//.test(S.spotify || '') ? `<a class="chip music" href="${esc(S.spotify)}" target="_blank" rel="noopener">🎧 Mission-Soundtrack</a>` : '';
+  const music = isSpotifyUrl(S.spotify) ? `<a class="chip music" href="${esc(S.spotify)}" target="_blank" rel="noopener">🎧 Mission-Soundtrack abspielen</a>` : `<button class="chip music setup" data-a="sheet" data-v="settings">🎧 Lieblingsmusik einrichten</button>`;
   const daily = p.daily !== today()
     ? `<button class="notruf" data-a="daily"><span class="siren">🚨</span><span><b>ECHO-Notruf</b><small>Tages-Mission · doppelte Beute · garantiert ein seltener Held</small></span></button>`
     : '<p class="muted center-t">🚨 Tages-Notruf erledigt – morgen kommt der nächste!</p>';
@@ -306,8 +306,8 @@ function sheet(p) {
     body = `<h2>Einstellungen</h2><h3>Klasse</h3><div class="seg">${GRADES.map((g) => `<button class="${p.grade === g ? 'on' : ''}" data-a="grade" data-v="${g}">Klasse ${g}</button>`).join('')}</div>
       <h3>Heldenfoto</h3><label><input type="file" data-photo accept="image/*"></label>${p.photo ? '<button class="btn ghost" data-a="nophoto">Foto entfernen</button>' : ''}
       <h3>Sound</h3><div class="seg"><button class="${S.mute ? '' : 'on'}" data-a="mute">${S.mute ? '🔇 Aus' : '🔊 An'}</button></div>
-      <h3>Mission-Soundtrack</h3><form data-f="spotify"><label>Spotify-Link (Playlist oder Künstler)<input name="url" inputmode="url" placeholder="https://open.spotify.com/…" value="${esc(S.spotify || '')}"></label><button class="btn" type="submit">Speichern</button></form>
-      <p class="muted">Der Link öffnet Spotify in der Spotify-App. Leer lassen = kein Soundtrack-Knopf.</p>
+      <h3>Mission-Soundtrack</h3><form data-f="spotify"><label>Spotify-Link (Playlist oder Künstler)<input name="url" inputmode="url" placeholder="https://open.spotify.com/…" value="${esc(S.spotify || '')}"></label><button class="btn" type="submit">Speichern</button></form>${ui.smsg ? `<p class="muted" role="alert">${esc(ui.smsg)}</p>` : ''}
+      <p class="muted">So geht's: In Spotify die Playlist oder den Künstler öffnen → „⋯“ → Teilen → Link kopieren, hier einfügen. Auf dem Startbildschirm erscheint dann ein Knopf, der Spotify öffnet und die Musik spielt. Dann einfach zurück zur App wechseln – die Musik läuft weiter.</p>
       <h3>Sicherung</h3><p class="muted">Speichert alle Helden und Fortschritte (auch Fotos) in einer Datei. Safari kann Website-Daten löschen – sichere ab und zu!</p>
       <div class="row wrap"><button class="btn" data-a="export">💾 Sichern</button><label class="btn ghost">📂 Wiederherstellen<input type="file" data-import accept=".json,application/json" hidden></label></div>${ui.msg ? `<p class="muted" role="status">${esc(ui.msg)}</p>` : ''}
       <div class="row wrap"><button class="btn ghost" data-a="switch">Held wechseln</button><button class="btn ghost danger" data-a="reset">${ui.confirm === 'reset' ? 'Wirklich alles löschen?' : 'Alles zurücksetzen'}</button></div>`;
@@ -463,7 +463,7 @@ document.addEventListener('click', (e) => {
     case 'cancelhero': ui.newHero = false; break;
     case 'sceneback': ui.scene = null; break;
     case 'sheet': ui.sheet = v; ui.confirm = null; break;
-    case 'closesheet': ui.sheet = null; ui.confirm = null; ui.msg = null; break;
+    case 'closesheet': ui.sheet = null; ui.confirm = null; ui.msg = null; ui.smsg = null; break;
     case 'grade': p.grade = Number(v); break;
     case 'letter': ui.letter = { to: letterNames(p)[0], topic: 'help', text: '', checked: false }; break;
     case 'lquit': ui.letter = null; break;
@@ -596,8 +596,8 @@ document.addEventListener('submit', async (e) => {
     ui.sheet = null; ui.route = 'projects';
   } else if (f.dataset.f === 'spotify') {
     const url = String(d.get('url')).trim();
-    S.spotify = /^https:\/\/open\.spotify\.com\//.test(url) ? url : '';
-    ui.sheet = null;
+    if (url && !isSpotifyUrl(url)) { ui.smsg = 'Das ist kein Spotify-Link. Er beginnt mit https://open.spotify.com/'; return render(); }
+    S.spotify = url; ui.sheet = null; ui.smsg = null;
   }
   commit();
 });
