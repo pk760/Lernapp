@@ -36,3 +36,24 @@ export function load() {
 export function save(state) {
   try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* ignorieren */ }
 }
+
+// ---- Backup: Export/Import als Datei (kein Server) ----
+export const BACKUP_APP = 'lernhelden-backup';
+
+export function exportJson(state) {
+  return JSON.stringify({ app: BACKUP_APP, exported: new Date().toISOString(), state }, null, 1);
+}
+
+// Prüft eine Backup-Datei streng; gibt den bereinigten Zustand zurück oder wirft Error mit verständlicher Meldung.
+export function parseBackup(text) {
+  let o;
+  try { o = JSON.parse(text); } catch (e) { throw new Error('Das ist keine Backup-Datei.'); }
+  const s = o && o.app === BACKUP_APP ? o.state : null;
+  if (!s || s.v !== 1 || !Array.isArray(s.profiles)) throw new Error('Das ist keine Lernhelden-Backup-Datei.');
+  const ok = s.profiles.every((p) => p && typeof p.id === 'string' && typeof p.name === 'string' && Number.isInteger(p.grade) && p.grade >= 1 && p.grade <= 4
+    && p.cards && typeof p.cards === 'object' && p.progress && typeof p.progress === 'object' && Array.isArray(p.projects));
+  if (!ok) throw new Error('Die Datei ist beschädigt.');
+  const spotify = typeof s.spotify === 'string' && /^https:\/\/open\.spotify\.com\//.test(s.spotify) ? s.spotify : '';
+  const active = s.profiles.some((p) => p.id === s.active) ? s.active : null;
+  return { ...s, spotify, active };
+}

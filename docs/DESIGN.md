@@ -13,3 +13,6 @@ Zielgruppe: Junge, fast 9, mag Marvel-Filme/Superhelden, nutzt ChatGPT per Sprac
 
 ## Ideen
 Heldenkraft je Fach (Mathe-Power, Sprach-Power als Werte am eigenen Helden), Kostüm-Upgrades für FP, Wochen-Event („Boss der Woche“), Duell-Modus gegen Papa/Freund auf einem Gerät, KI-Sidekick (siehe Roadmap), Sprach-Antworten.
+
+## Design v2 (cinematic)
+Kantige Panels mit gekappten Ecken (clip-path), Hairline in Gold, Energie-Cyan als zweite Akzentfarbe (passt zu ECHO und den Heldenbildern), Überschriften in Condensed-Systemschrift (Avenir Next Condensed / DIN Condensed auf iPad), Antworten mit Hex-Buchstaben A–D, Lernpfad mit Energieleitung. Effekte: Blitz + Funken beim Treffer, Schockwelle + Beben beim Crit, Glitch bei Fehler, Glanz-Sweep auf Buttons/Karten, Konfetti bei Sieg. Alles nur CSS/SVG, `prefers-reduced-motion` schaltet Effekte ab.

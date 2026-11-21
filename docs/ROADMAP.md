@@ -8,13 +8,14 @@ Karten-Packs, Sammlung, Ligen, Klassenarbeits-Projekte inkl. Boss, lokale Profil
 - [x] Design: Hero Academy (Superhelden-Look) statt Kosmos/Squishys, siehe docs/DESIGN.md
 - [x] 24 Helden, eigener Held mit Rang, Sidekick, Boss-Missionen mit Lebensleiste, Vorlesen, Spotify-Link
 - [x] Realistische Helden-Bilder: alle 24 Helden + 3 Bosse als WebP eingebaut (1024×1280, aus ChatGPT-Collagen hochskaliert; für Druck/Detail einzeln neu generieren)
-- [ ] **Rechtlich prüfen/ersetzen:** Helden mit spitzen „Fledermaus-Ohren“ (minusninja, wortwaechter, wordwarrior, nullpunkt, maerchenmeister, lingolord) wirken wie Batman → mit neuem Prompt (Kamm statt Ohren, siehe docs/HELDEN-PROMPTS.md) neu erzeugen, bevor die Seite öffentlich wird; ggf. auch tintenfalke (blau/rot/Stern) prüfen
+- [~] **Rechtlich:** Fledermaus-Ohren bei minusninja, wortwaechter, wordwarrior per Bildbearbeitung entfernt (runde Helme). Neu erzeugen vor Veröffentlichung: nullpunkt, lingolord (Batman-nah), tintenfalke (≈ Captain America) – neue Prompts stehen in docs/CHATGPT-PROMPTS.md und docs/HELDEN-PROMPTS.md
 - [ ] Helden ausbauen: 40+, Kostüm-Upgrades, Heldenkraft je Fach als Werte, Foil/Animation beim Öffnen der Kiste, Sound-Effekte
 - [ ] KI-Sidekick (optional): Erklärungen/Tipps per Sprache. Braucht API → Kosten & Datenschutz (Kind!) vorher klären; erst Eltern-Entscheidung
 - [x] Story-Kampagne (js/story.js), Kampf-Arena, Combo/Superkraft/Blitz-Aufgabe, ECHO-Notruf, Sounds (abschaltbar), Brief-Mission, Heldenfoto lokal
-- [ ] Konfetti/Foil-Animation beim Boss-Sieg, Story-Vorlesen verfeinern, Kapitel-Illustrationen
+- [x] Figuren animiert (Atmen, Aura, Treffer-/Crit-Reaktionen, 3D-Tilt der Karten); Konfetti beim Sieg ✅
+- [x] Kisten-Show (Strahlen, Schockwelle, Seltenheits-Banner, Karten-Flip), Comic-Einblendungen (BAM!), Story-Vorlesen verfeinern, Kapitel-Illustrationen
 - [x] Zahleneingabe per Ziffernblock (Mathe, ca. 50 % der Aufgaben)
-- [ ] Weitere Antwort-Typen: Lückentext, Buchstaben legen, Zuordnen, Uhrzeit stellen
+- [ ] Weitere Antwort-Typen: Buchstaben legen, Zuordnen, Uhrzeit stellen (Zifferblatt-Aufgabe mit Auswahl ✅, Lückentext als Auswahl vorhanden)
 - [ ] iPad-Feinschliff: Querformat-Layout, Safe Areas, Splash-Screens
 
 ## Phase 2 – Inhalte
@@ -26,7 +27,7 @@ Karten-Packs, Sammlung, Ligen, Klassenarbeits-Projekte inkl. Boss, lokale Profil
 - [ ] Wissens-Review durch Eltern/Lehrkraft (Korrektheit!)
 
 ## Phase 3 – Komfort
-- [ ] Export/Import des Fortschritts als Datei (Backup ohne Server)
+- [x] Export/Import des Fortschritts als Datei (Einstellungen → Sicherung)
 - [ ] Elternbereich (PIN): Fortschritt je Fach, Schwächen, Klassenarbeiten verwalten
 - [ ] Optionale Online-Rangliste/Freunde (nur wenn nötig; braucht Backend → Kosten/Datenschutz vorher klären)
 

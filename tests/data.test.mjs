@@ -36,6 +36,7 @@ test('Mathe-Aufgaben sind korrekt gerechnet (inkl. Punkt vor Strich, Klammern, R
   let pvs = 0, rest = 0;
   for (let r = 0; r < 400; r++) for (const g of GRADES) {
     for (const q of buildQuestions('mathe', g)) {
+      if (q.clock) { assert.equal(new Set(q.options).size, 4); continue; }
       if (q.chkRest) {
         const [a, d] = q.chkRest; rest++;
         assert.equal(q.c, `${Math.floor(a / d)} Rest ${a % d}`, q.q);
@@ -100,4 +101,19 @@ test('Story: 3 Akten mit je 8 Kapiteln, jedes mit Briefing und Nachbesprechung',
     assert.ok(akte.chapters[7].t.startsWith('Das Duell'));
   }
   assert.ok(DAILY_BRIEFING.length >= 2);
+});
+
+import { clockQuestion, fmtTime } from '../js/data.js';
+test('Uhrzeit-Aufgaben: richtige Antwort passt zum Zifferblatt, Optionen eindeutig', () => {
+  for (const g of [1, 2, 3, 4]) {
+    for (let i = 0; i < 300; i++) {
+      const q = clockQuestion(g), [h, m] = q.clock;
+      assert.equal(q.c, fmtTime(g, h, m));
+      assert.equal(q.w.length, 3);
+      assert.equal(new Set([q.c, ...q.w]).size, 4, `Klasse ${g}: ${[q.c, ...q.w]}`);
+    }
+  }
+  assert.equal(fmtTime(1, 3, 30), 'halb 4');
+  assert.equal(fmtTime(2, 12, 45), 'Viertel vor 1');
+  assert.equal(fmtTime(3, 7, 5), '7:05 Uhr');
 });

@@ -1,5 +1,7 @@
 # ChatGPT-Anleitung für die Helden-Bilder
 
+> **Vor der Veröffentlichung neu erzeugen (Ähnlichkeit zu bekannten Figuren): `nullpunkt`, `lingolord`, `tintenfalke`.** Ihre Zeilen unten sind bereits neu geschrieben (anderer Anzug, andere Kopfform, andere Farben). Danach Datei ersetzen und sw.js VERSION erhöhen.
+
 **Wichtig:** Alles in EINEM Chat machen, damit der Stil gleich bleibt. Reihenfolge: erst Schritt 1, dann die Helden einzeln (je ein Bild), dann die Bosse.
 Wenn der Stil abdriftet: „Gleicher Stil und Bildausschnitt wie das erste Bild.“ Wenn ein Held einer Filmfigur ähnelt: „Mach ihn eigenständiger, weniger wie [Figur].“
 
@@ -36,13 +38,13 @@ agentbabel: Superhero "Agent Babel" – violet with gold accents suit, flowing d
 ```
 quadrattitan: Superhero "Quadrat-Titan" – gold with dark steel accents suit, flowing dark cape, a hexagon emblem on the chest, a full helmet with narrow glowing white visor slits, fair skin. advanced armored suit with energy glow details.
 
-nullpunkt: Superhero "Nullpunkt" – teal with dark steel accents suit, flowing dark cape, a glowing ring emblem on the chest, a sleek hooded helmet with a swept-back crest and narrow glowing eyes (NO pointed bat-like ears), lower face visible, strong jaw, tan skin. advanced armored suit with energy glow details.
+nullpunkt: Superhero "Nullpunkt" – a calm, precise mathematician-hero. Brushed WHITE-SILVER armor with glowing teal energy lines (NOT black, NOT dark), a large glowing teal ring-shaped emblem on the chest (a stylised zero), smooth rounded helmet dome in white with one wide curved teal visor, absolutely no ears, horns, cowl or hood, no cape. Asymmetric armor: one large rounded shoulder plate, the other shoulder bare with a teal wristband. Tan skin, lower face visible, clean-shaven, friendly confident half-smile. Advanced armored suit with energy glow details.
 
 grammatiktitan: Superhero "Grammatik-Titan" – violet with gold accents suit, flowing dark cape, a hexagon emblem on the chest, a full helmet with narrow glowing white visor slits, fair skin. advanced armored suit with energy glow details.
 
-maerchenmeister: Superhero "Märchenmeister" – gold with dark steel accents suit, flowing dark cape, a flame emblem on the chest, a sleek hooded helmet with a swept-back crest and narrow glowing eyes (NO pointed bat-like ears), lower face visible, strong jaw, brown skin. advanced armored suit with energy glow details.
+maerchenmeister: Superhero "Märchenmeister" – gold with dark steel accents suit, flowing dark cape, a flame emblem on the chest, a smooth, fully ROUND helmet dome with a wide glowing visor band across the eyes (absolutely NO pointed ears, horns or bat-like shapes, no cowl or hood), lower face visible, strong jaw, brown skin. advanced armored suit with energy glow details.
 
-lingolord: Superhero "Lingo-Lord" – matte black with cyan glowing accents suit, flowing dark cape, a hexagon emblem on the chest, a sleek hooded helmet with a swept-back crest and narrow glowing eyes (NO pointed bat-like ears), lower face visible, strong jaw, fair skin. advanced armored suit with energy glow details.
+lingolord: Superhero "Lingo-Lord" – a noble, worldly language-master. Deep ROYAL NAVY-BLUE and gold ornate armor like a modern knight-diplomat, high stand-up collar, gold epaulettes with small globe motifs, a hexagon emblem of interlocking gold letters on the chest, NO mask and NO helmet: bare head with short styled light-brown hair and a thin golden circlet, short neat beard, warm intelligent eyes with a faint golden glow, short navy cape with gold trim. Fair skin. Epic armor, soft golden light, dark background.
 
 globeglider: Superhero "Globe-Glider" – teal with dark steel accents suit, flowing dark cape, a glowing ring emblem on the chest, a helmet with a glowing visor band, lower face visible, tan skin. advanced armored suit with energy glow details.
 ```
@@ -55,7 +57,7 @@ multimax: Superhero "Multi-Max" – burnt orange with navy accents suit, flowing
 
 reimreiter: Superhero "Reimreiter" – burnt orange with navy accents suit, flowing dark cape, a flame emblem on the chest, an angular eye mask and short dark hair, lower face visible, strong jaw, tan skin. upgraded suit with extra armor plates.
 
-tintenfalke: Superhero "Tintenfalke" – electric blue with red accents suit, flowing dark cape, a star emblem on the chest, a full helmet with narrow glowing white visor slits, dark brown skin. upgraded suit with extra armor plates.
+tintenfalke: Superhero "Tintenfalke" – a fast, stylish writer-hero with a falcon theme. INDIGO and INK-BLACK suit with silver ink-splash patterns and bronze trim (NO red, NO white stripes, NO star, NO round shield), a golden quill-feather emblem on the chest, feather-shaped layered shoulder pauldrons, a sleek helmet with a swept-back feather crest and a curved falcon-beak-style nose guard, glowing amber eyes, wings-like short cape. Dark brown skin, lower face visible. Upgraded suit with extra armor plates.
 
 grammarguard: Superhero "Grammar-Guard" – violet with gold accents suit, flowing dark cape, a shield emblem on the chest, a full helmet with narrow glowing white visor slits, fair skin. upgraded suit with extra armor plates.
 
@@ -66,19 +68,19 @@ speakspark: Superhero "Speak-Spark" – burnt orange with navy accents suit, flo
 ```
 zahlenblitz: Superhero "Zahlenblitz" – electric blue with red accents suit, flowing dark cape, a lightning bolt emblem on the chest, an angular eye mask and short dark hair, lower face visible, strong jaw, fair skin. practical tactical suit.
 
-minusninja: Superhero "Minus-Ninja" – matte black with cyan glowing accents suit, no cape, a star emblem on the chest, a sleek hooded helmet with a swept-back crest and narrow glowing eyes (NO pointed bat-like ears), lower face visible, strong jaw, brown skin. practical tactical suit.
+minusninja: Superhero "Minus-Ninja" – matte black with cyan glowing accents suit, no cape, a star emblem on the chest, a smooth, fully ROUND helmet dome with a wide glowing visor band across the eyes (absolutely NO pointed ears, horns or bat-like shapes, no cowl or hood), lower face visible, strong jaw, brown skin. practical tactical suit.
 
 plusphantom: Superhero "Plus-Phantom" – violet with gold accents suit, flowing dark cape, a glowing ring emblem on the chest, a helmet with a glowing visor band, lower face visible, light skin. practical tactical suit.
 
 silbensturm: Superhero "Silben-Sturm" – teal with dark steel accents suit, flowing dark cape, a lightning bolt emblem on the chest, an angular eye mask and short dark hair, lower face visible, strong jaw, light skin. practical tactical suit.
 
-wortwaechter: Superhero "Wortwächter" – emerald green with black accents suit, flowing dark cape, a shield emblem on the chest, a sleek hooded helmet with a swept-back crest and narrow glowing eyes (NO pointed bat-like ears), lower face visible, strong jaw, brown skin. practical tactical suit.
+wortwaechter: Superhero "Wortwächter" – emerald green with black accents suit, flowing dark cape, a shield emblem on the chest, a smooth, fully ROUND helmet dome with a wide glowing visor band across the eyes (absolutely NO pointed ears, horns or bat-like shapes, no cowl or hood), lower face visible, strong jaw, brown skin. practical tactical suit.
 
 satzschatten: Superhero "Satz-Schatten" – matte black with cyan glowing accents suit, no cape, a glowing ring emblem on the chest, a helmet with a glowing visor band, lower face visible, fair skin. practical tactical suit.
 
 hellohawk: Superhero "Hello-Hawk" – electric blue with red accents suit, flowing dark cape, a lightning bolt emblem on the chest, an angular eye mask and short dark hair, lower face visible, strong jaw, light skin. practical tactical suit.
 
-wordwarrior: Superhero "Word-Warrior" – crimson red with gold accents suit, no cape, a flame emblem on the chest, a sleek hooded helmet with a swept-back crest and narrow glowing eyes (NO pointed bat-like ears), lower face visible, strong jaw, tan skin. practical tactical suit.
+wordwarrior: Superhero "Word-Warrior" – crimson red with gold accents suit, no cape, a flame emblem on the chest, a smooth, fully ROUND helmet dome with a wide glowing visor band across the eyes (absolutely NO pointed ears, horns or bat-like shapes, no cowl or hood), lower face visible, strong jaw, tan skin. practical tactical suit.
 
 captainvocab: Superhero "Captain Vocab" – emerald green with black accents suit, flowing dark cape, a star emblem on the chest, a helmet with a glowing visor band, lower face visible, dark brown skin. practical tactical suit.
 ```

@@ -2,7 +2,7 @@ import { SUBJECTS, GRADES, CARDS, RARITY, VILLAINS, IMAGE_IDS, ligaFor, buildQue
 import { heroSvg, SUITS, EMBLEMS, SKINS } from './hero.js';
 import { STORY, DAILY_BRIEFING, ECHO_HIT, ECHO_CRIT, ECHO_MISS } from './story.js';
 import { sfx, sfxState } from './sfx.js';
-import { load, save, newProfile, today, yesterday, weekKey, daysUntil } from './store.js';
+import { load, save, newProfile, today, yesterday, weekKey, daysUntil, exportJson, parseBackup } from './store.js';
 
 const PATH_NODES = 8;
 const SESSIONS_FOR_BOSS = 3;
@@ -223,11 +223,22 @@ function numpad(L) {
     <div class="keypad">${keys}<button class="key" ${dis} data-a="key" data-v="del" aria-label="Löschen">⌫</button><button class="key" ${dis} data-a="key" data-v="0">0</button><button class="key go" ${L.input ? dis : 'disabled'} data-a="check" aria-label="Prüfen">✓</button></div>`;
 }
 
+function clockSvg([h, m]) {
+  const pt = (deg, r) => `${(60 + r * Math.sin(deg * Math.PI / 180)).toFixed(1)},${(60 - r * Math.cos(deg * Math.PI / 180)).toFixed(1)}`;
+  const ticks = Array.from({ length: 12 }, (_, i) => `<text x="${pt(i * 30 + 30, 43).split(',')[0]}" y="${(Number(pt(i * 30 + 30, 43).split(',')[1]) + 4).toFixed(1)}" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">${i + 1}</text>`).join('');
+  return `<svg class="clock" viewBox="0 0 120 120" role="img" aria-label="Uhr"><circle cx="60" cy="60" r="56" fill="none" stroke="var(--gold, #f5c542)" stroke-width="4"/>${ticks}
+    <line x1="60" y1="60" x2="${pt((h % 12) * 30 + m * 0.5, 26).split(',')[0]}" y2="${pt((h % 12) * 30 + m * 0.5, 26).split(',')[1]}" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+    <line x1="60" y1="60" x2="${pt(m * 6, 38).split(',')[0]}" y2="${pt(m * 6, 38).split(',')[1]}" stroke="var(--gold, #f5c542)" stroke-width="3" stroke-linecap="round"/><circle cx="60" cy="60" r="3.5" fill="currentColor"/></svg>`;
+}
+
 function viewLesson(p) {
   const L = ui.lesson, q = L.queue[L.i];
   const v = VILLAINS[L.villain];
   const hp = Math.max(0, 100 - Math.round((L.hits / L.total) * 100));
   const fx = L.answered ? (L.ok ? (L.crit ? 'hit crit' : 'hit') : 'miss') : '';
+  const BOLT = '<svg class="bolt" viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true"><polyline points="0,58 52,40 78,62 126,28 152,58 204,22 232,50 300,36"/></svg>';
+  const sparks = Array.from({ length: L.crit ? 14 : 8 }, (_, i) => `<i style="--a:${i * (360 / (L.crit ? 14 : 8)) + 7}deg;--d:${34 + (i * 13) % 30}px"></i>`).join('');
+  const strike = L.answered && L.ok ? `<div class="strike ${L.crit ? 'big' : ''}" aria-hidden="true">${BOLT}<div class="sparks">${sparks}</div>${L.crit ? '<div class="ring"></div>' : ''}<b class="pow ${L.crit ? 'big' : ''}">${(L.crit ? ['BAM!', 'KRACH!', 'ZAP!', 'BOOM!'] : ['TREFFER!', 'ZACK!', 'WUMM!'])[L.i % (L.crit ? 4 : 3)]}</b></div>` : '';
   const dmg = L.answered && L.ok ? `<span class="dmg">−${Math.ceil(100 / L.total)}${L.crit ? ' !' : ''}</span>` : '';
   const pips = [0, 1, 2].map((i) => `<i class="${L.power > i ? 'on' : ''}"></i>`).join('');
   const combo = L.combo >= 2 ? `<span class="combo">COMBO ×${L.combo}</span>` : '';
@@ -235,7 +246,7 @@ function viewLesson(p) {
     const gone = L.removed.includes(i);
     let cls = gone ? 'gone' : '';
     if (L.answered) cls = o === q.c ? 'right' : i === L.picked ? 'wrong' : 'dim';
-    return `<button class="opt ${cls}" ${L.answered || gone ? 'disabled' : ''} data-a="answer" data-i="${i}">${esc(o)}</button>`;
+    return `<button class="opt ${cls}" ${L.answered || gone ? 'disabled' : ''} data-a="answer" data-i="${i}"><b class="ltr">${'ABCD'[i]}</b><span>${esc(o)}</span></button>`;
   }).join('');
   let blitz = '';
   if (L.blitzAt && !L.answered) {
@@ -252,21 +263,34 @@ function viewLesson(p) {
       <div class="fighter me" data-a="squish">${myHero(p)}</div>
       <div class="mid"><small>${tag}</small>${combo}<div class="pips" title="Superkraft-Leiste">${pips}</div></div>
       <div class="fighter foe">${foePic(v, 'foe-fig')}${dmg}<div class="hpbox"><small>${esc(v.name)}</small><div class="bar hp"><i style="width:${hp}%"></i></div></div></div>
-    </div>${blitz}
+      ${strike}</div>${blitz}
     <div class="row between qrow"><h2 class="q">${esc(q.q)}</h2><button class="speak" data-a="speak" aria-label="Vorlesen">🔊</button></div>
+    ${q.clock ? `<div class="clockbox">${clockSvg(q.clock)}</div>` : ''}
     ${L.hintText ? `<p class="center-t hint">${esc(L.hintText)}</p>` : q.hint && !L.answered ? `<p class="muted center-t">Tipp: ${esc(q.hint)}</p>` : ''}${power}
     ${q.num ? numpad(L) : `<div class="opts">${opts}</div>`}${fb}${L.answered && L.crit ? '<div class="flash"></div>' : ''}</main>`;
 }
 
+const crateSvg = () => `<div class="crate"><i class="beam"></i><svg viewBox="0 0 200 190" aria-hidden="true">
+  <defs><linearGradient id="cm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a3560"/><stop offset="1" stop-color="#10162e"/></linearGradient><linearGradient id="cg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b8841a"/><stop offset=".5" stop-color="#ffe066"/><stop offset="1" stop-color="#b8841a"/></linearGradient></defs>
+  <ellipse cx="100" cy="176" rx="78" ry="9" fill="rgba(0,0,0,.45)"/>
+  <g class="cbody"><polygon points="32,86 168,86 160,172 40,172" fill="url(#cm)" stroke="url(#cg)" stroke-width="3"/>
+    <rect class="seam" x="32" y="84" width="136" height="5" fill="currentColor"/>
+    <polygon points="104,100 86,132 99,132 94,160 116,122 102,122" fill="url(#cg)"/>
+    <rect x="40" y="96" width="8" height="70" fill="url(#cg)" opacity=".5"/><rect x="152" y="96" width="8" height="70" fill="url(#cg)" opacity=".5"/></g>
+  <g class="lid"><polygon points="24,60 176,60 168,88 32,88" fill="url(#cm)" stroke="url(#cg)" stroke-width="3"/><rect x="92" y="60" width="16" height="28" fill="url(#cg)"/><polygon points="24,60 176,60 168,68 32,68" fill="rgba(255,255,255,.12)"/></g>
+</svg></div>`;
+
 function viewResult() {
   const R = ui.result, c = R.card;
   const reveal = c ? (R.opened
-    ? `<div class="tcg big ${c.rarity} pop"><div class="art">${cardArt(c)}</div><b>${c.name}</b><small>${RARITY[c.rarity].name} · ${SUBJECTS[c.subject].name}</small><p>${esc(c.text)}</p></div>`
-    : `<button class="pack" data-a="open">📦<span>Helden-Kiste öffnen</span></button>`) : (R.letter ? '<p class="muted">Beute gibt es nur für den ersten Brief am Tag. Die Antwort kommt gleich!</p>' : '<p class="muted">Für eine Helden-Kiste brauchst du mindestens 60 % sofort richtig. Nochmal – du schaffst das!</p>');
+    ? `<div class="reveal-fx ${c.rarity}" aria-hidden="true"><i class="rays"></i><i class="shock"></i><i class="shock s2"></i></div><div class="rarity-banner ${c.rarity}">${c.rarity === 'common' ? 'NEUER HELD!' : RARITY[c.rarity].name.toUpperCase() + '!'}</div>
+      <div class="tcg big ${c.rarity} pop flipin"><div class="art">${cardArt(c)}</div><b>${c.name}</b><small>${RARITY[c.rarity].name} · ${SUBJECTS[c.subject].name}</small><p>${esc(c.text)}</p></div>`
+    : `<button class="crate-btn ${c.rarity} ${R.opening ? 'opening' : ''}" data-a="open" ${R.opening ? 'disabled' : ''}>${crateSvg()}<span>${R.opening ? 'Öffnet sich …' : 'Helden-Kiste öffnen'}</span></button>`) : (R.letter ? '<p class="muted">Beute gibt es nur für den ersten Brief am Tag. Die Antwort kommt gleich!</p>' : '<p class="muted">Für eine Helden-Kiste brauchst du mindestens 60 % sofort richtig. Nochmal – du schaffst das!</p>');
   const v = VILLAINS[R.villain];
   const bossPic = R.boss && v.img ? `<img class="boss-big ${R.won ? 'beaten' : ''}" src="${v.img}" alt="${esc(v.name)}" draggable="false">` : '';
   const extras = [R.maxCombo >= 3 ? `🔥 Combo ×${R.maxCombo}` : '', R.blitzWins ? `⚡ ${R.blitzWins}× Blitz-Treffer` : '', R.daily ? '🚨 Notruf-Bonus' : ''].filter(Boolean).map((x) => `<span class="chip">${x}</span>`).join('');
-  return `<main class="center">${bossPic}<h1>${R.letter ? (R.perfect ? 'Meisterbrief zugestellt!' : 'Brief zugestellt!') : R.boss ? (R.won ? `${v.name} besiegt!` : 'Fast besiegt!') : R.perfect ? 'Perfekte Mission!' : 'Mission erledigt!'}</h1>
+  const conf = (R.won || R.perfect) ? `<div class="confetti" aria-hidden="true">${Array.from({ length: 28 }, (_, i) => `<i style="--x:${(i * 37) % 100}%;--dl:${(i % 9) * 0.12}s;--c:${['#ffc531', '#e23b3b', '#18c6d6', '#fff'][i % 4]}"></i>`).join('')}</div>` : '';
+  return `<main class="center">${conf}${bossPic}<h1>${R.letter ? (R.perfect ? 'Meisterbrief zugestellt!' : 'Brief zugestellt!') : R.boss ? (R.won ? `${v.name} besiegt!` : 'Fast besiegt!') : R.perfect ? 'Perfekte Mission!' : 'Mission erledigt!'}</h1>
     <p class="big-num">${R.correct} / ${R.total} <span class="muted">${R.letter ? 'Brief-Check' : 'sofort richtig'}</span></p>
     <p class="chip">⚡ +${R.fp} Fachpunkte</p><div class="row wrap">${extras}</div>${reveal}
     <button class="btn" data-a="done" ${c && !R.opened ? 'disabled' : ''}>Weiter</button></main>`;
@@ -281,6 +305,8 @@ function sheet(p) {
       <h3>Sound</h3><div class="seg"><button class="${S.mute ? '' : 'on'}" data-a="mute">${S.mute ? '🔇 Aus' : '🔊 An'}</button></div>
       <h3>Mission-Soundtrack</h3><form data-f="spotify"><label>Spotify-Link (Playlist oder Künstler)<input name="url" inputmode="url" placeholder="https://open.spotify.com/…" value="${esc(S.spotify || '')}"></label><button class="btn" type="submit">Speichern</button></form>
       <p class="muted">Der Link öffnet Spotify in der Spotify-App. Leer lassen = kein Soundtrack-Knopf.</p>
+      <h3>Sicherung</h3><p class="muted">Speichert alle Helden und Fortschritte (auch Fotos) in einer Datei. Safari kann Website-Daten löschen – sichere ab und zu!</p>
+      <div class="row wrap"><button class="btn" data-a="export">💾 Sichern</button><label class="btn ghost">📂 Wiederherstellen<input type="file" data-import accept=".json,application/json" hidden></label></div>${ui.msg ? `<p class="muted" role="status">${esc(ui.msg)}</p>` : ''}
       <div class="row wrap"><button class="btn ghost" data-a="switch">Held wechseln</button><button class="btn ghost danger" data-a="reset">${ui.confirm === 'reset' ? 'Wirklich alles löschen?' : 'Alles zurücksetzen'}</button></div>`;
   } else if (ui.sheet === 'letters') {
     body = `<h2>📬 Briefmappe</h2>${(p.letters || []).slice().reverse().map((l) => `<article class="card mail"><small class="muted">${esc(l.date.split('-').reverse().join('.'))} · an ${esc(l.to)}</small><pre>${esc(l.text)}</pre><div class="reply"><b>Antwort:</b> ${esc(l.reply)}</div></article>`).join('') || '<p class="muted">Noch keine Briefe.</p>'}`;
@@ -431,7 +457,7 @@ document.addEventListener('click', (e) => {
     case 'subject': ui.subject = v; break;
     case 'pick': S.active = v; break;
     case 'sheet': ui.sheet = v; ui.confirm = null; break;
-    case 'closesheet': ui.sheet = null; ui.confirm = null; break;
+    case 'closesheet': ui.sheet = null; ui.confirm = null; ui.msg = null; break;
     case 'grade': p.grade = Number(v); break;
     case 'letter': ui.letter = { to: letterNames(p)[0], topic: 'help', text: '', checked: false }; break;
     case 'lquit': ui.letter = null; break;
@@ -460,6 +486,7 @@ document.addEventListener('click', (e) => {
         story: { title: `Antwort von ${Lt.to}`, lines: [`ECHO: Eilmeldung! Dein Brief an ${Lt.to} wurde zugestellt.`, `${Lt.to}: „{name}, danke für deinen Brief! ${tp.reply}“`, 'ECHO: Die Antwort liegt in deiner Briefmappe.'] } };
       ui.letter = null; sfx.win(); break;
     }
+    case 'export': return doExport();
     case 'nophoto': delete p.photo; break;
     case 'mute': S.mute = !S.mute; sfxState.muted = S.mute; sfx.tap(); break;
     case 'switch': S.active = null; ui.sheet = null; break;
@@ -484,7 +511,14 @@ document.addEventListener('click', (e) => {
     case 'sidekick': p.sidekick = id; ui.sheet = null; break;
     case 'next': return next();
     case 'quit': ui.lesson = null; break;
-    case 'open': ui.result.opened = true; sfx.open(); break;
+    case 'open': {
+      const R = ui.result;
+      if (R.opening) return;
+      R.opening = true; sfx.shake();
+      setTimeout(() => { if (ui.result === R) sfx.lid(); }, 1100);
+      setTimeout(() => { if (ui.result === R) { R.opened = true; sfx.reveal(R.card.rarity); render(); } }, 1700);
+      break;
+    }
     case 'done': {
       const s = ui.result.story, subj = ui.result.subject;
       ui.result = null;
@@ -508,7 +542,28 @@ document.addEventListener('input', (e) => {
   if (e.target.matches('[data-letter]') && ui.letter) { ui.letter.text = e.target.value; ui.letter.checked = false; }
 });
 
+async function doExport() {
+  const name = `lernhelden-${today()}.json`;
+  const file = new File([exportJson(S)], name, { type: 'application/json' });
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: name }); ui.msg = 'Gesichert!'; return render(); }
+  } catch (e) { if (e.name === 'AbortError') return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+  ui.msg = 'Datei gesichert (Ordner „Downloads“).'; render();
+}
+
 document.addEventListener('change', async (e) => {
+  if (e.target.matches('[data-import]')) {
+    const f = e.target.files[0]; e.target.value = '';
+    if (!f) return;
+    try {
+      const ns = parseBackup(await f.text());
+      if (!confirm(`Backup mit ${ns.profiles.length} Held(en) laden? Der aktuelle Stand auf diesem Gerät wird ersetzt.`)) return;
+      S = ns; sfxState.muted = !!S.mute; ui.msg = 'Wiederhergestellt!';
+    } catch (err) { ui.msg = err.message; }
+    return commit();
+  }
   if (!e.target.matches('[data-photo]')) return;
   const ph = await readPhoto(e.target.files[0]);
   if (ph) { P().photo = ph; commit(); }
@@ -540,6 +595,23 @@ document.addEventListener('submit', async (e) => {
   }
   commit();
 });
+
+// Karten-Tilt: folgt dem Finger/der Maus (nur Optik, kein Zustand)
+let tiltEl = null;
+function tilt(e, end) {
+  const c = e.target.closest && e.target.closest('.tcg:not(.locked)');
+  if (end || !c) { if (tiltEl) { tiltEl.classList.remove('tilting'); tiltEl.style.removeProperty('--rx'); tiltEl.style.removeProperty('--ry'); tiltEl = null; } if (!c || end) return; }
+  if (tiltEl && tiltEl !== c) { tiltEl.classList.remove('tilting'); tiltEl.style.removeProperty('--rx'); tiltEl.style.removeProperty('--ry'); }
+  tiltEl = c; const r = c.getBoundingClientRect();
+  const x = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)), y = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
+  c.classList.add('tilting');
+  c.style.setProperty('--ry', `${((x - 0.5) * 22).toFixed(1)}deg`); c.style.setProperty('--rx', `${((0.5 - y) * 22).toFixed(1)}deg`);
+  c.style.setProperty('--gx', `${(x * 100).toFixed(0)}%`); c.style.setProperty('--gy', `${(y * 100).toFixed(0)}%`);
+}
+document.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse' || e.buttons || e.pointerType === 'touch') tilt(e); });
+document.addEventListener('pointerup', (e) => tilt(e, true));
+document.addEventListener('pointercancel', (e) => tilt(e, true));
+document.addEventListener('pointerleave', (e) => tilt(e, true), true);
 
 // ------------------------------------------------------------ Start
 render();
