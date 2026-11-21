@@ -27,7 +27,8 @@ manifest.webmanifest  PWA-Manifest
 sw.js                 Service Worker (cache-first App-Shell). Bei Dateiänderung VERSION erhöhen!
 css/app.css           Design „Hero Academy“ über CSS-Variablen
 js/data.js            Reine Logik/Inhalte: Fächer, Karten, Ligen, Fragen (statisch + Mathe-Generator), rollCard()
-js/hero.js            SVG-Generator für Helden (eigener Held + Sammelkarten)
+js/hero.js            SVG-Generator für Helden (eigener Held + Fallback für Karten); echte Bilder: assets/heroes/<id>.webp via IMAGE_IDS in data.js
+scripts/make-prompts.mjs  erzeugt docs/HELDEN-PROMPTS.md (Bild-Prompts je Held)
 js/store.js           localStorage, Profile, Datums-Helfer
 js/app.js             UI: Rendering per Template-Strings, Event-Delegation (data-a / data-f), Lektionen-Ablauf
 tests/*.test.mjs      Node-Tests für data.js (npm test)

@@ -46,6 +46,10 @@ export const CARDS = [
   { id: 'agentbabel', name: 'Agent Babel', suit: 'lila', emblem: 'star', mask: 'full', cape: true, skin: '#f1c9a5', subject: 'englisch', rarity: 'legendary', text: 'Hüter der Englisch-Arbeit.' },
 ];
 
+// Helden, für die ein echtes Bild unter assets/heroes/<id>.webp liegt (siehe docs/HELDEN-BILDER.md).
+// Alle anderen werden als SVG aus js/hero.js gezeichnet. Nach dem Ablegen eines Bildes die ID hier eintragen.
+export const IMAGE_IDS = [];
+
 // ---- Ränge (lokal, nach Gesamt-Fachpunkten) ----
 export const LIGEN = [
   { name: 'Rekrut',  min: 0,    emoji: '🎖️' },

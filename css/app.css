@@ -109,7 +109,7 @@ h1, h2 { font-weight: 900; font-style: italic; } h1 { font-size: 32px; }
 .btn { font-weight: 900; font-style: italic; border-bottom-width: 4px; }
 .hero { width: 100%; height: auto; display: block; overflow: visible; transform-origin: 50% 90%; }
 .avatar { background: var(--surface2); overflow: hidden; border: 2px solid var(--accent); }
-.avatar svg { width: 130%; margin: 6px 0 0 -15%; }
+.avatar svg { width: 175%; margin: 1px 0 0 -37%; }
 .tcg .art { padding: 14px 10px 0; overflow: hidden; border-radius: 10px; } .tcg.big .art { padding: 20px 20px 0; }
 .tcg { clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px)); border-radius: 0; }
 .tcg.epic, .tcg.legendary { background-image: linear-gradient(135deg, transparent 40%, rgba(255,255,255,.09) 50%, transparent 60%); background-size: 250% 250%; animation: foil 4s linear infinite; }
@@ -137,3 +137,6 @@ h1, h2 { font-weight: 900; font-style: italic; } h1 { font-size: 32px; }
 .speak { font-size: 28px; padding: 14px 4px 0 0; }
 .center-t { text-align: center; }
 .bubble { white-space: nowrap; top: -40px; }
+
+.hero-img { width: 100%; height: auto; display: block; border-radius: 8px; aspect-ratio: 4 / 5; object-fit: cover; }
+.tcg.locked .hero-img { filter: brightness(0) opacity(.22); }

@@ -1,4 +1,4 @@
-import { SUBJECTS, GRADES, CARDS, RARITY, VILLAINS, ligaFor, buildQuestions, rollCard } from './data.js';
+import { SUBJECTS, GRADES, CARDS, RARITY, VILLAINS, IMAGE_IDS, ligaFor, buildQuestions, rollCard } from './data.js';
 import { heroSvg, SUITS, EMBLEMS, SKINS } from './hero.js';
 import { load, save, newProfile, today, yesterday, weekKey, daysUntil } from './store.js';
 
@@ -13,6 +13,8 @@ const $app = document.getElementById('app');
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const P = () => S.profiles.find((p) => p.id === S.active) || null;
 const commit = () => { save(S); render(); };
+// Echtes Bild, falls vorhanden – sonst SVG-Held
+const cardArt = (c) => (IMAGE_IDS.includes(c.id) ? `<img class="hero-img" src="assets/heroes/${esc(c.id)}.webp" alt="${esc(c.name)}" draggable="false">` : heroSvg(c));
 const heroOf = (p) => p.hero || { suit: 'rot', emblem: 'bolt', mask: 'domino', cape: true, skin: SKINS[1] };
 const myHero = (p) => heroSvg({ ...heroOf(p), rarity: 'common' });
 
@@ -59,7 +61,7 @@ function heroBlock(p) {
   const l = ligaFor(p.fp);
   return `<section class="hero-row"><div class="hero-me" data-a="squish">${myHero(p)}</div>
     <div class="hero-info"><b>${esc(p.name)}</b><span class="muted">${l.cur.emoji} ${l.cur.name}</span><div class="say">${SAYS[(p.fp + p.streak) % SAYS.length]}</div></div>
-    ${side ? `<div class="hero-side" data-a="squish" title="Sidekick: ${esc(side.name)}">${heroSvg(side)}</div>` : ''}</section>`;
+    ${side ? `<div class="hero-side" data-a="squish" title="Sidekick: ${esc(side.name)}">${cardArt(side)}</div>` : ''}</section>`;
 }
 
 function viewLearn(p) {
@@ -102,8 +104,8 @@ function viewCollection(p) {
   const owned = CARDS.filter((c) => p.cards[c.id]).length;
   const grid = CARDS.map((c) => {
     const n = p.cards[c.id] || 0;
-    return n ? `<button class="tcg ${c.rarity}" data-a="sheet" data-v="card:${c.id}"><div class="art">${heroSvg(c)}</div><b>${c.name}</b><small>${RARITY[c.rarity].name}${n > 1 ? ` · ×${n}` : ''}</small></button>`
-      : `<div class="tcg locked"><div class="art">${heroSvg(c)}</div><b>???</b><small>${SUBJECTS[c.subject].name}</small></div>`;
+    return n ? `<button class="tcg ${c.rarity}" data-a="sheet" data-v="card:${c.id}"><div class="art">${cardArt(c)}</div><b>${c.name}</b><small>${RARITY[c.rarity].name}${n > 1 ? ` · ×${n}` : ''}</small></button>`
+      : `<div class="tcg locked"><div class="art">${cardArt(c)}</div><b>???</b><small>${SUBJECTS[c.subject].name}</small></div>`;
   }).join('');
   return `<main><h1>Helden-Archiv</h1><p class="muted">${owned} von ${CARDS.length} Helden rekrutiert</p><div class="grid">${grid}</div></main>`;
 }
@@ -149,7 +151,7 @@ function viewLesson() {
 function viewResult() {
   const R = ui.result, c = R.card;
   const reveal = c ? (R.opened
-    ? `<div class="tcg big ${c.rarity} pop"><div class="art">${heroSvg(c)}</div><b>${c.name}</b><small>${RARITY[c.rarity].name} · ${SUBJECTS[c.subject].name}</small><p>${esc(c.text)}</p></div>`
+    ? `<div class="tcg big ${c.rarity} pop"><div class="art">${cardArt(c)}</div><b>${c.name}</b><small>${RARITY[c.rarity].name} · ${SUBJECTS[c.subject].name}</small><p>${esc(c.text)}</p></div>`
     : `<button class="pack" data-a="open">📦<span>Helden-Kiste öffnen</span></button>`) : '<p class="muted">Für eine Helden-Kiste brauchst du mindestens 60 % sofort richtig. Nochmal – du schaffst das!</p>';
   const v = VILLAINS[R.subject];
   return `<main class="center"><h1>${R.boss ? (R.won ? `${v.name} besiegt!` : 'Fast besiegt!') : R.perfect ? 'Perfekte Mission!' : 'Mission erledigt!'}</h1>
@@ -173,7 +175,7 @@ function sheet(p) {
       <button class="btn" type="submit">Anlegen</button></form>`;
   } else if (ui.sheet.startsWith('card:')) {
     const c = CARDS.find((x) => x.id === ui.sheet.slice(5));
-    body = `<div class="tcg big ${c.rarity}"><div class="art" data-a="squish">${heroSvg(c)}</div><b>${c.name}</b><small>${RARITY[c.rarity].name} · ${SUBJECTS[c.subject].name}</small><p>${esc(c.text)}</p></div>
+    body = `<div class="tcg big ${c.rarity}"><div class="art" data-a="squish">${cardArt(c)}</div><b>${c.name}</b><small>${RARITY[c.rarity].name} · ${SUBJECTS[c.subject].name}</small><p>${esc(c.text)}</p></div>
       ${p.cards[c.id] ? `<button class="btn wide" data-a="sidekick" data-id="${c.id}" ${p.sidekick === c.id ? 'disabled' : ''}>${p.sidekick === c.id ? '🤝 Ist dein Sidekick' : '🤝 Als Sidekick wählen'}</button>` : ''}`;
   }
   return `<div class="scrim" data-a="closesheet"><section class="sheet" data-stop><button class="x close" data-a="closesheet" aria-label="Schließen">✕</button>${body}</section></div>`;
