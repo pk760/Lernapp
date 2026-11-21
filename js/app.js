@@ -2,7 +2,7 @@ import { SUBJECTS, GRADES, CARDS, RARITY, VILLAINS, IMAGE_IDS, ligaFor, buildQue
 import { heroSvg, SUITS, EMBLEMS, SKINS } from './hero.js';
 import { STORY, DAILY_BRIEFING, ECHO_HIT, ECHO_CRIT, ECHO_MISS } from './story.js';
 import { sfx, sfxState } from './sfx.js';
-import { load, save, newProfile, today, yesterday, weekKey, daysUntil, exportJson, parseBackup } from './store.js';
+import { load, save, newProfile, today, yesterday, weekKey, daysUntil, exportJson, parseBackup, isSpotifyUrl } from './store.js';
 
 const PATH_NODES = 8;
 const SESSIONS_FOR_BOSS = 3;
@@ -66,15 +66,18 @@ function viewProfile() {
   const suits = Object.entries(SUITS).map(([k, [a, b]], i) => `<label class="swatch"><input type="radio" name="suit" value="${k}" ${i === 0 ? 'checked' : ''}><span style="background:linear-gradient(135deg,${a} 55%,${b} 55%)"></span></label>`).join('');
   const emblems = Object.entries(EMBLEMS).map(([k, e], i) => `<label class="swatch"><input type="radio" name="emblem" value="${k}" ${i === 0 ? 'checked' : ''}><span class="emb">${e}</span></label>`).join('');
   const skins = SKINS.map((c, i) => `<label class="swatch"><input type="radio" name="skin" value="${c}" ${i === 1 ? 'checked' : ''}><span style="background:${c}"></span></label>`).join('');
-  return `<main class="center"><h1>Hero Academy</h1><p class="muted">Wer meldet sich zum Dienst?</p>${list}
-    <form class="card" data-f="newprofile"><h2>Neuer Held</h2>
+  const prev = S.profiles.find((x) => x.id === ui.prev);
+  const back = prev ? `<button class="btn ghost back" data-a="pick" data-v="${prev.id}">← Zurück zu ${esc(prev.name)}</button>` : '';
+  const has = S.profiles.length > 0;
+  const form = has && !ui.newHero ? `<button class="btn wide" data-a="newhero">＋ Neuen Helden erschaffen</button>` : `<form class="card" data-f="newprofile"><h2>Neuer Held</h2>
       <input name="name" maxlength="16" placeholder="Heldenname" required autocomplete="off">
       <div class="seg">${GRADES.map((g, i) => `<label><input type="radio" name="grade" value="${g}" ${i === 0 ? 'checked' : ''}><span>Klasse ${g}</span></label>`).join('')}</div>
       <label>Eigenes Heldenfoto (optional, bleibt auf diesem Gerät)<input type="file" name="photo" accept="image/*"></label>
       <p class="muted">Anzug</p><div class="seg">${suits}</div>
       <p class="muted">Symbol</p><div class="seg">${emblems}</div>
       <p class="muted">Hautton</p><div class="seg">${skins}</div>
-      <button class="btn" type="submit">Held erschaffen</button></form></main>`;
+      <div class="row wrap"><button class="btn" type="submit">Held erschaffen</button>${has ? '<button class="btn ghost" type="button" data-a="cancelhero">Abbrechen</button>' : ''}</div></form>`;
+  return `<main class="center">${back}<h1>Hero Academy</h1><p class="muted">Wer meldet sich zum Dienst?</p>${list}${form}</main>`;
 }
 
 const SAYS = ['Bereit für die nächste Mission?', 'Heute zeigst du, was in dir steckt!', 'Die Welt braucht einen Helden. Los!', 'Training macht Helden stark.'];
@@ -98,7 +101,7 @@ function viewLearn(p) {
     const face = st === 'done' ? '✓' : st === 'now' ? (fin ? '👑' : '▶') : '🔒';
     return `<div class="node-wrap" style="transform:translateX(${offs[i % 8]}px)"><button class="node ${st} ${fin ? 'finale' : ''}" ${st === 'lock' ? 'disabled' : ''} data-a="lesson" data-i="${i}" aria-label="Kapitel ${i + 1}: ${esc(story.chapters[i].t)}">${face}</button>${st === 'now' ? `<span class="bubble">Kapitel ${i + 1}</span>` : ''}</div>`;
   }).join('');
-  const music = /^https:\/\/open\.spotify\.com\//.test(S.spotify || '') ? `<a class="chip music" href="${esc(S.spotify)}" target="_blank" rel="noopener">🎧 Mission-Soundtrack</a>` : '';
+  const music = isSpotifyUrl(S.spotify) ? `<a class="chip music" href="${esc(S.spotify)}" target="_blank" rel="noopener">🎧 Mission-Soundtrack abspielen</a>` : `<button class="chip music setup" data-a="sheet" data-v="settings">🎧 Lieblingsmusik einrichten</button>`;
   const daily = p.daily !== today()
     ? `<button class="notruf" data-a="daily"><span class="siren">🚨</span><span><b>ECHO-Notruf</b><small>Tages-Mission · doppelte Beute · garantiert ein seltener Held</small></span></button>`
     : '<p class="muted center-t">🚨 Tages-Notruf erledigt – morgen kommt der nächste!</p>';
@@ -189,7 +192,7 @@ function viewLetter(p) {
   const checks = letterChecks(Lt.text, p.name), n = checks.filter((c) => c.ok).length;
   const chips = (arr, a, cur) => arr.map(([v, l]) => `<button class="pill ${cur === v ? 'on' : ''}" data-a="${a}" data-v="${esc(v)}">${esc(l)}</button>`).join('');
   const list = Lt.checked ? `<ul class="checks">${checks.map((c) => `<li class="${c.ok ? 'ok' : 'no'}">${c.ok ? '✓' : '○'} ${esc(c.t)}${c.ok ? '' : `<small>${esc(c.tip)}</small>`}</li>`).join('')}</ul>` : '';
-  return `<main class="letter"><div class="row"><button class="x" data-a="lquit" aria-label="Beenden">✕</button><h2 class="grow">Funkspruch-Werkstatt</h2></div>
+  return `<main class="letter"><div class="row"><button class="x back-x" data-a="lquit" aria-label="Zurück">← Zurück</button><h2 class="grow">Funkspruch-Werkstatt</h2></div>
     <p class="muted">Schreibe einen Brief an einen Helden-Freund.</p>
     <div class="pills">${chips(Object.entries(TOPICS).map(([k, v]) => [k, v.t]), 'ltopic', Lt.topic)}</div>
     <div class="task">✉️ ${esc(tp.task)}</div>
@@ -209,7 +212,7 @@ function viewScene(p) {
   const lines = sc.lines.map((t, i) => `<p class="line" style="animation-delay:${i * 1.1}s">${fill(t, p)}</p>`).join('');
   const shadow = sc.kind === 'brief' && v.img ? `<div class="scene-foe ${sc.finale ? 'reveal' : 'shadow'}">${foePic(v, 'scene-foe-img')}</div>` : sc.kind === 'debrief' && v.img ? `<div class="scene-foe beaten">${foePic(v, 'scene-foe-img')}</div>` : '';
   const goText = sc.kind === 'debrief' ? 'Weiter' : sc.finale ? '⚔️ Zum Duell!' : '▶ Mission starten';
-  return `<main class="scene"><div class="scene-title">${esc(sc.title)}</div>${shadow}
+  return `<main class="scene"><button class="x scene-x" data-a="sceneback" aria-label="Zurück">← Zurück</button><div class="scene-title">${esc(sc.title)}</div>${shadow}
     <div class="echo-row"><div class="echo">${ECHO}</div><div class="bubbles">${lines}</div></div>
     <div class="row wrap scene-btns"><button class="btn" data-a="scenego">${goText}</button><button class="btn ghost" data-a="speaklines" aria-label="Vorlesen">🔊</button></div></main>`;
 }
@@ -258,7 +261,7 @@ function viewLesson(p) {
   const power = L.power >= 3 && !L.answered && !L.usedPower ? '<button class="power-btn" data-a="power">⚡ SUPERKRAFT AKTIVIEREN</button>' : '';
   const fb = L.answered ? `<div class="feedback ${L.ok ? 'ok' : 'bad'}"><b>${esc(L.echo)}</b>${L.ok ? '' : ` <span>Richtig ist: ${esc(q.c)}</span>`}<button class="btn" data-a="next">Weiter</button></div>` : '';
   const tag = L.boss ? (L.nodeIndex === PATH_NODES - 1 ? 'FINALE' : 'BOSS-MISSION') : L.daily ? 'ECHO-NOTRUF' : L.project ? 'TRAINING' : `KAPITEL ${L.nodeIndex + 1}`;
-  return `<main class="lesson"><div class="row"><button class="x" data-a="quit" aria-label="Beenden">✕</button><div class="bar grow"><i style="width:${Math.round((L.i / L.queue.length) * 100)}%"></i></div></div>
+  return `<main class="lesson"><div class="row"><button class="x back-x" data-a="quit" aria-label="Zurück zur Startseite">← Zurück</button><div class="bar grow"><i style="width:${Math.round((L.i / L.queue.length) * 100)}%"></i></div></div>
     <div class="arena ${fx}">
       <div class="fighter me" data-a="squish">${myHero(p)}</div>
       <div class="mid"><small>${tag}</small>${combo}<div class="pips" title="Superkraft-Leiste">${pips}</div></div>
@@ -293,7 +296,7 @@ function viewResult() {
   return `<main class="center">${conf}${bossPic}<h1>${R.letter ? (R.perfect ? 'Meisterbrief zugestellt!' : 'Brief zugestellt!') : R.boss ? (R.won ? `${v.name} besiegt!` : 'Fast besiegt!') : R.perfect ? 'Perfekte Mission!' : 'Mission erledigt!'}</h1>
     <p class="big-num">${R.correct} / ${R.total} <span class="muted">${R.letter ? 'Brief-Check' : 'sofort richtig'}</span></p>
     <p class="chip">⚡ +${R.fp} Fachpunkte</p><div class="row wrap">${extras}</div>${reveal}
-    <button class="btn" data-a="done" ${c && !R.opened ? 'disabled' : ''}>Weiter</button></main>`;
+    <div class="row wrap scene-btns"><button class="btn" data-a="done" ${c && !R.opened ? 'disabled' : ''}>Weiter</button><button class="btn ghost" data-a="resultback">← Zur Startseite</button></div></main>`;
 }
 
 function sheet(p) {
@@ -303,8 +306,8 @@ function sheet(p) {
     body = `<h2>Einstellungen</h2><h3>Klasse</h3><div class="seg">${GRADES.map((g) => `<button class="${p.grade === g ? 'on' : ''}" data-a="grade" data-v="${g}">Klasse ${g}</button>`).join('')}</div>
       <h3>Heldenfoto</h3><label><input type="file" data-photo accept="image/*"></label>${p.photo ? '<button class="btn ghost" data-a="nophoto">Foto entfernen</button>' : ''}
       <h3>Sound</h3><div class="seg"><button class="${S.mute ? '' : 'on'}" data-a="mute">${S.mute ? '🔇 Aus' : '🔊 An'}</button></div>
-      <h3>Mission-Soundtrack</h3><form data-f="spotify"><label>Spotify-Link (Playlist oder Künstler)<input name="url" inputmode="url" placeholder="https://open.spotify.com/…" value="${esc(S.spotify || '')}"></label><button class="btn" type="submit">Speichern</button></form>
-      <p class="muted">Der Link öffnet Spotify in der Spotify-App. Leer lassen = kein Soundtrack-Knopf.</p>
+      <h3>Mission-Soundtrack</h3><form data-f="spotify"><label>Spotify-Link (Playlist oder Künstler)<input name="url" inputmode="url" placeholder="https://open.spotify.com/…" value="${esc(S.spotify || '')}"></label><button class="btn" type="submit">Speichern</button></form>${ui.smsg ? `<p class="muted" role="alert">${esc(ui.smsg)}</p>` : ''}
+      <p class="muted">So geht's: In Spotify die Playlist oder den Künstler öffnen → „⋯“ → Teilen → Link kopieren, hier einfügen. Auf dem Startbildschirm erscheint dann ein Knopf, der Spotify öffnet und die Musik spielt. Dann einfach zurück zur App wechseln – die Musik läuft weiter.</p>
       <h3>Sicherung</h3><p class="muted">Speichert alle Helden und Fortschritte (auch Fotos) in einer Datei. Safari kann Website-Daten löschen – sichere ab und zu!</p>
       <div class="row wrap"><button class="btn" data-a="export">💾 Sichern</button><label class="btn ghost">📂 Wiederherstellen<input type="file" data-import accept=".json,application/json" hidden></label></div>${ui.msg ? `<p class="muted" role="status">${esc(ui.msg)}</p>` : ''}
       <div class="row wrap"><button class="btn ghost" data-a="switch">Held wechseln</button><button class="btn ghost danger" data-a="reset">${ui.confirm === 'reset' ? 'Wirklich alles löschen?' : 'Alles zurücksetzen'}</button></div>`;
@@ -323,6 +326,30 @@ function sheet(p) {
   return `<div class="scrim" data-a="closesheet"><section class="sheet" data-stop><button class="x close" data-a="closesheet" aria-label="Schließen">✕</button>${body}</section></div>`;
 }
 
+// Zurück-Wischgeste/Browser-Zurück: jede Unterseite bekommt einen Verlaufseintrag
+let hist = false, skipPop = false;
+const isInner = () => !!(ui.sheet || ui.lesson || ui.result || ui.scene || ui.letter || (!P() && S.profiles.length && ui.prev) || ui.newHero);
+function goBack() {
+  if (ui.sheet) { ui.sheet = null; ui.confirm = null; ui.msg = null; ui.smsg = null; }
+  else if (ui.lesson) ui.lesson = null;
+  else if (ui.result) ui.result = null;
+  else if (ui.scene) ui.scene = null;
+  else if (ui.letter) ui.letter = null;
+  else if (ui.newHero) ui.newHero = false;
+  else if (!P() && ui.prev) { S.active = ui.prev; ui.prev = null; }
+}
+function syncHistory() {
+  try {
+    const inner = isInner();
+    if (inner && !hist) { history.pushState({ i: 1 }, ''); hist = true; }
+    else if (!inner && hist) { hist = false; skipPop = true; history.back(); }
+  } catch (e) { /* Verlauf nicht verfügbar */ }
+}
+window.addEventListener('popstate', () => {
+  if (skipPop) { skipPop = false; return; }
+  if (hist) { hist = false; goBack(); save(S); render(); }
+});
+
 function render() {
   const p = P();
   let html;
@@ -337,6 +364,7 @@ function render() {
     html = header(p) + v(p) + tabs();
   }
   $app.innerHTML = html + (p ? sheet(p) : '');
+  syncHistory();
 }
 
 // ------------------------------------------------------------ Lektionen
@@ -455,9 +483,12 @@ document.addEventListener('click', (e) => {
   switch (a) {
     case 'go': ui.route = v; break;
     case 'subject': ui.subject = v; break;
-    case 'pick': S.active = v; break;
+    case 'pick': S.active = v; ui.prev = null; ui.newHero = false; break;
+    case 'newhero': ui.newHero = true; break;
+    case 'cancelhero': ui.newHero = false; break;
+    case 'sceneback': ui.scene = null; break;
     case 'sheet': ui.sheet = v; ui.confirm = null; break;
-    case 'closesheet': ui.sheet = null; ui.confirm = null; ui.msg = null; break;
+    case 'closesheet': ui.sheet = null; ui.confirm = null; ui.msg = null; ui.smsg = null; break;
     case 'grade': p.grade = Number(v); break;
     case 'letter': ui.letter = { to: letterNames(p)[0], topic: 'help', text: '', checked: false }; break;
     case 'lquit': ui.letter = null; break;
@@ -489,7 +520,7 @@ document.addEventListener('click', (e) => {
     case 'export': return doExport();
     case 'nophoto': delete p.photo; break;
     case 'mute': S.mute = !S.mute; sfxState.muted = S.mute; sfx.tap(); break;
-    case 'switch': S.active = null; ui.sheet = null; break;
+    case 'switch': ui.prev = S.active; S.active = null; ui.sheet = null; ui.newHero = false; break;
     case 'reset': if (ui.confirm === 'reset') { S = { ...S, active: null, profiles: [] }; ui.sheet = null; ui.confirm = null; } else ui.confirm = 'reset'; break;
     case 'lesson': {
       const i = Number(t.dataset.i), key = `${ui.subject}-${p.grade}`, ch = STORY[ui.subject].chapters[i], fin = i === PATH_NODES - 1;
@@ -511,6 +542,7 @@ document.addEventListener('click', (e) => {
     case 'sidekick': p.sidekick = id; ui.sheet = null; break;
     case 'next': return next();
     case 'quit': ui.lesson = null; break;
+    case 'resultback': ui.result = null; break;
     case 'open': {
       const R = ui.result;
       if (R.opening) return;
@@ -582,7 +614,7 @@ document.addEventListener('submit', async (e) => {
     const np = newProfile(name, Number(d.get('grade')), hero);
     const ph = await readPhoto(d.get('photo'));
     if (ph) np.photo = ph;
-    S.profiles.push(np); S.active = np.id;
+    S.profiles.push(np); S.active = np.id; ui.newHero = false; ui.prev = null;
   } else if (f.dataset.f === 'newproject') {
     const p = P();
     p.projects.push({ id: Math.random().toString(36).slice(2, 9), subject: String(d.get('subject')), title: String(d.get('title')).trim(), date: String(d.get('date')), sessions: 0, boss: null });
@@ -590,8 +622,8 @@ document.addEventListener('submit', async (e) => {
     ui.sheet = null; ui.route = 'projects';
   } else if (f.dataset.f === 'spotify') {
     const url = String(d.get('url')).trim();
-    S.spotify = /^https:\/\/open\.spotify\.com\//.test(url) ? url : '';
-    ui.sheet = null;
+    if (url && !isSpotifyUrl(url)) { ui.smsg = 'Das ist kein Spotify-Link. Er beginnt mit https://open.spotify.com/'; return render(); }
+    S.spotify = url; ui.sheet = null; ui.smsg = null;
   }
   commit();
 });
