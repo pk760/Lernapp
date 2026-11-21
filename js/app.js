@@ -192,7 +192,7 @@ function viewLetter(p) {
   const checks = letterChecks(Lt.text, p.name), n = checks.filter((c) => c.ok).length;
   const chips = (arr, a, cur) => arr.map(([v, l]) => `<button class="pill ${cur === v ? 'on' : ''}" data-a="${a}" data-v="${esc(v)}">${esc(l)}</button>`).join('');
   const list = Lt.checked ? `<ul class="checks">${checks.map((c) => `<li class="${c.ok ? 'ok' : 'no'}">${c.ok ? '✓' : '○'} ${esc(c.t)}${c.ok ? '' : `<small>${esc(c.tip)}</small>`}</li>`).join('')}</ul>` : '';
-  return `<main class="letter"><div class="row"><button class="x" data-a="lquit" aria-label="Beenden">✕</button><h2 class="grow">Funkspruch-Werkstatt</h2></div>
+  return `<main class="letter"><div class="row"><button class="x back-x" data-a="lquit" aria-label="Zurück">← Zurück</button><h2 class="grow">Funkspruch-Werkstatt</h2></div>
     <p class="muted">Schreibe einen Brief an einen Helden-Freund.</p>
     <div class="pills">${chips(Object.entries(TOPICS).map(([k, v]) => [k, v.t]), 'ltopic', Lt.topic)}</div>
     <div class="task">✉️ ${esc(tp.task)}</div>
@@ -261,7 +261,7 @@ function viewLesson(p) {
   const power = L.power >= 3 && !L.answered && !L.usedPower ? '<button class="power-btn" data-a="power">⚡ SUPERKRAFT AKTIVIEREN</button>' : '';
   const fb = L.answered ? `<div class="feedback ${L.ok ? 'ok' : 'bad'}"><b>${esc(L.echo)}</b>${L.ok ? '' : ` <span>Richtig ist: ${esc(q.c)}</span>`}<button class="btn" data-a="next">Weiter</button></div>` : '';
   const tag = L.boss ? (L.nodeIndex === PATH_NODES - 1 ? 'FINALE' : 'BOSS-MISSION') : L.daily ? 'ECHO-NOTRUF' : L.project ? 'TRAINING' : `KAPITEL ${L.nodeIndex + 1}`;
-  return `<main class="lesson"><div class="row"><button class="x" data-a="quit" aria-label="Beenden">✕</button><div class="bar grow"><i style="width:${Math.round((L.i / L.queue.length) * 100)}%"></i></div></div>
+  return `<main class="lesson"><div class="row"><button class="x back-x" data-a="quit" aria-label="Zurück zur Startseite">← Zurück</button><div class="bar grow"><i style="width:${Math.round((L.i / L.queue.length) * 100)}%"></i></div></div>
     <div class="arena ${fx}">
       <div class="fighter me" data-a="squish">${myHero(p)}</div>
       <div class="mid"><small>${tag}</small>${combo}<div class="pips" title="Superkraft-Leiste">${pips}</div></div>
@@ -296,7 +296,7 @@ function viewResult() {
   return `<main class="center">${conf}${bossPic}<h1>${R.letter ? (R.perfect ? 'Meisterbrief zugestellt!' : 'Brief zugestellt!') : R.boss ? (R.won ? `${v.name} besiegt!` : 'Fast besiegt!') : R.perfect ? 'Perfekte Mission!' : 'Mission erledigt!'}</h1>
     <p class="big-num">${R.correct} / ${R.total} <span class="muted">${R.letter ? 'Brief-Check' : 'sofort richtig'}</span></p>
     <p class="chip">⚡ +${R.fp} Fachpunkte</p><div class="row wrap">${extras}</div>${reveal}
-    <button class="btn" data-a="done" ${c && !R.opened ? 'disabled' : ''}>Weiter</button></main>`;
+    <div class="row wrap scene-btns"><button class="btn" data-a="done" ${c && !R.opened ? 'disabled' : ''}>Weiter</button><button class="btn ghost" data-a="resultback">← Zur Startseite</button></div></main>`;
 }
 
 function sheet(p) {
@@ -326,6 +326,30 @@ function sheet(p) {
   return `<div class="scrim" data-a="closesheet"><section class="sheet" data-stop><button class="x close" data-a="closesheet" aria-label="Schließen">✕</button>${body}</section></div>`;
 }
 
+// Zurück-Wischgeste/Browser-Zurück: jede Unterseite bekommt einen Verlaufseintrag
+let hist = false, skipPop = false;
+const isInner = () => !!(ui.sheet || ui.lesson || ui.result || ui.scene || ui.letter || (!P() && S.profiles.length && ui.prev) || ui.newHero);
+function goBack() {
+  if (ui.sheet) { ui.sheet = null; ui.confirm = null; ui.msg = null; ui.smsg = null; }
+  else if (ui.lesson) ui.lesson = null;
+  else if (ui.result) ui.result = null;
+  else if (ui.scene) ui.scene = null;
+  else if (ui.letter) ui.letter = null;
+  else if (ui.newHero) ui.newHero = false;
+  else if (!P() && ui.prev) { S.active = ui.prev; ui.prev = null; }
+}
+function syncHistory() {
+  try {
+    const inner = isInner();
+    if (inner && !hist) { history.pushState({ i: 1 }, ''); hist = true; }
+    else if (!inner && hist) { hist = false; skipPop = true; history.back(); }
+  } catch (e) { /* Verlauf nicht verfügbar */ }
+}
+window.addEventListener('popstate', () => {
+  if (skipPop) { skipPop = false; return; }
+  if (hist) { hist = false; goBack(); save(S); render(); }
+});
+
 function render() {
   const p = P();
   let html;
@@ -340,6 +364,7 @@ function render() {
     html = header(p) + v(p) + tabs();
   }
   $app.innerHTML = html + (p ? sheet(p) : '');
+  syncHistory();
 }
 
 // ------------------------------------------------------------ Lektionen
@@ -517,6 +542,7 @@ document.addEventListener('click', (e) => {
     case 'sidekick': p.sidekick = id; ui.sheet = null; break;
     case 'next': return next();
     case 'quit': ui.lesson = null; break;
+    case 'resultback': ui.result = null; break;
     case 'open': {
       const R = ui.result;
       if (R.opening) return;

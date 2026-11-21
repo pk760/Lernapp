@@ -1,5 +1,5 @@
 // Offline-First App-Shell. Bei Änderungen an Dateien VERSION erhöhen.
-const VERSION = 'lernhelden-v21';
+const VERSION = 'lernhelden-v22';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'css/app.css', 'js/app.js', 'js/data.js', 'js/store.js', 'js/hero.js', 'js/story.js', 'js/sfx.js',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png',
   'assets/heroes/agentbabel.webp', 'assets/heroes/captainvocab.webp', 'assets/heroes/globeglider.webp',
