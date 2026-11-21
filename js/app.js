@@ -18,7 +18,22 @@ const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&
 const P = () => S.profiles.find((p) => p.id === S.active) || null;
 const commit = () => { save(S); render(); };
 const heroOf = (p) => p.hero || { suit: 'rot', emblem: 'bolt', mask: 'domino', cape: true, skin: SKINS[1] };
-const myHero = (p) => heroSvg({ ...heroOf(p), rarity: 'common' });
+const myHero = (p) => (p.photo ? `<img class="hero-photo" src="${p.photo}" alt="" draggable="false">` : heroSvg({ ...heroOf(p), rarity: 'common' }));
+// Foto wird nur lokal im Gerät gespeichert (verkleinert, 4:5), nie hochgeladen.
+function readPhoto(file) {
+  return new Promise((res) => {
+    if (!file || !file.size || !/^image\//.test(file.type)) return res(null);
+    const url = URL.createObjectURL(file), im = new Image();
+    im.onload = () => {
+      const W = 320, H = 400, c = document.createElement('canvas'); c.width = W; c.height = H;
+      const k = Math.max(W / im.width, H / im.height), w = im.width * k, h = im.height * k;
+      c.getContext('2d').drawImage(im, (W - w) / 2, (H - h) * 0.2, w, h);
+      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg', 0.85));
+    };
+    im.onerror = () => { URL.revokeObjectURL(url); res(null); };
+    im.src = url;
+  });
+}
 const cardArt = (c) => (IMAGE_IDS.includes(c.id) ? `<img class="hero-img" src="assets/heroes/${esc(c.id)}.webp" alt="${esc(c.name)}" draggable="false">` : heroSvg(c));
 const fill = (t, p) => esc(t.replace(/\{name\}/g, p.name));
 const ECHO = '<svg class="echo-svg" viewBox="0 0 60 60" aria-hidden="true"><defs><radialGradient id="eg"><stop offset="0" stop-color="#aaffff"/><stop offset="1" stop-color="#18c6d6" stop-opacity=".15"/></radialGradient></defs><circle cx="30" cy="30" r="27" fill="url(#eg)"/><circle cx="30" cy="30" r="14" fill="#06202a" stroke="#7ff" stroke-width="2"/><circle cx="30" cy="30" r="6" fill="#bff"/></svg>';
@@ -55,6 +70,7 @@ function viewProfile() {
     <form class="card" data-f="newprofile"><h2>Neuer Held</h2>
       <input name="name" maxlength="16" placeholder="Heldenname" required autocomplete="off">
       <div class="seg">${GRADES.map((g, i) => `<label><input type="radio" name="grade" value="${g}" ${i === 0 ? 'checked' : ''}><span>Klasse ${g}</span></label>`).join('')}</div>
+      <label>Eigenes Heldenfoto (optional, bleibt auf diesem Gerät)<input type="file" name="photo" accept="image/*"></label>
       <p class="muted">Anzug</p><div class="seg">${suits}</div>
       <p class="muted">Symbol</p><div class="seg">${emblems}</div>
       <p class="muted">Hautton</p><div class="seg">${skins}</div>
@@ -210,6 +226,7 @@ function sheet(p) {
   let body = '';
   if (ui.sheet === 'settings') {
     body = `<h2>Einstellungen</h2><h3>Klasse</h3><div class="seg">${GRADES.map((g) => `<button class="${p.grade === g ? 'on' : ''}" data-a="grade" data-v="${g}">Klasse ${g}</button>`).join('')}</div>
+      <h3>Heldenfoto</h3><label><input type="file" data-photo accept="image/*"></label>${p.photo ? '<button class="btn ghost" data-a="nophoto">Foto entfernen</button>' : ''}
       <h3>Sound</h3><div class="seg"><button class="${S.mute ? '' : 'on'}" data-a="mute">${S.mute ? '🔇 Aus' : '🔊 An'}</button></div>
       <h3>Mission-Soundtrack</h3><form data-f="spotify"><label>Spotify-Link (Playlist oder Künstler)<input name="url" inputmode="url" placeholder="https://open.spotify.com/…" value="${esc(S.spotify || '')}"></label><button class="btn" type="submit">Speichern</button></form>
       <p class="muted">Der Link öffnet Spotify in der Spotify-App. Leer lassen = kein Soundtrack-Knopf.</p>
@@ -362,6 +379,7 @@ document.addEventListener('click', (e) => {
     case 'sheet': ui.sheet = v; ui.confirm = null; break;
     case 'closesheet': ui.sheet = null; ui.confirm = null; break;
     case 'grade': p.grade = Number(v); break;
+    case 'nophoto': delete p.photo; break;
     case 'mute': S.mute = !S.mute; sfxState.muted = S.mute; sfx.tap(); break;
     case 'switch': S.active = null; ui.sheet = null; break;
     case 'reset': if (ui.confirm === 'reset') { S = { ...S, active: null, profiles: [] }; ui.sheet = null; ui.confirm = null; } else ui.confirm = 'reset'; break;
@@ -405,7 +423,13 @@ document.addEventListener('keydown', (e) => {
   else if (e.key === 'Enter') { if (L.answered) next(); else check(); }
 });
 
-document.addEventListener('submit', (e) => {
+document.addEventListener('change', async (e) => {
+  if (!e.target.matches('[data-photo]')) return;
+  const ph = await readPhoto(e.target.files[0]);
+  if (ph) { P().photo = ph; commit(); }
+});
+
+document.addEventListener('submit', async (e) => {
   const f = e.target.closest('[data-f]');
   if (!f) return;
   e.preventDefault();
@@ -416,6 +440,8 @@ document.addEventListener('submit', (e) => {
     const hero = { suit: String(d.get('suit')), emblem: String(d.get('emblem')), skin: String(d.get('skin')), mask: 'domino', cape: true };
     if (!SUITS[hero.suit] || !EMBLEMS[hero.emblem] || !SKINS.includes(hero.skin)) return;
     const np = newProfile(name, Number(d.get('grade')), hero);
+    const ph = await readPhoto(d.get('photo'));
+    if (ph) np.photo = ph;
     S.profiles.push(np); S.active = np.id;
   } else if (f.dataset.f === 'newproject') {
     const p = P();
