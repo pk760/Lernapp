@@ -2,7 +2,7 @@ import { SUBJECTS, GRADES, CARDS, RARITY, VILLAINS, IMAGE_IDS, ligaFor, buildQue
 import { heroSvg, SUITS, EMBLEMS, SKINS } from './hero.js';
 import { STORY, DAILY_BRIEFING, ECHO_HIT, ECHO_CRIT, ECHO_MISS } from './story.js';
 import { sfx, sfxState } from './sfx.js';
-import { load, save, newProfile, today, yesterday, weekKey, daysUntil } from './store.js';
+import { load, save, newProfile, today, yesterday, weekKey, daysUntil, exportJson, parseBackup } from './store.js';
 
 const PATH_NODES = 8;
 const SESSIONS_FOR_BOSS = 3;
@@ -281,6 +281,8 @@ function sheet(p) {
       <h3>Sound</h3><div class="seg"><button class="${S.mute ? '' : 'on'}" data-a="mute">${S.mute ? '🔇 Aus' : '🔊 An'}</button></div>
       <h3>Mission-Soundtrack</h3><form data-f="spotify"><label>Spotify-Link (Playlist oder Künstler)<input name="url" inputmode="url" placeholder="https://open.spotify.com/…" value="${esc(S.spotify || '')}"></label><button class="btn" type="submit">Speichern</button></form>
       <p class="muted">Der Link öffnet Spotify in der Spotify-App. Leer lassen = kein Soundtrack-Knopf.</p>
+      <h3>Sicherung</h3><p class="muted">Speichert alle Helden und Fortschritte (auch Fotos) in einer Datei. Safari kann Website-Daten löschen – sichere ab und zu!</p>
+      <div class="row wrap"><button class="btn" data-a="export">💾 Sichern</button><label class="btn ghost">📂 Wiederherstellen<input type="file" data-import accept=".json,application/json" hidden></label></div>${ui.msg ? `<p class="muted" role="status">${esc(ui.msg)}</p>` : ''}
       <div class="row wrap"><button class="btn ghost" data-a="switch">Held wechseln</button><button class="btn ghost danger" data-a="reset">${ui.confirm === 'reset' ? 'Wirklich alles löschen?' : 'Alles zurücksetzen'}</button></div>`;
   } else if (ui.sheet === 'letters') {
     body = `<h2>📬 Briefmappe</h2>${(p.letters || []).slice().reverse().map((l) => `<article class="card mail"><small class="muted">${esc(l.date.split('-').reverse().join('.'))} · an ${esc(l.to)}</small><pre>${esc(l.text)}</pre><div class="reply"><b>Antwort:</b> ${esc(l.reply)}</div></article>`).join('') || '<p class="muted">Noch keine Briefe.</p>'}`;
@@ -431,7 +433,7 @@ document.addEventListener('click', (e) => {
     case 'subject': ui.subject = v; break;
     case 'pick': S.active = v; break;
     case 'sheet': ui.sheet = v; ui.confirm = null; break;
-    case 'closesheet': ui.sheet = null; ui.confirm = null; break;
+    case 'closesheet': ui.sheet = null; ui.confirm = null; ui.msg = null; break;
     case 'grade': p.grade = Number(v); break;
     case 'letter': ui.letter = { to: letterNames(p)[0], topic: 'help', text: '', checked: false }; break;
     case 'lquit': ui.letter = null; break;
@@ -460,6 +462,7 @@ document.addEventListener('click', (e) => {
         story: { title: `Antwort von ${Lt.to}`, lines: [`ECHO: Eilmeldung! Dein Brief an ${Lt.to} wurde zugestellt.`, `${Lt.to}: „{name}, danke für deinen Brief! ${tp.reply}“`, 'ECHO: Die Antwort liegt in deiner Briefmappe.'] } };
       ui.letter = null; sfx.win(); break;
     }
+    case 'export': return doExport();
     case 'nophoto': delete p.photo; break;
     case 'mute': S.mute = !S.mute; sfxState.muted = S.mute; sfx.tap(); break;
     case 'switch': S.active = null; ui.sheet = null; break;
@@ -508,7 +511,28 @@ document.addEventListener('input', (e) => {
   if (e.target.matches('[data-letter]') && ui.letter) { ui.letter.text = e.target.value; ui.letter.checked = false; }
 });
 
+async function doExport() {
+  const name = `lernhelden-${today()}.json`;
+  const file = new File([exportJson(S)], name, { type: 'application/json' });
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: name }); ui.msg = 'Gesichert!'; return render(); }
+  } catch (e) { if (e.name === 'AbortError') return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+  ui.msg = 'Datei gesichert (Ordner „Downloads“).'; render();
+}
+
 document.addEventListener('change', async (e) => {
+  if (e.target.matches('[data-import]')) {
+    const f = e.target.files[0]; e.target.value = '';
+    if (!f) return;
+    try {
+      const ns = parseBackup(await f.text());
+      if (!confirm(`Backup mit ${ns.profiles.length} Held(en) laden? Der aktuelle Stand auf diesem Gerät wird ersetzt.`)) return;
+      S = ns; sfxState.muted = !!S.mute; ui.msg = 'Wiederhergestellt!';
+    } catch (err) { ui.msg = err.message; }
+    return commit();
+  }
   if (!e.target.matches('[data-photo]')) return;
   const ph = await readPhoto(e.target.files[0]);
   if (ph) { P().photo = ph; commit(); }

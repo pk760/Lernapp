@@ -26,7 +26,7 @@ Karten-Packs, Sammlung, Ligen, Klassenarbeits-Projekte inkl. Boss, lokale Profil
 - [ ] Wissens-Review durch Eltern/Lehrkraft (Korrektheit!)
 
 ## Phase 3 – Komfort
-- [ ] Export/Import des Fortschritts als Datei (Backup ohne Server)
+- [x] Export/Import des Fortschritts als Datei (Einstellungen → Sicherung)
 - [ ] Elternbereich (PIN): Fortschritt je Fach, Schwächen, Klassenarbeiten verwalten
 - [ ] Optionale Online-Rangliste/Freunde (nur wenn nötig; braucht Backend → Kosten/Datenschutz vorher klären)
 
