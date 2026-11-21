@@ -14,7 +14,7 @@ Karten-Packs, Sammlung, Ligen, Klassenarbeits-Projekte inkl. Boss, lokale Profil
 ## Phase 2 – Inhalte
 - [ ] Fragenbank mit Themen-Tags (z. B. „Einmaleins“, „Wortarten“) statt nur Klasse
 - [ ] Klassenarbeits-Modus nach Thema: Projekt wählt Themen, Training zieht gezielt daraus, Fehler-Wiederholung
-- [ ] Lehrplan-Abgleich je Bundesland (Quellen offen: Auftraggeber nennt Bundesland)
+- [ ] Lehrplan-Abgleich mit NRW-Lehrplan Grundschule (Kompetenzerwartungen je Klasse als Themenliste ableiten; Lehrwerke der Schule erfragen)
 - [ ] Mathe: Sachaufgaben, Geometrie, Uhrzeit, Geld; Deutsch: Diktat-Wörter, Lesetexte; Englisch: Vokabeln mit Bildern
 - [ ] Wissens-Review durch Eltern/Lehrkraft (Korrektheit!)
 
@@ -25,6 +25,6 @@ Karten-Packs, Sammlung, Ligen, Klassenarbeits-Projekte inkl. Boss, lokale Profil
 
 ## Offene Fragen an den Auftraggeber
 1. Welches Design (cosmos / wald / arena)?
-2. Bundesland (Lehrplan, Schreibschrift vs. Druckschrift, Englisch ab Klasse 1 oder 3)?
+2. ✅ Bundesland: NRW, Grundschule Füchtorf (48336). Noch offen: Englisch ab welcher Klasse, Schrift, Lehrwerke der Schule
 3. Nur ein Kind/Gerät oder mehrere Profile (aktuell mehrere lokal möglich)?
 4. Wie soll das Repo heißen / soll es öffentlich oder privat sein (Pages privat braucht bezahlten Plan)?

@@ -6,6 +6,11 @@ Duolingo-artiger Lernpfad, Belohnung über **Sammelkarten** (statt Sterne/Punkte
 **Klassenarbeits-Modus** (Arbeit mit Datum anlegen → gezielt üben → „Prüfungs-Boss“ → legendäre Karte).
 Zielgruppe: ca. 8 Jahre. Look: kindlich, motivierend, **nicht zu bunt, nicht albern**.
 
+## Kontext
+Bundesland **NRW**, Grundschule in Füchtorf (PLZ 48336). Inhalte sollen sich am NRW-Lehrplan Grundschule orientieren.
+Offen/zu prüfen (nicht raten, recherchieren oder Auftraggeber fragen): ab welcher Klasse Englisch an der Schule unterrichtet wird,
+verwendete Schrift (Grundschrift/Schulausgangsschrift) und Lehrwerke der Schule.
+
 ## Harte Randbedingungen (Entscheidungen des Auftraggebers)
 - **Komplett kostenlos**: kein Server, keine Datenbank, keine Accounts. Hosting = GitHub Pages. Daten = `localStorage` auf dem Gerät.
 - **Kein Build-Schritt**: Vanilla JS (ES-Module), CSS, keine Frameworks, keine externen CDNs/Fonts (muss offline laufen).
