@@ -5,9 +5,10 @@ PWA-Gerüst, 3 Themes, Lernpfad je Fach/Klasse, Lektionen (Mathe generiert, Deut
 Karten-Packs, Sammlung, Ligen, Klassenarbeits-Projekte inkl. Boss, lokale Profile, Offline-Cache, Pages-Deploy.
 
 ## Phase 1 – Spielgefühl & Design (nächste Aufgabe)
-- [x] Design: Kosmos gewählt; Karten sind jetzt Squishys (SVG, prozedural)
-- [x] 24 Squishys, 8 Formen (inkl. Onigiri, Brötchen, Knetmännchen); Lieblings-Squishy als Begleiter auf dem Lernpfad
-- [ ] Squishys weiter ausbauen: 40+, Glitzer-Version bei Doppelten, Sammelalbum mit Seiten, Begleiter füttern/streicheln, Sprüche passend zum Fach
+- [x] Design: Hero Academy (Superhelden-Look) statt Kosmos/Squishys, siehe docs/DESIGN.md
+- [x] 24 Helden, eigener Held mit Rang, Sidekick, Boss-Missionen mit Lebensleiste, Vorlesen, Spotify-Link
+- [ ] Helden ausbauen: 40+, Kostüm-Upgrades, Heldenkraft je Fach als Werte, Foil/Animation beim Öffnen der Kiste, Sound-Effekte
+- [ ] KI-Sidekick (optional): Erklärungen/Tipps per Sprache. Braucht API → Kosten & Datenschutz (Kind!) vorher klären; erst Eltern-Entscheidung
 - [ ] Animationen/Sounds (Web Audio, abschaltbar), Konfetti bei Boss
 - [x] Zahleneingabe per Ziffernblock (Mathe, ca. 50 % der Aufgaben)
 - [ ] Weitere Antwort-Typen: Lückentext, Buchstaben legen, Zuordnen, Uhrzeit stellen

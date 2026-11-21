@@ -1,6 +1,6 @@
 // Offline-First App-Shell. Bei Änderungen an Dateien VERSION erhöhen.
-const VERSION = 'lernhelden-v3';
-const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'css/app.css', 'js/app.js', 'js/data.js', 'js/store.js', 'js/squishy.js',
+const VERSION = 'lernhelden-v4';
+const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'css/app.css', 'js/app.js', 'js/data.js', 'js/store.js', 'js/hero.js',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
 
 self.addEventListener('install', (e) => {

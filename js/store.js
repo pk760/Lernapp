@@ -19,10 +19,10 @@ export function daysUntil(dateStr) {
   return Math.round((target - now) / 86400000);
 }
 
-export const defaults = () => ({ v: 1, theme: 'cosmos', active: null, profiles: [] });
+export const defaults = () => ({ v: 1, active: null, spotify: '', profiles: [] });
 
-export function newProfile(name, grade) {
-  return { id: uid(), name, grade, fp: 0, weekFp: 0, weekKey: weekKey(), streak: 0, lastDay: '', progress: {}, cards: {}, projects: [] };
+export function newProfile(name, grade, hero) {
+  return { id: uid(), name, grade, hero, sidekick: null, fp: 0, weekFp: 0, weekKey: weekKey(), streak: 0, lastDay: '', progress: {}, cards: {}, projects: [] };
 }
 
 export function load() {

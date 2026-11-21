@@ -2,9 +2,9 @@
 
 ## Ziel
 Installierbare Web-App (PWA, iPad zuerst) mit Lernhilfen für Grundschüler **Klasse 1–4**: **Mathe, Deutsch, Englisch**.
-Duolingo-artiger Lernpfad, Belohnung über **Squishy-Sammelfiguren** (Dumpling, Butterklops, Mochi, Bao, Pudding – Trend „Squishies/Kuscheltier-Blobs“; statt Sterne/Punkte), Ranking über **Ligen**, und ein
+Duolingo-artiger Lernpfad („Missionen“), Belohnung über **Superhelden-Sammelkarten** (statt Sterne/Punkte), eigener Held des Kindes, Boss-Missionen für Klassenarbeiten, Ranking über **Ligen**, und ein
 **Klassenarbeits-Modus** (Arbeit mit Datum anlegen → gezielt üben → „Prüfungs-Boss“ → legendäre Karte).
-Zielgruppe: ca. 8 Jahre. Look: kindlich, motivierend, **nicht zu bunt, nicht albern**.
+Zielgruppe: Junge, fast 9, mag Marvel-Filme/Superhelden, Spotify, ChatGPT per Sprache. Look: **cool, filmisch, nicht kindlich** (siehe docs/DESIGN.md).
 
 ## Kontext
 Bundesland **NRW**, Grundschule in Füchtorf (PLZ 48336). Inhalte sollen sich am NRW-Lehrplan Grundschule orientieren.
@@ -16,8 +16,8 @@ verwendete Schrift (Grundschrift/Schulausgangsschrift) und Lehrwerke der Schule.
 - **Kein Build-Schritt**: Vanilla JS (ES-Module), CSS, keine Frameworks, keine externen CDNs/Fonts (muss offline laufen).
 - **Deutsche UI-Texte** (Kind-gerecht, du-Form, kurze Sätze).
 - **Datenschutz**: Kinder-App → keine Tracker, keine Analytics, keine externen Requests, keine Klarnamen-Pflicht (Vorname/Spitzname reicht).
-- **Keine geschützten Figuren** (weder Pokémon noch Squishmallows o. Ä.). Alle Squishys sind eigene Erfindungen, prozedural als SVG gezeichnet (`js/squishy.js`: Form × Farbe × Gesicht × Accessoire). Antippen = quetschen (Animation).
-- **Design gewählt: Kosmos** (dunkles Weltall, oranger Akzent). Die anderen Entwürfe (Waldlichtung, Arena) wurden entfernt.
+- **Keine geschützten Figuren** (keine Marvel/DC/Pokémon-Namen, -Figuren oder -Logos). Alle Helden sind Eigenentwicklungen, prozedural als SVG (`js/hero.js`: Anzug × Symbol × Maske × Cape × Hautton).
+- **Design: Hero Academy** (dunkel, Rot/Gold). Frühere Entwürfe (Kosmos/Squishys, Waldlichtung, Arena) nur in der Git-Historie.
 - Repo-Name/Pages-Pfad: relative URLs verwenden (`./`), da Pages unter `/<repo>/` läuft.
 
 ## Architektur
@@ -25,16 +25,16 @@ verwendete Schrift (Grundschrift/Schulausgangsschrift) und Lehrwerke der Schule.
 index.html            App-Shell, Meta für iPad-Installation (Zum Home-Bildschirm)
 manifest.webmanifest  PWA-Manifest
 sw.js                 Service Worker (cache-first App-Shell). Bei Dateiänderung VERSION erhöhen!
-css/app.css           Design „Kosmos“ über CSS-Variablen
+css/app.css           Design „Hero Academy“ über CSS-Variablen
 js/data.js            Reine Logik/Inhalte: Fächer, Karten, Ligen, Fragen (statisch + Mathe-Generator), rollCard()
-js/squishy.js         SVG-Generator für die Squishy-Figuren
+js/hero.js            SVG-Generator für Helden (eigener Held + Sammelkarten)
 js/store.js           localStorage, Profile, Datums-Helfer
 js/app.js             UI: Rendering per Template-Strings, Event-Delegation (data-a / data-f), Lektionen-Ablauf
 tests/*.test.mjs      Node-Tests für data.js (npm test)
 .github/workflows     Tests + Deploy nach GitHub Pages bei Push auf main
 docs/                 ROADMAP.md, DESIGN.md (3 Designvorschläge), CONTENT.md (Fragen schreiben)
 ```
-Aufgabenformat: Mehrfachauswahl; Mathe zusätzlich Zahleneingabe (`q.num`, Ziffernblock + Tastatur). Begleiter: `profile.buddy` (Karten-ID).
+Aufgabenformat: Mehrfachauswahl; Mathe zusätzlich Zahleneingabe (`q.num`, Ziffernblock + Tastatur). Eigener Held: `profile.hero`; Sidekick: `profile.sidekick` (Karten-ID); Spotify-Link: `state.spotify`; Vorlesen via Web Speech API.
 Spielregeln (aktuell in `js/app.js` → `finishLesson`): Lektion = 5 Fragen; falsche Fragen kommen am Ende nochmal;
 ≥60 % sofort richtig ⇒ Lernpfad-Knoten + Karten-Pack; perfekt ⇒ mind. „selten“. Klassenarbeits-Einheit: +10 FP; Boss
 (ab 3 Einheiten, 10 Fragen, ≥80 %) ⇒ +40 FP und legendäre Fach-Karte.

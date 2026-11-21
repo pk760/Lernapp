@@ -1,10 +1,15 @@
-# Design: Kosmos (gewählt)
+# Design: Hero Academy
 
-Dunkles Weltall, oranger Akzent, dicke „Knopf“-Schatten. Die früheren Alternativen (Waldlichtung, Arena) sind nur noch in der Git-Historie (erster Commit).
+Zielgruppe: Junge, fast 9, mag Marvel-Filme/Superhelden, nutzt ChatGPT per Sprache und hört viel Spotify. Soll „cool“ wirken, nicht kindlich.
 
-## Belohnungssystem
-- **Squishys sammeln**: weiche Blobs (Dumpling, Butterklops, Mochi, Bao, Pudding) mit Gesicht, eigene Erfindungen, prozedural als SVG (`js/squishy.js`). Antippen quetscht sie.
-- Nach jeder gelungenen Lektion (≥60 % richtig) ein **Karten-Pack**. Seltenheit: gewöhnlich / selten (Schleife) / episch (Heiligenschein, Glitzer) / legendär (Krone, Glanz).
-- **Perfekte Lektion** ⇒ mindestens „selten“. **Prüfungs-Boss** ⇒ garantiert **legendär** (eine je Fach).
-- **Fachpunkte (FP)** laufen im Hintergrund und bestimmen die **Liga** (Holz → Bronze → Silber → Gold → Diamant) und die Wochen-Rangliste. **Lernserie** 🔥 = Tage in Folge.
-- Ideen: Glitzer-Version bei Doppelten, Sammelalbum je Fach, Lieblings-Squishy als Begleiter, Tauschen/Deck, Wochenziele, Elternbereich.
+- **Look:** dunkler Film-Look (Nachtblau, Rot/Gold), Comic-Halbton-Punkte, kantige Hex-Knoten, kursive Großbuchstaben-Überschriften.
+- **Eigener Held:** Beim Start erschafft das Kind seinen Helden (Name, Anzug, Symbol, Hautton). Er steht oben auf dem Lernpfad und wächst mit dem Rang (Rekrut → Agent → Held → Elite → Legende).
+- **Missionen** statt Lektionen; jede Mission hat einen Gegner mit Lebensleiste, die bei jeder richtigen Antwort sinkt.
+- **Boss-Mission** = Klassenarbeits-Vorbereitung. Je Fach ein Boss (Professor Chaos-Null, Der Fehlerteufel, Baron Babel). Sieg ⇒ legendärer Held.
+- **Helden-Archiv:** 24 Sammel-Helden (eigene Figuren, SVG aus `js/hero.js`), Seltenheit gewöhnlich/selten/episch/legendär (Foil-Glanz bei episch/legendär). Ein gesammelter Held kann als **Sidekick** gewählt werden.
+- **Vorlesen** (🔊, Web Speech API): Frage wird vorgelesen – passt zu seiner Sprach-Gewohnheit.
+- **Mission-Soundtrack:** Eltern hinterlegen in den Einstellungen einen Spotify-Link; der Knopf öffnet Spotify (kein Streaming in der App).
+- Keine Marvel-/DC-Figuren, -Namen oder -Logos. Alles Eigenentwicklung.
+
+## Ideen
+Heldenkraft je Fach (Mathe-Power, Sprach-Power als Werte am eigenen Helden), Kostüm-Upgrades für FP, Wochen-Event („Boss der Woche“), Duell-Modus gegen Papa/Freund auf einem Gerät, KI-Sidekick (siehe Roadmap), Sprach-Antworten.

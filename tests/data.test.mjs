@@ -53,15 +53,15 @@ test('Karten: Boss gibt legendäre Fach-Karte, perfekte Lektion mind. selten', (
 });
 
 test('Liga-Berechnung', () => {
-  assert.equal(ligaFor(0).cur.name, 'Holz-Liga');
-  assert.equal(ligaFor(150).cur.name, 'Bronze-Liga');
+  assert.equal(ligaFor(0).cur.name, 'Rekrut');
+  assert.equal(ligaFor(150).cur.name, 'Agent');
   assert.equal(ligaFor(5000).next, null);
 });
 
-import { squishy } from '../js/squishy.js';
-test('jede Karte rendert ein gültiges Squishy-SVG', () => {
+import { heroSvg } from '../js/hero.js';
+test('jede Karte rendert ein gültiges Helden-SVG', () => {
   for (const c of CARDS) {
-    const svg = squishy(c);
+    const svg = heroSvg(c);
     assert.ok(svg.startsWith('<svg') && svg.endsWith('</svg>'), c.id);
     assert.ok(!svg.includes('undefined'), c.id);
   }

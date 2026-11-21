@@ -1,14 +1,14 @@
 {
-  "name": "Lernhelden",
-  "short_name": "Lernhelden",
+  "name": "Hero Academy",
+  "short_name": "Hero Academy",
   "description": "Lernen für die Grundschule: Mathe, Deutsch, Englisch – mit Sammelkarten.",
   "lang": "de",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#14163a",
-  "theme_color": "#14163a",
+  "background_color": "#0a0e1a",
+  "theme_color": "#0a0e1a",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },

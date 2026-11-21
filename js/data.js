@@ -8,7 +8,10 @@ export const SUBJECTS = {
 
 export const GRADES = [1, 2, 3, 4];
 
-// ---- Sammelkarten (Platzhalter: Emoji-Art, später echte Illustrationen) ----
+// Bossgegner je Fach (Boss-Mission = Klassenarbeits-Vorbereitung)
+export const VILLAINS = { mathe: { name: 'Professor Chaos-Null', emoji: '🤖' }, deutsch: { name: 'Der Fehlerteufel', emoji: '👹' }, englisch: { name: 'Baron Babel', emoji: '🦹' } };
+
+// ---- Helden-Sammelkarten (eigene Figuren, SVG aus js/hero.js) ----
 export const RARITY = {
   common:    { name: 'Gewöhnlich', weight: 60 },
   rare:      { name: 'Selten',     weight: 28 },
@@ -17,45 +20,39 @@ export const RARITY = {
 };
 
 export const CARDS = [
-  // Mathe
-  { id: 'rechenknoedel',  name: 'Rechenknödel',    shape: 'dumpling', color: 'cream',   face: 'happy',  acc: 'none',   subject: 'mathe',    rarity: 'common',    text: 'Zählt jede Falte nach. Dreimal.' },
-  { id: 'butterklops',    name: 'Butterklops Bruno', shape: 'butter',  color: 'butter',  face: 'sleepy', acc: 'none',   subject: 'mathe',    rarity: 'common',    text: 'Schmilzt bei schwierigen Aufgaben – und rechnet trotzdem weiter.' },
-  { id: 'pluspudding',    name: 'Plus-Pudding',    shape: 'pudding',  color: 'caramel', face: 'cat',    acc: 'bow',    subject: 'mathe',    rarity: 'rare',      text: 'Wackelt vor Freude bei jedem Plus.' },
-  { id: 'nullmochi',      name: 'Null-Mochi',      shape: 'mochi',    color: 'lilac',   face: 'wow',    acc: 'halo',   subject: 'mathe',    rarity: 'epic',      text: 'Aus Nichts wird bei ihm ganz viel.' },
-  { id: 'kronenbao',      name: 'Kronen-Bao',      shape: 'bao',      color: 'sky',     face: 'happy',  acc: 'crown',  subject: 'mathe',    rarity: 'legendary', text: 'Hüter der Mathe-Arbeit.' },
-  // Deutsch
-  { id: 'silbendumpling', name: 'Silben-Dumpling', shape: 'dumpling', color: 'mint',    face: 'cat',    acc: 'sprout', subject: 'deutsch',  rarity: 'common',    text: 'Hüpft von Silbe zu Silbe.' },
-  { id: 'buchstabenbutter', name: 'Buchstaben-Butter', shape: 'butter', color: 'peach', face: 'happy',  acc: 'none',   subject: 'deutsch',  rarity: 'common',    text: 'Streicht sich auf jedes Wort.' },
-  { id: 'reimbao',        name: 'Reim-Bao',        shape: 'bao',      color: 'pink',    face: 'cat',    acc: 'bow',    subject: 'deutsch',  rarity: 'rare',      text: 'Haus – Maus – Klaus! Reimt sich alles zurecht.' },
-  { id: 'satzmochi',      name: 'Satz-Mochi',      shape: 'mochi',    color: 'mint',    face: 'wow',    acc: 'sprout', subject: 'deutsch',  rarity: 'epic',      text: 'Dehnt jeden Satz bis er passt.' },
-  { id: 'maerchenpudding', name: 'Märchen-Pudding', shape: 'pudding', color: 'lilac',   face: 'sleepy', acc: 'crown',  subject: 'deutsch',  rarity: 'legendary', text: 'Hüter der Deutsch-Arbeit.' },
-  // Englisch
-  { id: 'wortmochi',      name: 'Wort-Mochi',      shape: 'mochi',    color: 'sky',     face: 'happy',  acc: 'none',   subject: 'englisch', rarity: 'common',    text: 'Sagt „Hello!“ zu jedem.' },
-  { id: 'helloknoedel',   name: 'Hello-Knödel',    shape: 'dumpling', color: 'peach',   face: 'wow',    acc: 'none',   subject: 'englisch', rarity: 'common',    text: 'Gut gefüllt mit Vokabeln.' },
-  { id: 'loewenbutter',   name: 'Löwen-Butter',    shape: 'butter',   color: 'caramel', face: 'cat',    acc: 'bow',    subject: 'englisch', rarity: 'rare',      text: 'Brüllt leise, aber mit Akzent.' },
-  { id: 'brueckenbao',    name: 'Brücken-Bao',     shape: 'bao',      color: 'mint',    face: 'sleepy', acc: 'halo',   subject: 'englisch', rarity: 'epic',      text: 'Baut Brücken zwischen den Sprachen.' },
-  { id: 'weltendumpling', name: 'Welten-Dumpling', shape: 'dumpling', color: 'pink',    face: 'happy',  acc: 'crown',  subject: 'englisch', rarity: 'legendary', text: 'Hüter der Englisch-Arbeit.' },
-  // Mathe (neu)
-  { id: 'dreieckonigiri',  name: 'Dreieck-Onigiri', shape: 'onigiri',   color: 'cream',   face: 'happy',  acc: 'none',   subject: 'mathe',    rarity: 'common',    text: 'Hat drei Ecken und alle sind lecker.' },
-  { id: 'zahlenbroetchen', name: 'Zahlenbrötchen',  shape: 'broetchen', color: 'caramel', face: 'cat',    acc: 'none',   subject: 'mathe',    rarity: 'rare',      text: 'Frisch gebacken: 1 + 1 = 2.' },
-  { id: 'knetkalle',       name: 'Knet-Kalle',      shape: 'knet',      color: 'sky',     face: 'wow',    acc: 'halo',   subject: 'mathe',    rarity: 'epic',      text: 'Lässt sich zu jeder Zahl formen.' },
-  // Deutsch (neu)
-  { id: 'wortonigiri',     name: 'Wort-Onigiri',    shape: 'onigiri',   color: 'pink',    face: 'sleepy', acc: 'none',   subject: 'deutsch',  rarity: 'common',    text: 'Gefüllt mit den besten Wörtern.' },
-  { id: 'lesebroetchen',   name: 'Lese-Brötchen',   shape: 'broetchen', color: 'butter',  face: 'happy',  acc: 'sprout', subject: 'deutsch',  rarity: 'rare',      text: 'Liest dir beim Frühstück vor.' },
-  { id: 'knetknut',        name: 'Knet-Knut',       shape: 'knet',      color: 'mint',    face: 'cat',    acc: 'halo',   subject: 'deutsch',  rarity: 'epic',      text: 'Knetet aus Buchstaben ganze Geschichten.' },
-  // Englisch (neu)
-  { id: 'englischonigiri', name: 'Hello-Onigiri',   shape: 'onigiri',   color: 'lilac',   face: 'wow',    acc: 'none',   subject: 'englisch', rarity: 'common',    text: 'Spricht Reis-isch und Englisch.' },
-  { id: 'teabroetchen',    name: 'Tea-Brötchen',    shape: 'broetchen', color: 'peach',   face: 'sleepy', acc: 'bow',    subject: 'englisch', rarity: 'rare',      text: 'Trinkt jeden Tag um fünf Tee.' },
-  { id: 'knetkim',         name: 'Knet-Kim',        shape: 'knet',      color: 'pink',    face: 'happy',  acc: 'halo',   subject: 'englisch', rarity: 'epic',      text: 'Biegt sich um jede Grammatik.' },
+  { id: 'zahlenblitz', name: 'Zahlenblitz', suit: 'blau', emblem: 'bolt', mask: 'domino', cape: true, skin: '#f1c9a5', subject: 'mathe', rarity: 'common', text: 'Rechnet schneller als ein Blitz.' },
+  { id: 'minusninja', name: 'Minus-Ninja', suit: 'schwarz', emblem: 'star', mask: 'cowl', cape: false, skin: '#a8704b', subject: 'mathe', rarity: 'common', text: 'Zieht jede Aufgabe lautlos ab.' },
+  { id: 'plusphantom', name: 'Plus-Phantom', suit: 'lila', emblem: 'ring', mask: 'visor', cape: true, skin: '#f7d9c0', subject: 'mathe', rarity: 'common', text: 'Taucht auf, wo addiert wird.' },
+  { id: 'rechenfalke', name: 'Rechenfalke', suit: 'rot', emblem: 'shield', mask: 'full', cape: true, skin: '#d9a273', subject: 'mathe', rarity: 'rare', text: 'Sieht jeden Rechenfehler von oben.' },
+  { id: 'multimax', name: 'Multi-Max', suit: 'orange', emblem: 'hex', mask: 'domino', cape: true, skin: '#7a4a30', subject: 'mathe', rarity: 'rare', text: 'Verdoppelt, verdreifacht, vervierfacht!' },
+  { id: 'quadrattitan', name: 'Quadrat-Titan', suit: 'gold', emblem: 'hex', mask: 'full', cape: true, skin: '#f1c9a5', subject: 'mathe', rarity: 'epic', text: 'Seine Stärke: hoch zwei.' },
+  { id: 'nullpunkt', name: 'Nullpunkt', suit: 'tuerkis', emblem: 'ring', mask: 'cowl', cape: true, skin: '#d9a273', subject: 'mathe', rarity: 'epic', text: 'Macht aus Nichts ein Ergebnis.' },
+  { id: 'kapitaenquotient', name: 'Kapitän Quotient', suit: 'rot', emblem: 'star', mask: 'full', cape: true, skin: '#f1c9a5', subject: 'mathe', rarity: 'legendary', text: 'Hüter der Mathe-Arbeit.' },
+  { id: 'silbensturm', name: 'Silben-Sturm', suit: 'tuerkis', emblem: 'bolt', mask: 'domino', cape: true, skin: '#f7d9c0', subject: 'deutsch', rarity: 'common', text: 'Zerlegt jedes Wort in Silben.' },
+  { id: 'wortwaechter', name: 'Wortwächter', suit: 'gruen', emblem: 'shield', mask: 'cowl', cape: true, skin: '#a8704b', subject: 'deutsch', rarity: 'common', text: 'Bewacht die Rechtschreibung.' },
+  { id: 'satzschatten', name: 'Satz-Schatten', suit: 'schwarz', emblem: 'ring', mask: 'visor', cape: false, skin: '#f1c9a5', subject: 'deutsch', rarity: 'common', text: 'Folgt jedem Satz bis zum Punkt.' },
+  { id: 'reimreiter', name: 'Reimreiter', suit: 'orange', emblem: 'flame', mask: 'domino', cape: true, skin: '#d9a273', subject: 'deutsch', rarity: 'rare', text: 'Haus – Maus – Applaus!' },
+  { id: 'tintenfalke', name: 'Tintenfalke', suit: 'blau', emblem: 'star', mask: 'full', cape: true, skin: '#7a4a30', subject: 'deutsch', rarity: 'rare', text: 'Schreibt mit Tempo und Stil.' },
+  { id: 'grammatiktitan', name: 'Grammatik-Titan', suit: 'lila', emblem: 'hex', mask: 'full', cape: true, skin: '#f1c9a5', subject: 'deutsch', rarity: 'epic', text: 'Kennt alle vier Fälle.' },
+  { id: 'maerchenmeister', name: 'Märchenmeister', suit: 'gold', emblem: 'flame', mask: 'cowl', cape: true, skin: '#a8704b', subject: 'deutsch', rarity: 'epic', text: 'Erfindet Geschichten im Flug.' },
+  { id: 'meisterfederkiel', name: 'Meister Federkiel', suit: 'gold', emblem: 'shield', mask: 'full', cape: true, skin: '#d9a273', subject: 'deutsch', rarity: 'legendary', text: 'Hüter der Deutsch-Arbeit.' },
+  { id: 'hellohawk', name: 'Hello-Hawk', suit: 'blau', emblem: 'bolt', mask: 'domino', cape: true, skin: '#f7d9c0', subject: 'englisch', rarity: 'common', text: 'Grüßt in jeder Sprache zuerst auf Englisch.' },
+  { id: 'wordwarrior', name: 'Word-Warrior', suit: 'rot', emblem: 'flame', mask: 'cowl', cape: false, skin: '#d9a273', subject: 'englisch', rarity: 'common', text: 'Kämpft für jedes Vokabel.' },
+  { id: 'captainvocab', name: 'Captain Vocab', suit: 'gruen', emblem: 'star', mask: 'visor', cape: true, skin: '#7a4a30', subject: 'englisch', rarity: 'common', text: 'Kennt 1000 Wörter. Mindestens.' },
+  { id: 'grammarguard', name: 'Grammar-Guard', suit: 'lila', emblem: 'shield', mask: 'full', cape: true, skin: '#f1c9a5', subject: 'englisch', rarity: 'rare', text: 'Beschützt dich vor falschen Zeiten.' },
+  { id: 'speakspark', name: 'Speak-Spark', suit: 'orange', emblem: 'bolt', mask: 'domino', cape: true, skin: '#a8704b', subject: 'englisch', rarity: 'rare', text: 'Sprüht vor Sprachfunken.' },
+  { id: 'lingolord', name: 'Lingo-Lord', suit: 'schwarz', emblem: 'hex', mask: 'cowl', cape: true, skin: '#f1c9a5', subject: 'englisch', rarity: 'epic', text: 'Herrscher über alle Satzzeiten.' },
+  { id: 'globeglider', name: 'Globe-Glider', suit: 'tuerkis', emblem: 'ring', mask: 'visor', cape: true, skin: '#d9a273', subject: 'englisch', rarity: 'epic', text: 'Gleitet von Land zu Land.' },
+  { id: 'agentbabel', name: 'Agent Babel', suit: 'lila', emblem: 'star', mask: 'full', cape: true, skin: '#f1c9a5', subject: 'englisch', rarity: 'legendary', text: 'Hüter der Englisch-Arbeit.' },
 ];
 
-// ---- Ligen (lokal, nach Gesamt-Fachpunkten) ----
+// ---- Ränge (lokal, nach Gesamt-Fachpunkten) ----
 export const LIGEN = [
-  { name: 'Holz-Liga',    min: 0,    emoji: '🪵' },
-  { name: 'Bronze-Liga',  min: 100,  emoji: '🥉' },
-  { name: 'Silber-Liga',  min: 300,  emoji: '🥈' },
-  { name: 'Gold-Liga',    min: 700,  emoji: '🥇' },
-  { name: 'Diamant-Liga', min: 1500, emoji: '💎' },
+  { name: 'Rekrut',  min: 0,    emoji: '🎖️' },
+  { name: 'Agent',   min: 100,  emoji: '🕶️' },
+  { name: 'Held',    min: 300,  emoji: '⚡' },
+  { name: 'Elite',   min: 700,  emoji: '🔥' },
+  { name: 'Legende', min: 1500, emoji: '👑' },
 ];
 
 export function ligaFor(fp) {
