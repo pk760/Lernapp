@@ -578,6 +578,23 @@ document.addEventListener('submit', async (e) => {
   commit();
 });
 
+// Karten-Tilt: folgt dem Finger/der Maus (nur Optik, kein Zustand)
+let tiltEl = null;
+function tilt(e, end) {
+  const c = e.target.closest && e.target.closest('.tcg:not(.locked)');
+  if (end || !c) { if (tiltEl) { tiltEl.classList.remove('tilting'); tiltEl.style.removeProperty('--rx'); tiltEl.style.removeProperty('--ry'); tiltEl = null; } if (!c || end) return; }
+  if (tiltEl && tiltEl !== c) { tiltEl.classList.remove('tilting'); tiltEl.style.removeProperty('--rx'); tiltEl.style.removeProperty('--ry'); }
+  tiltEl = c; const r = c.getBoundingClientRect();
+  const x = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)), y = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
+  c.classList.add('tilting');
+  c.style.setProperty('--ry', `${((x - 0.5) * 22).toFixed(1)}deg`); c.style.setProperty('--rx', `${((0.5 - y) * 22).toFixed(1)}deg`);
+  c.style.setProperty('--gx', `${(x * 100).toFixed(0)}%`); c.style.setProperty('--gy', `${(y * 100).toFixed(0)}%`);
+}
+document.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse' || e.buttons || e.pointerType === 'touch') tilt(e); });
+document.addEventListener('pointerup', (e) => tilt(e, true));
+document.addEventListener('pointercancel', (e) => tilt(e, true));
+document.addEventListener('pointerleave', (e) => tilt(e, true), true);
+
 // ------------------------------------------------------------ Start
 render();
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
