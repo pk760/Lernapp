@@ -1,0 +1,11 @@
+{
+  "name": "lernhelden",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Lern-PWA für Grundschüler (Klasse 1-4): Mathe, Deutsch, Englisch mit Sammelkarten",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "test": "node --test tests/*.test.mjs"
+  }
+}

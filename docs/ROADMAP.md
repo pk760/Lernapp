@@ -1,0 +1,30 @@
+# Roadmap
+
+## Phase 0 – Prototyp ✅ (dieses Repo)
+PWA-Gerüst, 3 Themes, Lernpfad je Fach/Klasse, Lektionen (Mathe generiert, Deutsch/Englisch je 6 Fragen/Klasse),
+Karten-Packs, Sammlung, Ligen, Klassenarbeits-Projekte inkl. Boss, lokale Profile, Offline-Cache, Pages-Deploy.
+
+## Phase 1 – Spielgefühl & Design (nächste Aufgabe)
+- [ ] Design-Entscheidung treffen, Rest aufräumen oder als Auswahl lassen
+- [ ] Echte Illustrationen statt Emoji für Karten (SVG, eigene Figuren; 15 → 40 Karten)
+- [ ] Animationen/Sounds (Web Audio, abschaltbar), Konfetti bei Boss
+- [ ] Antwort-Typen erweitern: Zahleneingabe (Ziffernblock), Lückentext, Buchstaben legen, Zuordnen
+- [ ] iPad-Feinschliff: Querformat-Layout, Safe Areas, Splash-Screens
+
+## Phase 2 – Inhalte
+- [ ] Fragenbank mit Themen-Tags (z. B. „Einmaleins“, „Wortarten“) statt nur Klasse
+- [ ] Klassenarbeits-Modus nach Thema: Projekt wählt Themen, Training zieht gezielt daraus, Fehler-Wiederholung
+- [ ] Lehrplan-Abgleich je Bundesland (Quellen offen: Auftraggeber nennt Bundesland)
+- [ ] Mathe: Sachaufgaben, Geometrie, Uhrzeit, Geld; Deutsch: Diktat-Wörter, Lesetexte; Englisch: Vokabeln mit Bildern
+- [ ] Wissens-Review durch Eltern/Lehrkraft (Korrektheit!)
+
+## Phase 3 – Komfort
+- [ ] Export/Import des Fortschritts als Datei (Backup ohne Server)
+- [ ] Elternbereich (PIN): Fortschritt je Fach, Schwächen, Klassenarbeiten verwalten
+- [ ] Optionale Online-Rangliste/Freunde (nur wenn nötig; braucht Backend → Kosten/Datenschutz vorher klären)
+
+## Offene Fragen an den Auftraggeber
+1. Welches Design (cosmos / wald / arena)?
+2. Bundesland (Lehrplan, Schreibschrift vs. Druckschrift, Englisch ab Klasse 1 oder 3)?
+3. Nur ein Kind/Gerät oder mehrere Profile (aktuell mehrere lokal möglich)?
+4. Wie soll das Repo heißen / soll es öffentlich oder privat sein (Pages privat braucht bezahlten Plan)?
