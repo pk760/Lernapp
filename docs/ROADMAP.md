@@ -19,6 +19,8 @@ Karten-Packs, Sammlung, Ligen, Klassenarbeits-Projekte inkl. Boss, lokale Profil
 - [ ] iPad-Feinschliff: Querformat-Layout, Safe Areas, Splash-Screens
 
 ## Phase 2 – Inhalte
+- [x] Deutsch/Englisch per Generatoren (js/content-de.js, content-en.js), Akte II (Kapitel 9–16), Schnelltraining, Wiederholungsschutz
+- [ ] Akte III / weitere Kapitel, Themen-Auswahl im Schnelltraining, Fehler-Wiederholung
 - [ ] Fragenbank mit Themen-Tags (z. B. „Einmaleins“, „Wortarten“) statt nur Klasse
 - [ ] Klassenarbeits-Modus nach Thema: Projekt wählt Themen, Training zieht gezielt daraus, Fehler-Wiederholung
 - [ ] Lehrplan-Abgleich mit NRW-Lehrplan Grundschule (Kompetenzerwartungen je Klasse als Themenliste ableiten; Lehrwerke der Schule erfragen)

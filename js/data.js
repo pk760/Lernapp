@@ -6,6 +6,9 @@ export const SUBJECTS = {
   englisch: { name: 'Englisch', emoji: '🌍' },
 };
 
+import { genDeutsch } from './content-de.js';
+import { genEnglisch } from './content-en.js';
+
 export const GRADES = [1, 2, 3, 4];
 
 // Bossgegner je Fach (Boss-Mission = Klassenarbeits-Vorbereitung)
@@ -268,26 +271,29 @@ export function clockQuestion(grade) {
   return { q: 'Wie spät ist es?', c, w: [...wrong].slice(0, 3), hint: 'Der kurze Zeiger zeigt die Stunde, der lange die Minuten.', clock: [h, m] };
 }
 
-function uniqueMath(grade, n) {
-  const out = [], seen = new Set();
-  let guard = 0;
-  if (Math.random() < 0.35) { const c = clockQuestion(grade); seen.add(c.q); out.push(c); }
-  while (out.length < n && guard++ < 200) { const q = MATH[grade](); if (!seen.has(q.q)) { seen.add(q.q); out.push(q); } }
-  return shuffle(out);
-}
-
 // Baut eine Lektion. boss = 10 Fragen mit Nachbar-Klassen gemischt.
-export function buildQuestions(subject, grade, { boss = false } = {}) {
+// avoid: Set mit Frage-Texten, die das Kind zuletzt gesehen hat (werden nach Möglichkeit nicht wiederholt).
+// tier 2 = „Akte II“: ein Teil der Fragen kommt aus der nächsthöheren Klasse (max. 4).
+export function buildQuestions(subject, grade, { boss = false, avoid = new Set(), tier = 1 } = {}) {
   const n = boss ? 10 : 5;
-  let list;
-  if (subject === 'mathe') {
-    list = uniqueMath(grade, n);
-  } else {
-    let pool = [...STATIC[subject][grade]];
-    if (boss) pool = pool.concat(STATIC[subject][Math.max(1, grade - 1)], STATIC[subject][Math.min(4, grade + 1)]);
-    const seen = new Set();
-    pool = pool.filter(q => !seen.has(q.q) && seen.add(q.q));
-    list = shuffle(pool).slice(0, n);
+  const gradeFor = () => {
+    if (boss) return Math.min(4, Math.max(1, grade + pick([-1, 0, 0, 1])));
+    return tier === 2 && Math.random() < 0.6 ? Math.min(4, grade + 1) : grade;
+  };
+  const gen = { mathe: (g) => (Math.random() < 0.08 ? clockQuestion(g) : MATH[g]()), deutsch: genDeutsch, englisch: genEnglisch }[subject];
+  const out = [], used = new Set();
+  const staticPool = subject === 'mathe' ? [] : shuffle([...STATIC[subject][grade], ...(boss ? STATIC[subject][Math.max(1, grade - 1)] : [])]);
+  const take = (q, strict) => {
+    if (!q || used.has(q.q) || (strict && avoid.has(q.q))) return false;
+    used.add(q.q); out.push(q); return true;
+  };
+  for (let pass = 0; pass < 2 && out.length < n; pass++) {
+    const strict = pass === 0;
+    let guard = 0;
+    while (out.length < n && guard++ < 150) {
+      if (subject !== 'mathe' && Math.random() < 0.15 && staticPool.length) { take(staticPool.pop(), strict); continue; }
+      take(gen(gradeFor()), strict);
+    }
   }
-  return list.map(q => ({ ...q, options: shuffle([q.c, ...q.w]) }));
+  return shuffle(out).map((q) => ({ ...q, options: shuffle([q.c, ...q.w]) }));
 }

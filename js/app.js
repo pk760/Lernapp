@@ -1,6 +1,6 @@
 import { SUBJECTS, GRADES, CARDS, RARITY, VILLAINS, IMAGE_IDS, ligaFor, buildQuestions, rollCard, shuffle, pick } from './data.js';
 import { heroSvg, SUITS, EMBLEMS, SKINS } from './hero.js';
-import { STORY, DAILY_BRIEFING, ECHO_HIT, ECHO_CRIT, ECHO_MISS } from './story.js';
+import { STORY, chapterAt, TOTAL_CHAPTERS, DAILY_BRIEFING, ECHO_HIT, ECHO_CRIT, ECHO_MISS } from './story.js';
 import { sfx, sfxState } from './sfx.js';
 import { load, save, newProfile, today, yesterday, weekKey, daysUntil, exportJson, parseBackup, isSpotifyUrl } from './store.js';
 
@@ -8,6 +8,8 @@ const PATH_NODES = 8;
 const SESSIONS_FOR_BOSS = 3;
 const SESSIONS_GOAL = 5;
 const BLITZ_SECONDS = 10;
+const TRAIN_CARDS_PER_DAY = 3;
+const SEEN_LIMIT = 120; // so viele zuletzt gesehene Fragen pro Fach/Klasse werden nicht wiederholt
 
 let S = load();
 sfxState.muted = !!S.mute;
@@ -93,13 +95,16 @@ function viewLearn(p) {
   const key = `${ui.subject}-${p.grade}`;
   const done = p.progress[key] || 0;
   const story = STORY[ui.subject];
+  const akt = done >= PATH_NODES ? 1 : 0, base = akt * PATH_NODES;
+  const aktTitle = akt === 1 ? story.akte2.title : story.title;
   const subs = Object.entries(SUBJECTS).map(([k, s]) => `<button class="${ui.subject === k ? 'on' : ''}" data-a="subject" data-v="${k}">${s.emoji} ${s.name}</button>`).join('');
   const offs = [0, 38, 64, 38, 0, -38, -64, -38];
-  const nodes = Array.from({ length: PATH_NODES }, (_, i) => {
+  const nodes = Array.from({ length: PATH_NODES }, (_, k) => {
+    const i = base + k;
     const st = i < done ? 'done' : i === done ? 'now' : 'lock';
-    const fin = i === PATH_NODES - 1;
+    const fin = k === PATH_NODES - 1;
     const face = st === 'done' ? '✓' : st === 'now' ? (fin ? '👑' : '▶') : '🔒';
-    return `<div class="node-wrap" style="transform:translateX(${offs[i % 8]}px)"><button class="node ${st} ${fin ? 'finale' : ''}" ${st === 'lock' ? 'disabled' : ''} data-a="lesson" data-i="${i}" aria-label="Kapitel ${i + 1}: ${esc(story.chapters[i].t)}">${face}</button>${st === 'now' ? `<span class="bubble">Kapitel ${i + 1}</span>` : ''}</div>`;
+    return `<div class="node-wrap" style="transform:translateX(${offs[i % 8]}px)"><button class="node ${st} ${fin ? 'finale' : ''}" ${st === 'lock' ? 'disabled' : ''} data-a="lesson" data-i="${i}" aria-label="Kapitel ${i + 1}: ${esc(chapterAt(ui.subject, i).t)}">${face}</button>${st === 'now' ? `<span class="bubble">Kapitel ${i + 1}</span>` : ''}</div>`;
   }).join('');
   const music = isSpotifyUrl(S.spotify) ? `<a class="chip music" href="${esc(S.spotify)}" target="_blank" rel="noopener">🎧 Mission-Soundtrack abspielen</a>` : `<button class="chip music setup" data-a="sheet" data-v="settings">🎧 Lieblingsmusik einrichten</button>`;
   const daily = p.daily !== today()
@@ -108,10 +113,13 @@ function viewLearn(p) {
   const letters = ui.subject === 'deutsch' && p.grade >= 2
     ? `<div class="row wrap"><button class="notruf letterbtn" data-a="letter"><span class="siren">✉️</span><span><b>Brief-Mission</b><small>Schreibe einem Helden-Freund · ${p.letterDay === today() ? 'heute schon geschrieben' : 'Beute für den ersten Brief am Tag'}</small></span></button>${(p.letters || []).length ? `<button class="btn ghost" data-a="sheet" data-v="letters">📬 Briefmappe (${p.letters.length})</button>` : ''}</div>`
     : '';
-  const next = done < PATH_NODES ? `Kapitel ${done + 1}: ${esc(story.chapters[done].t)}` : 'Akte geschlossen – du hast alle Kapitel geschafft! 🏆';
+  const all = done >= TOTAL_CHAPTERS;
+  const next = all ? 'Beide Akten geschlossen – du bist ein Meister! 🏆 Mach weiter mit Schnelltraining.' : `Kapitel ${done + 1}: ${esc(chapterAt(ui.subject, done).t)}`;
+  const trainsLeft = Math.max(0, TRAIN_CARDS_PER_DAY - (p.train && p.train.day === today() ? p.train.n : 0));
+  const train = `<button class="notruf trainbtn" data-a="train"><span class="siren">⚡</span><span><b>Schnelltraining</b><small>${SUBJECTS[ui.subject].name} · immer neue Fragen · ${trainsLeft > 0 ? `noch ${trainsLeft}× heute mit Helden-Kiste` : 'heute nur noch Punkte, Kisten gibt es morgen wieder'}</small></span></button>`;
   return `<main>${heroBlock(p)}${music}${daily}<div class="seg sub">${subs}</div>${letters}
-    <h2 class="path-title">${esc(story.title)}</h2><p class="muted center-t">${next} · Klasse ${p.grade}</p>
-    <div class="path">${nodes}</div></main>`;
+    <h2 class="path-title">${esc(aktTitle)}</h2><p class="muted center-t">${akt === 1 ? 'Akte II · ' : ''}${next} · Klasse ${p.grade}</p>
+    <div class="path">${nodes}</div>${train}</main>`;
 }
 
 function viewProjects(p) {
@@ -260,7 +268,7 @@ function viewLesson(p) {
   }
   const power = L.power >= 3 && !L.answered && !L.usedPower ? '<button class="power-btn" data-a="power">⚡ SUPERKRAFT AKTIVIEREN</button>' : '';
   const fb = L.answered ? `<div class="feedback ${L.ok ? 'ok' : 'bad'}"><b>${esc(L.echo)}</b>${L.ok ? '' : ` <span>Richtig ist: ${esc(q.c)}</span>`}<button class="btn" data-a="next">Weiter</button></div>` : '';
-  const tag = L.boss ? (L.nodeIndex === PATH_NODES - 1 ? 'FINALE' : 'BOSS-MISSION') : L.daily ? 'ECHO-NOTRUF' : L.project ? 'TRAINING' : `KAPITEL ${L.nodeIndex + 1}`;
+  const tag = L.boss ? (L.nodeIndex % PATH_NODES === PATH_NODES - 1 ? 'FINALE' : 'BOSS-MISSION') : L.daily ? 'ECHO-NOTRUF' : L.project || L.train ? 'TRAINING' : `KAPITEL ${L.nodeIndex + 1}`;
   return `<main class="lesson"><div class="row"><button class="x back-x" data-a="quit" aria-label="Zurück zur Startseite">← Zurück</button><div class="bar grow"><i style="width:${Math.round((L.i / L.queue.length) * 100)}%"></i></div></div>
     <div class="arena ${fx}">
       <div class="fighter me" data-a="squish">${myHero(p)}</div>
@@ -288,7 +296,7 @@ function viewResult() {
   const reveal = c ? (R.opened
     ? `<div class="reveal-fx ${c.rarity}" aria-hidden="true"><i class="rays"></i><i class="shock"></i><i class="shock s2"></i></div><div class="rarity-banner ${c.rarity}">${c.rarity === 'common' ? 'NEUER HELD!' : RARITY[c.rarity].name.toUpperCase() + '!'}</div>
       <div class="tcg big ${c.rarity} pop flipin"><div class="art">${cardArt(c)}</div><b>${c.name}</b><small>${RARITY[c.rarity].name} · ${SUBJECTS[c.subject].name}</small><p>${esc(c.text)}</p></div>`
-    : `<button class="crate-btn ${c.rarity} ${R.opening ? 'opening' : ''}" data-a="open" ${R.opening ? 'disabled' : ''}>${crateSvg()}<span>${R.opening ? 'Öffnet sich …' : 'Helden-Kiste öffnen'}</span></button>`) : (R.letter ? '<p class="muted">Beute gibt es nur für den ersten Brief am Tag. Die Antwort kommt gleich!</p>' : '<p class="muted">Für eine Helden-Kiste brauchst du mindestens 60 % sofort richtig. Nochmal – du schaffst das!</p>');
+    : `<button class="crate-btn ${c.rarity} ${R.opening ? 'opening' : ''}" data-a="open" ${R.opening ? 'disabled' : ''}>${crateSvg()}<span>${R.opening ? 'Öffnet sich …' : 'Helden-Kiste öffnen'}</span></button>`) : (R.letter ? '<p class="muted">Beute gibt es nur für den ersten Brief am Tag. Die Antwort kommt gleich!</p>' : R.passed ? '<p class="muted">Die Kisten vom Schnelltraining sind für heute aufgebraucht – morgen gibt es wieder welche. Die Punkte hast du!</p>' : '<p class="muted">Für eine Helden-Kiste brauchst du mindestens 60 % sofort richtig. Nochmal – du schaffst das!</p>');
   const v = VILLAINS[R.villain];
   const bossPic = R.boss && v.img ? `<img class="boss-big ${R.won ? 'beaten' : ''}" src="${v.img}" alt="${esc(v.name)}" draggable="false">` : '';
   const extras = [R.maxCombo >= 3 ? `🔥 Combo ×${R.maxCombo}` : '', R.blitzWins ? `⚡ ${R.blitzWins}× Blitz-Treffer` : '', R.daily ? '🚨 Notruf-Bonus' : ''].filter(Boolean).map((x) => `<span class="chip">${x}</span>`).join('');
@@ -373,18 +381,29 @@ function armQuestion(L) {
   L.blitzAt = L.i > 0 && L.i < L.total - 1 && Math.random() < 0.28 ? Date.now() : 0; // nie bei der ersten/letzten Frage
 }
 
-function startLesson({ subject, nodeIndex = null, project = null, boss = false, daily = false }) {
+// Zuletzt gesehene Fragen merken, damit sie nicht sofort wiederkommen
+function seenSet(p, subject) { p.seen = p.seen || {}; return new Set(p.seen[`${subject}-${p.grade}`] || []); }
+function markSeen(p, subject, qs) {
+  const k = `${subject}-${p.grade}`;
+  p.seen = p.seen || {};
+  p.seen[k] = [...(p.seen[k] || []), ...qs.map((q) => q.q)].slice(-SEEN_LIMIT);
+}
+
+function startLesson({ subject, nodeIndex = null, project = null, boss = false, daily = false, train = false }) {
   const p = P();
   let questions;
+  const done = p.progress[`${subject}-${p.grade}`] || 0;
+  const tier = (nodeIndex !== null ? nodeIndex >= PATH_NODES : done >= PATH_NODES) ? 2 : 1;
   if (daily) {
-    questions = shuffle(Object.keys(SUBJECTS).flatMap((s) => buildQuestions(s, p.grade).slice(0, 2)));
+    questions = shuffle(Object.keys(SUBJECTS).flatMap((s) => { const qs = buildQuestions(s, p.grade, { avoid: seenSet(p, s) }).slice(0, 2); markSeen(p, s, qs); return qs; }));
   } else {
-    questions = buildQuestions(subject, p.grade, { boss });
+    questions = buildQuestions(subject, p.grade, { boss, tier, avoid: seenSet(p, subject) });
+    markSeen(p, subject, questions);
   }
-  const L = { subject, nodeIndex, project, boss, daily, villain: daily ? pick(Object.keys(VILLAINS)) : subject, queue: questions, i: 0, total: questions.length, correct: 0, hits: 0, combo: 0, maxCombo: 0, power: 0, blitzWins: 0, failedOnce: new Set(), answered: false, picked: -1, ok: false, crit: false, echo: '', input: '' };
+  const L = { subject, nodeIndex, project, boss, daily, train, villain: daily ? pick(Object.keys(VILLAINS)) : subject, queue: questions, i: 0, total: questions.length, correct: 0, hits: 0, combo: 0, maxCombo: 0, power: 0, blitzWins: 0, failedOnce: new Set(), answered: false, picked: -1, ok: false, crit: false, echo: '', input: '' };
   armQuestion(L);
   ui.lesson = L; ui.scene = null;
-  render();
+  commit();
 }
 
 function judge(ok, picked) {
@@ -459,16 +478,22 @@ function finishLesson() {
   let story = null;
   if (L.nodeIndex !== null && passed) {
     const key = `${L.subject}-${p.grade}`;
-    if ((p.progress[key] || 0) === L.nodeIndex) { p.progress[key] = L.nodeIndex + 1; story = { title: `Kapitel ${L.nodeIndex + 1} geschafft: ${STORY[L.subject].chapters[L.nodeIndex].t}`, lines: STORY[L.subject].chapters[L.nodeIndex].out }; }
+    if ((p.progress[key] || 0) === L.nodeIndex) { p.progress[key] = L.nodeIndex + 1; const ch = chapterAt(L.subject, L.nodeIndex); story = { title: `Kapitel ${L.nodeIndex + 1} geschafft: ${ch.t}`, lines: ch.out }; }
   }
   if (L.daily && passed) p.daily = today();
   if (L.project) {
     const pr = p.projects.find((x) => x.id === L.project);
     if (pr && passed) { if (L.boss) { if (won) pr.boss = 'won'; } else pr.sessions++; }
   }
-  const card = passed ? rollCard({ subject: L.daily ? pick(Object.keys(SUBJECTS)) : L.subject, boss: L.boss, perfect: perfect || L.daily }) : null;
+  let cardOk = passed;
+  if (L.train && passed) { // Schnelltraining: Kisten nur begrenzt pro Tag (kein Dauer-Farmen)
+    const tr = p.train && p.train.day === today() ? p.train : { day: today(), n: 0 };
+    if (tr.n >= TRAIN_CARDS_PER_DAY) cardOk = false; else tr.n++;
+    p.train = tr;
+  }
+  const card = cardOk ? rollCard({ subject: L.daily ? pick(Object.keys(SUBJECTS)) : L.subject, boss: L.boss, perfect: perfect || L.daily }) : null;
   if (card) p.cards[card.id] = (p.cards[card.id] || 0) + 1;
-  ui.result = { subject: L.subject, villain: L.villain, correct: L.correct, total: L.total, fp, perfect, boss: L.boss, won, card, opened: false, maxCombo: L.maxCombo, blitzWins: L.blitzWins, daily: L.daily, story };
+  ui.result = { passed, subject: L.subject, villain: L.villain, correct: L.correct, total: L.total, fp, perfect, boss: L.boss, won, card, opened: false, maxCombo: L.maxCombo, blitzWins: L.blitzWins, daily: L.daily, story };
   ui.lesson = null;
   if (passed) sfx.win();
   commit();
@@ -523,10 +548,11 @@ document.addEventListener('click', (e) => {
     case 'switch': ui.prev = S.active; S.active = null; ui.sheet = null; ui.newHero = false; break;
     case 'reset': if (ui.confirm === 'reset') { S = { ...S, active: null, profiles: [] }; ui.sheet = null; ui.confirm = null; } else ui.confirm = 'reset'; break;
     case 'lesson': {
-      const i = Number(t.dataset.i), key = `${ui.subject}-${p.grade}`, ch = STORY[ui.subject].chapters[i], fin = i === PATH_NODES - 1;
+      const i = Number(t.dataset.i), key = `${ui.subject}-${p.grade}`, ch = chapterAt(ui.subject, i), fin = i % PATH_NODES === PATH_NODES - 1;
       if ((p.progress[key] || 0) === i) { ui.scene = { kind: 'brief', subject: ui.subject, title: `Kapitel ${i + 1}: ${ch.t}`, lines: ch.in, finale: fin, after: { subject: ui.subject, nodeIndex: i, boss: fin } }; sfx.tap(); break; }
       return startLesson({ subject: ui.subject, nodeIndex: i, boss: fin });
     }
+    case 'train': return startLesson({ subject: ui.subject, train: true });
     case 'daily': ui.scene = { kind: 'brief', subject: pick(Object.keys(VILLAINS)), title: 'ECHO-Notruf', lines: DAILY_BRIEFING, finale: false, after: { subject: 'mathe', daily: true } }; sfx.tap(); break;
     case 'scenego': { const sc = ui.scene; sfx.tap(); if (sc.after) return startLesson(sc.after); ui.scene = null; break; }
     case 'speaklines': { speakText(ui.scene.lines.map((l) => l.replace(/\{name\}/g, p.name).replace(/^ECHO:\s*/, '')).join(' ')); return; }

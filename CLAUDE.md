@@ -27,7 +27,9 @@ manifest.webmanifest  PWA-Manifest
 sw.js                 Service Worker (cache-first App-Shell). Bei Dateiänderung VERSION erhöhen!
 css/app.css           Design „Hero Academy“ über CSS-Variablen
 js/data.js            Reine Logik/Inhalte: Fächer, Karten, Ligen, Fragen (statisch + Mathe-Generator), rollCard()
-js/story.js           Story-Text: je Fach 8 Kapitel (Briefing `in`, Nachbesprechung `out`), ECHO-Sprüche
+js/story.js           Story-Text: je Fach Akte I (8 Kapitel) + Akte II (`akte2`, Kapitel 9–16; `chapterAt()`), ECHO-Sprüche
+js/content-de.js      Deutsch: Wortlisten + ~25 Aufgaben-Generatoren (Rechtschreibung, Wortarten, Zeitformen, Satzzeichen, wörtl. Rede …)
+js/content-en.js      Englisch: Vokabeln nach Thema/Stufe + Generatoren (EN↔DE, be/have, Plural, Fragewörter, Dialoge …)
 js/sfx.js             Soundeffekte per Web Audio (abschaltbar)
 js/hero.js            SVG-Generator für Helden (eigener Held + Fallback für Karten); echte Bilder: assets/heroes/<id>.webp via IMAGE_IDS in data.js
 scripts/make-prompts.mjs  erzeugt docs/HELDEN-PROMPTS.md (Bild-Prompts je Held)
@@ -37,6 +39,7 @@ tests/*.test.mjs      Node-Tests für data.js (npm test)
 .github/workflows     Tests + Deploy nach GitHub Pages bei Push auf main
 docs/                 ROADMAP.md, DESIGN.md (3 Designvorschläge), CONTENT.md (Fragen schreiben)
 ```
+Fragen-Auswahl: `buildQuestions(subject, grade, {boss, avoid, tier})`; Deutsch/Englisch/Mathe kommen aus Generatoren (+ wenige statische Q()). `profile.seen` merkt die letzten 120 Fragen je Fach/Klasse (kein Wiederholen). Akte II = `tier 2` (Stoff der nächsten Klasse gemischt). Schnelltraining: beliebig viele Lektionen, Kisten max. 3×/Tag (`profile.train`).
 Aufgabenformat: Mehrfachauswahl; Mathe zusätzlich Zahleneingabe (`q.num`, Ziffernblock + Tastatur). Eigener Held: `profile.hero`; Sidekick: `profile.sidekick` (Karten-ID); Spotify-Link: `state.spotify`; Vorlesen via Web Speech API.
 Spielregeln (aktuell in `js/app.js` → `finishLesson`): Lektion = 5 Fragen; falsche Fragen kommen am Ende nochmal;
 ≥60 % sofort richtig ⇒ Lernpfad-Knoten + Karten-Pack; perfekt ⇒ mind. „selten“. Klassenarbeits-Einheit: +10 FP; Boss

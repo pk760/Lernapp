@@ -44,6 +44,53 @@ export const STORY = {
   },
 };
 
+
+// ---- Akte II (Kapitel 9–16): schwerere Aufgaben (Stoff der nächsten Klasse gemischt) ----
+const C = (t, inn, out) => ({ t, in: inn, out });
+STORY.mathe.akte2 = {
+  title: 'Akte Null-Armee',
+  chapters: [
+    C('Die Null-Armee', ['ECHO: Alarm, {name}! Chaos-Null ist zurück – mit einer ganzen Armee aus Nullen.', 'Sie marschieren auf die Stadt zu. Rechne sie zurück auf Null!'], ['Die erste Welle ist gestoppt. Aber hinter dem Hügel wartet mehr.']),
+    C('Der Zahlenwald', ['Im Zahlenwald hängen die Zahlen wie Früchte in den Bäumen – und Chaos-Null hat sie verhext.', 'ECHO: Pflücke die richtigen Ergebnisse!'], ['Die Bäume leuchten wieder. Ein verstecktes Tor wird sichtbar.']),
+    C('Die Rechenbrücke', ['Eine Brücke aus Rechenaufgaben führt über den Abgrund. Bei jedem Fehler bricht ein Stück weg.', 'ECHO: Konzentriert bleiben, {name}!'], ['Du bist drüben. Die Brücke hat gehalten – dank dir.']),
+    C('Die Uhrenhöhle', ['In der Höhle ticken hundert Uhren – alle gehen falsch.', 'ECHO: Wenn du die Zeit richtig liest, öffnet sich der Ausgang.'], ['Alle Uhren schlagen im Takt. Draußen weht kalter Wind.']),
+    C('Der Geldspeicher', ['Chaos-Null hat den Münzspeicher geknackt und das Geld durcheinandergewirbelt.', 'ECHO: Zähle richtig, sonst fehlt am Ende ein Cent!'], ['Jede Münze liegt wieder an ihrem Platz.']),
+    C('Das Labyrinth der Mauern', ['Zahlenmauern ragen überall auf. Nur wer die fehlenden Steine findet, kommt durch.', 'ECHO: Denk von unten nach oben!'], ['Du stehst im Zentrum. In der Mitte liegt ein Funkgerät – Chaos-Null spricht!']),
+    C('Funkspruch aus dem Turm', ['Chaos-Null: „Du bist gut, aber ich habe das letzte Rätsel!“', 'ECHO: Jetzt wird es hart. Blitz-Aufgaben geben Bonus!'], ['Das Rätsel ist gelöst. Der Weg zum Gipfel ist frei.']),
+    C('Finale: Chaos-Null kehrt zurück', ['Auf dem Gipfel wartet Chaos-Null – diesmal mit doppelter Kraft.', 'ECHO: Das ist dein größter Kampf, {name}. Zeig, was du kannst!'], ['Chaos-Null ist endgültig besiegt! Die Zahlen gehören wieder dir. Du bist ein echter Mathe-Held.']),
+  ],
+};
+STORY.deutsch.akte2 = {
+  title: 'Akte Rache des Fehlerteufels',
+  chapters: [
+    C('Fehler im Rathaus', ['ECHO: Notfall, {name}! Der Fehlerteufel ist zurück und hat das Rathaus mit Fehlern überzogen.', 'Alle Formulare sind voller Fehler. Bring sie in Ordnung!'], ['Das Rathaus ist wieder in Ordnung. Auf dem Tisch liegt eine neue Spur.']),
+    C('Der Märchenwald', ['Im Märchenwald sind die Geschichten durcheinander: Der Wolf wohnt im Pfefferkuchenhaus!', 'ECHO: Setze die Wörter richtig ein, dann stimmt die Geschichte.'], ['Die Märchen erzählen sich wieder richtig zu Ende.']),
+    C('Die Zeitmaschine', ['Der Fehlerteufel hat die Zeitformen vertauscht: Gestern ist morgen und morgen ist gestern!', 'ECHO: Bring Vergangenheit und Gegenwart wieder auseinander.'], ['Die Zeit läuft wieder in die richtige Richtung.']),
+    C('Die Wortschmiede', ['In der Schmiede hämmern Zwerge Wörter zusammen – aber die Teile passen nicht.', 'ECHO: Baue die zusammengesetzten Wörter richtig!'], ['Funken sprühen – und ein Meisterwerk aus Wörtern entsteht.']),
+    C('Der Satzzeichen-Sturm', ['Ein Sturm wirbelt alle Punkte, Kommas und Fragezeichen durch die Luft.', 'ECHO: Fang sie ein und setze sie an die richtige Stelle!'], ['Der Sturm legt sich. Jedes Zeichen sitzt wieder.']),
+    C('Die Rede-Falle', ['Der Fehlerteufel hat eine Falle gestellt: Wer wörtliche Rede falsch schreibt, bleibt kleben.', 'ECHO: Anführungszeichen, Doppelpunkt – du schaffst das!'], ['Du bist frei! Die Falle klappt zu – leer.']),
+    C('Die Höhle der Wörter', ['Tief in der Höhle hängen Wörter in Käfigen: Nomen, Verben, Adjektive.', 'ECHO: Sortiere sie richtig, dann springen die Türen auf. Blitz-Aufgaben geben Bonus!'], ['Alle Wörter sind frei und fliegen zurück in die Bücher.']),
+    C('Finale: Die Rache des Fehlerteufels', ['Der Fehlerteufel brüllt: „Diesmal mache ich ALLE Fehler auf einmal!“', 'ECHO: Er irrt sich schon wieder, {name}. Zeig ihm, wer die Sprache beherrscht!'], ['Der Fehlerteufel verschwindet in einer Wolke aus Radiergummi-Krümeln. Die Sprache gehört dir – Meister der Wörter!']),
+  ],
+};
+STORY.englisch.akte2 = {
+  title: 'Akte Sprachsturm',
+  chapters: [
+    C('Landung in London', ['ECHO: Baron Babel ist zurück und hat einen Sprachsturm über London gebracht!', 'Alle Schilder sind durcheinander. Hilf den Leuten, sich zurechtzufinden.'], ['Der Sturm lässt nach. Well done!']),
+    C('Der Markt', ['Auf dem Markt versteht niemand, was die Händler rufen.', 'ECHO: Apples, bread, milk – finde das richtige Wort!'], ['Der Markt summt wieder. Everyone is happy.']),
+    C('Das Wetter-Radio', ['Das Radio sagt das Wetter falsch voraus: Es regnet bei Sonnenschein!', 'ECHO: Sunny, rainy, windy – stell das Wetter richtig ein.'], ['Jetzt scheint wirklich die Sonne. The sun is shining!']),
+    C('Das Zimmer-Rätsel', ['In einem Haus sind alle Möbel falsch beschriftet: Ein „bed“ steht in der Küche.', 'ECHO: Ordne die Wörter den richtigen Dingen zu.'], ['Jedes Zimmer hat wieder die richtigen Möbel.']),
+    C('Der Zoo der Wörter', ['Im Zoo sind die Tiere ausgebrochen – und ihre Schilder vertauscht!', 'ECHO: Wer ist ein „sheep“, wer eine „mouse“? Achte auch auf die Mehrzahl!'], ['Alle Tiere sind wieder in ihren Gehegen. Two mice, three sheep!']),
+    C('Der Anruf', ['Baron Babel ruft an und stellt Fragen: „What is your name? How old are you?“', 'ECHO: Antworte richtig, sonst legt er nicht auf!'], ['Er legt auf. Du hast jede Frage beantwortet.']),
+    C('Die Bibliothek der Sprachen', ['In der Bibliothek flüstern die Bücher in vielen Sprachen.', 'ECHO: Nur Englisch zählt! Blitz-Aufgaben geben Bonus.'], ['Die Bücher verstummen. Oben im Turm schimmert Licht.']),
+    C('Finale: Baron Babel kehrt zurück', ['Baron Babel steht auf dem Turm: „Diesmal verstehst du mich nicht!“', 'ECHO: Doch, {name}. You can do it!'], ['Baron Babel verstummt. Du bist ein echter Sprachheld!']),
+  ],
+};
+
+// Kapitel nach Gesamtindex (0–7 = Akte I, 8–15 = Akte II)
+export const chapterAt = (subject, idx) => (idx < 8 ? STORY[subject].chapters[idx] : STORY[subject].akte2.chapters[idx - 8]);
+export const TOTAL_CHAPTERS = 16;
+
 export const DAILY_BRIEFING = ['ECHO: Notruf, {name}! Alle drei Schurken greifen gleichzeitig an.', 'Eine gemischte Mission: Mathe, Deutsch und Englisch. Dafür gibt es doppelte Beute!'];
 
 export const ECHO_HIT = ['Treffer!', 'Stark!', 'Genau so!', 'Boom!', 'Sauber getroffen!'];
